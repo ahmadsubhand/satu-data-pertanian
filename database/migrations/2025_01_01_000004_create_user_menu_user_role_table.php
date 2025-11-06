@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('user_menu_user_role', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_role_id')->constrained('user_roles', 'id');
+            $table->foreignId('user_menu_id')->constrained('user_menus', 'id');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('user_menu_user_role');
+    }
+};
