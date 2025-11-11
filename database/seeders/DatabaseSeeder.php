@@ -13,15 +13,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            UserRoleSeeder::class,
+            UserMenuSeeder::class,
+            UserMenuUserRoleSeeder::class,
+            ProdusenDataTableSeeder::class,
+            KategoriDataTableSeeder::class,
+        ]);
 
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => 'password',
-                'email_verified_at' => now(),
-            ]
-        );
+        // User::factory(10)->create();
+        User::factory()->create([
+            'email' => 'contoh@test.com',
+            'nama_lengkap' => 'Test User',
+            'username' => 'test_user',
+            'password' => '12341234',
+            'email_verified_at' => now(),
+            'user_role_id' => 1,
+            'eselon' =>  1,
+        ]);
     }
 }
