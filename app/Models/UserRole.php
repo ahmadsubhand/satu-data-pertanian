@@ -33,4 +33,14 @@ class UserRole extends Model
     {
         return $this->hasMany(UserMenuUserRole::class, 'user_role_id');
     }
+
+    public function userMenus()
+    {
+        return $this->belongsToMany(
+            UserMenu::class,
+            'user_menu_user_role', // nama tabel pivot
+            'user_role_id',        // foreign key ke user_roles
+            'user_menu_id'         // foreign key ke user_menus
+        );
+    }
 }

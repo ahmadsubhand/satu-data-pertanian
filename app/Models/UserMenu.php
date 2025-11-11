@@ -26,4 +26,14 @@ class UserMenu extends Model
     {
         return $this->hasMany(UserMenuUserRole::class, 'user_menu_id');
     }
+
+    public function userRoles()
+    {
+        return $this->belongsToMany(
+            UserRole::class,
+            'user_menu_user_role',
+            'user_menu_id',
+            'user_role_id'
+        );
+    }
 }
