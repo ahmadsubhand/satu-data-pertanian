@@ -22,14 +22,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $name = fake()->name();
         return [
-            'nip' => fake()->numerify('######'),
-            'nama_lengkap' => fake()->name(),
-            'eselon' => fake()->randomElement(['I', 'II', 'III', 'IV']),
-            'kodeunker' => fake()->numerify('####'),
+            'nip' => fake()->nik(),
+            'nama_lengkap' => $name,
+            'eselon' => \App\Models\ProdusenDataTable::factory(),
+            // 'kodeunker' => fake()->numerify('####'),
             'unit_kerja' => fake()->company(),
             'hp' => fake()->phoneNumber(),
-            'username' => fake()->unique()->userName(),
+            'username' => Str::slug($name),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= 'password',

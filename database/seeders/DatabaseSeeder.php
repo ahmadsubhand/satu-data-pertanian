@@ -22,14 +22,14 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // User::factory(10)->create();
-
-        User::firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'name' => 'Test User',
-                'password' => 'password',
-                'email_verified_at' => now(),
-            ]
-        );
+        User::factory()->create([
+            'email' => 'contoh@test.com',
+            'nama_lengkap' => 'Test User',
+            'username' => 'test_user',
+            'password' => '12341234',
+            'email_verified_at' => now(),
+            'user_role_id' => 1,
+            'eselon' =>  1,
+        ]);
     }
 }

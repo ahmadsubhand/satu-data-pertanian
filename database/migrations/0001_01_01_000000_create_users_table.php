@@ -13,12 +13,20 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+
+            $table->string('nip')->unique();
+            $table->string('nama_lengkap');
+            $table->foreignId('eselon')->constrained('produsen_data_tables');
+            // $table->string('kodeunker')->after('eselon')->nullable();
+            $table->string('unit_kerja');
+            $table->string('hp');
+            $table->string('username');
+            $table->foreignId('user_role_id')->constrained();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
