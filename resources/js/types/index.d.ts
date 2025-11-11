@@ -41,3 +41,13 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export type UserType = User;
+
+export interface PageProps {
+    auth?: {
+        user: UserType;
+    };
+    errors?: Record<string, string>;
+    [key: string]: unknown;
+}
