@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UserMenuUserRoleSeeder::class,
             ProdusenDataTableSeeder::class,
             KategoriDataTableSeeder::class,
+            UserSeeder::class,
         ]);
 
         // User::factory(10)->create();
