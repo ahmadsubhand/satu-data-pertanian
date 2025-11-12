@@ -9,6 +9,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/', function () {
       return Inertia::render('admin/user/index');
     })->name('admin-user');
+    
+    // Submenu routes for user management
+    Route::get('/daftar-user', function () {
+      return Inertia::render('admin/user/daftar-user');
+    })->name('admin-user-list');
+    
+    Route::get('/manajemen-menu', function () {
+      return Inertia::render('admin/user/manajemen-menu');
+    })->name('admin-menu-management');
+    
+    Route::get('/manajemen-submenu', function () {
+      return Inertia::render('admin/user/manajemen-submenu');
+    })->name('admin-submenu-management');
+    
+    Route::get('/manajemen-role', function () {
+      return Inertia::render('admin/user/manajemen-role');
+    })->name('admin-role-management');
   });
   
   // Data (ID: 2)

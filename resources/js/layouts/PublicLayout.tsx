@@ -339,6 +339,7 @@ const PublicLayout = ({
                         },
                     ],
                 },
+
                 {
                     key: 'rencana-rilis',
                     label: <Link href="/release-plans">Rencana Rilis</Link>,

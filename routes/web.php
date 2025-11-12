@@ -202,6 +202,27 @@ Route::get('/data/statistical', function () {
     return Inertia::render('StatisticalIndexPage');
 })->name('data.statistical');
 
+// Routes for user management pages (accessible without menuAdmin middleware)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::prefix('admin/user')->group(function () {
+        Route::get('daftar-user', function () {
+            return Inertia::render('admin/user/daftar-user');
+        })->name('admin.user.daftar-user');
+        
+        Route::get('manajemen-menu', function () {
+            return Inertia::render('admin/user/manajemen-menu');
+        })->name('admin.user.manajemen-menu');
+        
+        Route::get('manajemen-submenu', function () {
+            return Inertia::render('admin/user/manajemen-submenu');
+        })->name('admin.user.manajemen-submenu');
+        
+        Route::get('manajemen-role', function () {
+            return Inertia::render('admin/user/manajemen-role');
+        })->name('admin.user.manajemen-role');
+    });
+});
+
 // Additional statistical data routes
 Route::get('/statistical-data/production', function () {
     return Inertia::render('StatisticalIndexPage');
@@ -214,6 +235,10 @@ Route::get('/statistical-data/trade', function () {
 Route::get('/statistical-data/prices', function () {
     return Inertia::render('StatisticalIndexPage');
 })->name('statistical-data.prices');
+
+// Route::get('test', function () {
+//     return 'Test Page';
+// })->name('test.page');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

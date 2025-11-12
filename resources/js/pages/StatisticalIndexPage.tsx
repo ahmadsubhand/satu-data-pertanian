@@ -164,7 +164,7 @@ const StatisticalIndexPage: React.FC<StatisticalIndexPageProps> = () => {
                 onClick={() => window.location.href = '/statistical-data/trade'}
               >
                 <div style={{ fontSize: '40px', marginBottom: '12px' }}>↔️</div>
-                <Title level={4} style={{ color: '#2d5036', marginBottom: '8px' }}>Perdagangan</Title>
+                <Title level={4} style={{ color: '#2d5036', marginBottom: '8px' }}>Ekspor/Impor</Title>
                 <Paragraph type="secondary">Data ekspor-impor pertanian</Paragraph>
               </Card>
             </Col>
