@@ -1,10 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, User as UserType, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
+import { Head, usePage, router } from '@inertiajs/react';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, message } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { adminUserDestroy, adminUserStore, adminUserUpdate } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -38,8 +39,18 @@ interface Props {
 }
 
 const DaftarUserPage = ({ user, roles, eselon }: Props) => {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, flash } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
+    
+    // Tampilkan pesan sukses dari flash session
+    React.useEffect(() => {
+        if (flash?.success) {
+            message.success(flash.success);
+        }
+        if (flash?.error) {
+            message.error(flash.error);
+        }
+    }, [flash]);
     const [selectedRole, setSelectedRole] = useState<number | null>(null);
     const [selectedEselon, setSelectedEselon] = useState<number | null>(null); // Changed to number for ID
     const [searchText, setSearchText] = useState('');
@@ -156,62 +167,20 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
     // Fungsi untuk menambah atau mengupdate user
     const handleAddUser = (values: any) => {
         if (isEditing && currentRecord) {
-            // Update user yang sudah ada
-            setUserData(prev => prev.map(user =>
-                user.id === currentRecord.id 
-                    ? { 
-                        ...user,
-                        nip: values.nip,
-                        nama_lengkap: values.nama_lengkap,
-                        eselon: eselon.find(e => e.id === values.eselon) || { id: 0, value: '', created_at: '', updated_at: '' },
-                        unit_kerja: values.unit_kerja,
-                        email: values.email,
-                        hp: values.hp,
-                        user_role_id: values.user_role_id,
-                        username: values.nama_lengkap.toLowerCase().replace(/\s+/g, '_'),
-                        updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
-                      }
-                    : user
-            ));
-            
-            // Reset mode edit
-            setIsEditing(false);
-            setCurrentRecord(null);
+            // Update user yang sudah ada via API
+            router.put(adminUserUpdate.url(currentRecord.id), {
+                ...values,
+                username: values.nama_lengkap.toLowerCase().replace(/\s+/g, '_'),
+                password: values.password || null, // Jika password tidak diisi, kirim null
+            });
         } else {
-            // Generate ID baru berdasarkan ID terbesar + 1
-            const newId = Math.max(...userData.map(u => u.id), 0) + 1;
-            
-            // Find eselon object based on ID
-            const eselonObj = eselon.find(e => e.id === values.eselon) || { id: 0, value: '', created_at: '', updated_at: '' };
-            
-            // Find role object based on ID
-            const roleObj = roles.find(r => r.id === values.user_role_id);
-            
-            // Generate username dari nama lengkap
-            const username = values.nama_lengkap.toLowerCase().replace(/\s+/g, '_');
-            
-            const newUser: UserType = {
-                id: newId,
-                nip: values.nip,
-                nama_lengkap: values.nama_lengkap,
-                eselon: eselonObj,
-                unit_kerja: values.unit_kerja,
-                email: values.email,
-                hp: values.hp,
-                user_role_id: values.user_role_id,
-                user_role: roleObj || { id: 0, role: 'Unknown', created_at: '', updated_at: '' },
-                username: username,
-                created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
-                updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
-            };
-
-            // Tambahkan user baru ke state
-            setUserData(prev => [...prev, newUser]);
+            // Tambah user baru via API
+            router.post(adminUserStore.url(), {
+                ...values,
+                username: values.nama_lengkap.toLowerCase().replace(/\s+/g, '_'),
+                password: values.password || 'password123', // Default password jika tidak diisi
+            });
         }
-
-        // Reset form dan tutup modal
-        form.resetFields();
-        setIsModalVisible(false);
     };
 
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -225,8 +194,8 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
     
     // Fungsi untuk mengkonfirmasi penghapusan
     const confirmDelete = () => {
-        if (deleteRecordId !== null) {
-            setUserData(prev => prev.filter(user => user.id !== deleteRecordId));
+        if (deleteRecordId) {
+            router.delete(adminUserDestroy.url(deleteRecordId));
         }
         setDeleteModalVisible(false);
         setDeleteRecordId(null);
@@ -244,7 +213,7 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
 
     // Fungsi untuk menangani edit user
     const handleEdit = (record: UserType) => {
-        // Isi form dengan data user
+        // Isi form dengan data user, kecuali password
         form.setFieldsValue({
             nip: record.nip,
             nama_lengkap: record.nama_lengkap,
@@ -253,6 +222,7 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
             email: record.email,
             hp: record.hp,
             user_role_id: record.user_role_id,
+            // Jangan isi password dari data lama
         });
         
         // Set mode edit dan simpan record yang sedang diedit
@@ -388,6 +358,22 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
                                     <Option key={role.id} value={role.id}>{role.role}</Option>
                                 ))}
                             </Select>
+                        </Form.Item>
+                        <Form.Item 
+                            label="Password" 
+                            name="password"
+                            rules={
+                                !isEditing 
+                                ? [
+                                    { required: true, message: 'Password wajib diisi saat menambah user baru' },
+                                    { min: 8, message: 'Password minimal 8 karakter' }
+                                  ]
+                                : [
+                                    { min: 8, message: 'Password minimal 8 karakter jika diisi' }
+                                  ]
+                            }
+                        >
+                            <Input.Password placeholder={isEditing ? "Isi hanya jika ingin mengganti password" : "Masukkan password"} />
                         </Form.Item>
                     </Form>
                 </Modal>

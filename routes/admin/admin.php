@@ -14,6 +14,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Submenu routes for user management
     Route::controller(UserController::class)->prefix('daftar-user')->group(function () {
       Route::get('/', 'index')->name('admin-user-list');
+      Route::post('/', 'store')->name('admin-user-store');
+      Route::put('/{user}', 'update')->name('admin-user-update');
+      Route::delete('/{user}', 'destroy')->name('admin-user-destroy');
     });
     
     Route::get('/manajemen-menu', function () {
