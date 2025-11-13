@@ -1,9 +1,9 @@
 import AdminLayout from '@/layouts/admin/layout';
-import { SharedData, User, type BreadcrumbItem } from '@/types';
+import { SharedData, User as UserType, type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -21,188 +21,46 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface UserData {
-    id: number;
-    nip: string;
-    nama_lengkap: string;
-    eselon: string;
-    unit_kerja: string;
-    email: string;
-    hp: string;
-    user_role_id: number;
-    username: string;
-    created_at: string;
-    updated_at: string;
+interface Props {
+    user: UserType[];
+    roles: {
+        id: number;
+        role: string;
+        created_at: string;
+        updated_at: string;
+    }[];
+    eselon: {
+        id: number;
+        value: string;
+        created_at: string;
+        updated_at: string;
+    }[];
 }
 
-const DaftarUserPage = ({ 
-    user 
-} : {  
-    user: User
-}) => {
+const DaftarUserPage = ({ user, roles, eselon }: Props) => {
     const { auth } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedRole, setSelectedRole] = useState<number | null>(null);
-    const [selectedEselon, setSelectedEselon] = useState<string | null>(null);
+    const [selectedEselon, setSelectedEselon] = useState<number | null>(null); // Changed to number for ID
     const [searchText, setSearchText] = useState('');
     const [form] = Form.useForm();
 
-    // Data role untuk referensi
-    const roles = [
-        { id: 1, role: 'Superadmin' },
-        { id: 2, role: 'Walidata' },
-        { id: 3, role: 'Admin Pusdatin' },
-        { id: 4, role: 'Pembina Data' },
-        { id: 5, role: 'Produsen Data' },
-    ];
+    // Use data from props instead of hardcoded values
+    const [userData, setUserData] = useState<UserType[]>(user);
 
-    // Data contoh pengguna sesuai dengan struktur UserSeeder
-    const [userData, setUserData] = useState<UserData[]>([
-        {
-            id: 10,
-            nip: '198701042011011010',
-            nama_lengkap: 'ASYHADI LAKSONO HAKIM',
-            eselon: 'SEKRETARIAT JENDERAL',
-            unit_kerja: 'PUSAT DATA DAN SISTEM INFORMASI PERTANIAN',
-            email: 'asyhadi@pertanian.go.id',
-            hp: '081286184174',
-            user_role_id: 5,
-            username: 'asyhadi_laksono_hakim',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 11,
-            nip: '198111062009101004',
-            nama_lengkap: 'ANDRY POLOS',
-            eselon: '',
-            unit_kerja: 'PUSAT DATA DAN SISTEM INFORMASI PERTANIAN',
-            email: 'andry_p@pertanian.go.id',
-            hp: '08561116187',
-            user_role_id: 3,
-            username: 'andry_polos',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 22,
-            nip: '198702272009122006',
-            nama_lengkap: 'ROYDATUL ZIKRIA',
-            eselon: 'SEKRETARIAT JENDERAL',
-            unit_kerja: 'PUSAT DATA DAN SISTEM INFORMASI PERTANIAN',
-            email: 'roydatul_z@pertanian.go.id',
-            hp: '085645866356',
-            user_role_id: 1,
-            username: 'roydatul_zikria',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 23,
-            nip: '198605302009011001',
-            nama_lengkap: 'RHENDY KENCANAPUTRA WIDIYANTO',
-            eselon: 'SEKRETARIAT JENDERAL',
-            unit_kerja: 'PUSAT DATA DAN SISTEM INFORMASI PERTANIAN',
-            email: 'rhendy@pertanian.go.id',
-            hp: '082111132121',
-            user_role_id: 3,
-            username: 'rhendy_kencanaputra_widiyanto',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 25,
-            nip: '199102012019021001',
-            nama_lengkap: 'RIZKY PURNAMA RIHALDIYAN',
-            eselon: 'SEKRETARIAT JENDERAL',
-            unit_kerja: 'PUSAT DATA DAN SISTEM INFORMASI PERTANIAN',
-            email: 'rizkypurnama@pertanian.go.id',
-            hp: '085794806545',
-            user_role_id: 1,
-            username: 'rizky_purnama_rihaldian',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 26,
-            nip: '198406112002121001',
-            nama_lengkap: 'AMIRZA NATA KUSUMA',
-            eselon: 'SEKRETARIAT JENDERAL',
-            unit_kerja: 'PUSAT DATA DAN SISTEM INFORMASI PERTANIAN',
-            email: 'amirzanata@pertanian.go.id',
-            hp: '081210111484',
-            user_role_id: 3,
-            username: 'amirza_nata_kusuma',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 27,
-            nip: '198311142011011007',
-            nama_lengkap: 'SUSILO NOVIANTO DAMARJATI',
-            eselon: 'DIREKTORAT JENDERAL PERKEBUNAN',
-            unit_kerja: 'SEKRETARIAT DIREKTORAT JENDERAL PERKEBUNAN',
-            email: 'susilonovianto@pertanian.go.id',
-            hp: '082221941945',
-            user_role_id: 5,
-            username: 'susilo_novianto_damarjati',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 28,
-            nip: '199312312022032001',
-            nama_lengkap: 'DEVI PUTRI DEWANTI',
-            eselon: 'DIREKTORAT JENDERAL PERKEBUNAN',
-            unit_kerja: 'SEKRETARIAT DIREKTORAT JENDERAL PERKEBUNAN',
-            email: 'devi.putri@pertanian.go.id',
-            hp: '082216633989',
-            user_role_id: 5,
-            username: 'devi_putri_dewanti',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 29,
-            nip: '198007282007012002',
-            nama_lengkap: 'NURLIANIE',
-            eselon: 'BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN',
-            unit_kerja: 'SEKRETARIAT BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN',
-            email: 'nurlianie@pertanian.go.id',
-            hp: '085283834455',
-            user_role_id: 5,
-            username: 'nurlianie',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-        {
-            id: 30,
-            nip: '198902222022032001',
-            nama_lengkap: 'RETNO FEPRININGRUM',
-            eselon: 'BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN',
-            unit_kerja: 'SEKRETARIAT BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN',
-            email: 'retno.fepriningrum@pertanian.go.id',
-            hp: '085713020104',
-            user_role_id: 5,
-            username: 'retno_fepriningrum',
-            created_at: '2025-11-11 06:40:02',
-            updated_at: '2025-11-11 06:40:02'
-        },
-    ]);
-
-    // Fungsi untuk memfilter data berdasarkan pencarian
-    const filteredData = userData.filter(user => 
+    // Fungsi untuk memfilter data berdasarkan pencarian dan filter yang dipilih
+    const filteredData = userData.filter(user =>
         user.nama_lengkap.toLowerCase().includes(searchText.toLowerCase()) ||
         user.email.toLowerCase().includes(searchText.toLowerCase()) ||
         user.nip.toLowerCase().includes(searchText.toLowerCase()) ||
         user.unit_kerja.toLowerCase().includes(searchText.toLowerCase())
-    ).filter(user => 
+    ).filter(user =>
         selectedRole ? user.user_role_id === selectedRole : true
     ).filter(user =>
-        selectedEselon ? user.eselon === selectedEselon : true
+        selectedEselon ? user.eselon?.id === selectedEselon : true
     );
 
-    const columns: TableColumnsType<UserData> = [
+    const columns: TableColumnsType<UserType> = [
         {
             title: 'ID',
             dataIndex: 'id',
@@ -228,8 +86,8 @@ const DaftarUserPage = ({
             title: 'Eselon',
             dataIndex: 'eselon',
             key: 'eselon',
-            render: (eselon) => eselon || '-',
-            sorter: (a, b) => a.eselon.localeCompare(b.eselon),
+            render: (eselon) => eselon?.value || '-',
+            sorter: (a, b) => (a.eselon?.value || '').localeCompare(b.eselon?.value || ''),
             width: 200,
         },
         {
@@ -254,14 +112,11 @@ const DaftarUserPage = ({
         },
         {
             title: 'Role',
-            dataIndex: 'user_role_id',
-            key: 'user_role_id',
-            render: (roleId) => {
-                const role = roles.find(r => r.id === roleId);
-                return role ? role.role : 'Tdk Diketahui';
+            dataIndex: 'user_role',
+            key: 'user_role',
+            render: (_, record) => {
+                return record.user_role?.role || 'Tdk Diketahui';
             },
-            filters: roles.map(role => ({ text: role.role, value: role.id })),
-            onFilter: (value, record) => record.user_role_id === value,
             width: 150,
         },
         {
@@ -302,13 +157,13 @@ const DaftarUserPage = ({
     const handleAddUser = (values: any) => {
         if (isEditing && currentRecord) {
             // Update user yang sudah ada
-            setUserData(prev => prev.map(user => 
+            setUserData(prev => prev.map(user =>
                 user.id === currentRecord.id 
                     ? { 
                         ...user,
                         nip: values.nip,
                         nama_lengkap: values.nama_lengkap,
-                        eselon: values.eselon,
+                        eselon: eselon.find(e => e.id === values.eselon) || { id: 0, value: '', created_at: '', updated_at: '' },
                         unit_kerja: values.unit_kerja,
                         email: values.email,
                         hp: values.hp,
@@ -326,18 +181,25 @@ const DaftarUserPage = ({
             // Generate ID baru berdasarkan ID terbesar + 1
             const newId = Math.max(...userData.map(u => u.id), 0) + 1;
             
+            // Find eselon object based on ID
+            const eselonObj = eselon.find(e => e.id === values.eselon) || { id: 0, value: '', created_at: '', updated_at: '' };
+            
+            // Find role object based on ID
+            const roleObj = roles.find(r => r.id === values.user_role_id);
+            
             // Generate username dari nama lengkap
             const username = values.nama_lengkap.toLowerCase().replace(/\s+/g, '_');
             
-            const newUser: UserData = {
+            const newUser: UserType = {
                 id: newId,
                 nip: values.nip,
                 nama_lengkap: values.nama_lengkap,
-                eselon: values.eselon,
+                eselon: eselonObj,
                 unit_kerja: values.unit_kerja,
                 email: values.email,
                 hp: values.hp,
                 user_role_id: values.user_role_id,
+                user_role: roleObj || { id: 0, role: 'Unknown', created_at: '', updated_at: '' },
                 username: username,
                 created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
                 updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
@@ -378,15 +240,15 @@ const DaftarUserPage = ({
 
     // State untuk menandai apakah sedang dalam mode edit
     const [isEditing, setIsEditing] = useState(false);
-    const [currentRecord, setCurrentRecord] = useState<UserData | null>(null);
+    const [currentRecord, setCurrentRecord] = useState<UserType | null>(null);
 
     // Fungsi untuk menangani edit user
-    const handleEdit = (record: UserData) => {
+    const handleEdit = (record: UserType) => {
         // Isi form dengan data user
         form.setFieldsValue({
             nip: record.nip,
             nama_lengkap: record.nama_lengkap,
-            eselon: record.eselon,
+            eselon: record.eselon?.id,
             unit_kerja: record.unit_kerja,
             email: record.email,
             hp: record.hp,
@@ -443,13 +305,9 @@ const DaftarUserPage = ({
                             allowClear
                             onChange={(value) => setSelectedEselon(value || null)}
                         >
-                            <Option value="SEKRETARIAT JENDERAL">SEKRETARIAT JENDERAL</Option>
-                            <Option value="DIREKTORAT JENDERAL PERKEBUNAN">DIREKTORAT JENDERAL PERKEBUNAN</Option>
-                            <Option value="BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN">BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN</Option>
-                            <Option value="DIREKTORAT JENDERAL PRASARANA DAN SARANA PERTANIAN">DIREKTORAT JENDERAL PRASARANA DAN SARANA PERTANIAN</Option>
-                            <Option value="DIREKTORAT JENDERAL PETERNAKAN DAN KESEHATAN HEWAN">DIREKTORAT JENDERAL PETERNAKAN DAN KESEHATAN HEWAN</Option>
-                            <Option value="BADAN PENELITIAN DAN PENGEMBANGAN PERTANIAN">BADAN PENELITIAN DAN PENGEMBANGAN PERTANIAN</Option>
-                            <Option value="DIREKTORAT JENDERAL HORTIKULTURA">DIREKTORAT JENDERAL HORTIKULTURA</Option>
+                            {eselon.map(e => (
+                                <Option key={e.id} value={e.id}>{e.value}</Option>
+                            ))}
                         </Select>
                     </div>
 
@@ -503,13 +361,9 @@ const DaftarUserPage = ({
                         </Form.Item>
                         <Form.Item label="Eselon" name="eselon" rules={[{ required: true, message: 'Eselon wajib dipilih' }]}>
                             <Select placeholder="Pilih eselon">
-                                <Option value="SEKRETARIAT JENDERAL">SEKRETARIAT JENDERAL</Option>
-                                <Option value="DIREKTORAT JENDERAL PERKEBUNAN">DIREKTORAT JENDERAL PERKEBUNAN</Option>
-                                <Option value="BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN">BADAN PENYULUHAN DAN PENGEMBANGAN SUMBER DAYA MANUSIA PERTANIAN</Option>
-                                <Option value="DIREKTORAT JENDERAL PRASARANA DAN SARANA PERTANIAN">DIREKTORAT JENDERAL PRASARANA DAN SARANA PERTANIAN</Option>
-                                <Option value="DIREKTORAT JENDERAL PETERNAKAN DAN KESEHATAN HEWAN">DIREKTORAT JENDERAL PETERNAKAN DAN KESEHATAN HEWAN</Option>
-                                <Option value="BADAN PENELITIAN DAN PENGEMBANGAN PERTANIAN">BADAN PENELITIAN DAN PENGEMBANGAN PERTANIAN</Option>
-                                <Option value="DIREKTORAT JENDERAL HORTIKULTURA">DIREKTORAT JENDERAL HORTIKULTURA</Option>
+                                {eselon.map(e => (
+                                    <Option key={e.id} value={e.id}>{e.value}</Option>
+                                ))}
                             </Select>
                         </Form.Item>
                         <Form.Item label="Unit Kerja" name="unit_kerja" rules={[{ required: true, message: 'Unit kerja wajib diisi' }]}>
