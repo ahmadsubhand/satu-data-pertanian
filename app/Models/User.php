@@ -57,6 +57,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the eselon of user (produsen data).
+     */
+    public function eselon()
+    {
+        return $this->belongsTo(ProdusenDataTable::class, 'eselon');
+    }
+
+    /**
      * Get the metadata records for the user.
      */
     public function menuMetadataTables()

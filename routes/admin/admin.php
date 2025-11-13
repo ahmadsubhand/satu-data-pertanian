@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -11,9 +12,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('admin-user');
     
     // Submenu routes for user management
-    Route::get('/daftar-user', function () {
-      return Inertia::render('admin/user/daftar-user');
-    })->name('admin-user-list');
+    Route::controller(UserController::class)->prefix('daftar-user')->group(function () {
+      Route::get('/', 'index')->name('admin-user-list');
+    });
     
     Route::get('/manajemen-menu', function () {
       return Inertia::render('admin/user/manajemen-menu');

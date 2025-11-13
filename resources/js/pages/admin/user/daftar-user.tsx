@@ -1,9 +1,9 @@
 import AdminLayout from '@/layouts/admin/layout';
-import { SharedData, type BreadcrumbItem } from '@/types';
+import { SharedData, User, type BreadcrumbItem } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
 import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -35,7 +35,11 @@ interface UserData {
     updated_at: string;
 }
 
-const DaftarUserPage = () => {
+const DaftarUserPage = ({ 
+    user 
+} : {  
+    user: User
+}) => {
     const { auth } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedRole, setSelectedRole] = useState<number | null>(null);
