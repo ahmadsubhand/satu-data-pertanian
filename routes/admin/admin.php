@@ -33,6 +33,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
       Route::get('/', function () {
           return Inertia::render('admin/data/index');
       })->name('admin-data');
+      
+      // Submenu routes for data management
+      Route::get('/input-data', function () {
+          return Inertia::render('admin/data/input-data');
+      })->name('admin-data-input');
+      
+      Route::get('/input-daftar-data', function () {
+          return Inertia::render('admin/data/input-daftar-data');
+      })->name('admin-data-input-daftar');
+      
+      Route::get('/input-data-variabel', function () {
+          return Inertia::render('admin/data/input-data-variabel');
+      })->name('admin-data-input-variabel');
+      
+      Route::get('/input-data-indikator', function () {
+          return Inertia::render('admin/data/input-data-indikator');
+      })->name('admin-data-input-indikator');
+      
+      Route::get('/input-link-website', function () {
+          return Inertia::render('admin/data/input-link-website');
+      })->name('admin-data-input-link');
   });
   
   // Berita (ID: 3)

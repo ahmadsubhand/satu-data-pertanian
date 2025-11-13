@@ -4,6 +4,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -30,6 +31,10 @@ interface UserRole {
 const ManajemenRolePage = () => {
     const { auth } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentRecord, setCurrentRecord] = useState<UserRole | null>(null);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [form] = Form.useForm();
     const [roleData, setRoleData] = useState<UserRole[]>([
         {
@@ -92,23 +97,24 @@ const ManajemenRolePage = () => {
             title: 'Aksi',
             key: 'action',
             render: (_, record) => (
-                <Space size="middle">
+                <Space size="small">
                     <Button
-                        type="link"
+                        type="text"
+                        icon={<EditOutlined />}
                         onClick={() => handleEdit(record)}
-                    >
-                        Edit
-                    </Button>
+                        title="Edit"
+                    />
                     <Button
-                        type="link"
+                        type="text"
                         danger
+                        icon={<DeleteOutlined />}
                         onClick={() => handleDelete(record.id)}
-                    >
-                        Hapus
-                    </Button>
+                        title="Hapus"
+                    />
                     <Button
-                        type="link"
+                        type="text"
                         onClick={() => console.log(`Manage permissions for role ${record.id}`)}
+                        title="Kelola Akses"
                     >
                         Kelola Akses
                     </Button>
@@ -120,32 +126,78 @@ const ManajemenRolePage = () => {
     const { Search } = Input;
     const { Option } = Select;
 
-    // Fungsi untuk menambah role baru
-    const handleAddRole = (values: any) => {
-        // Generate ID baru berdasarkan ID terbesar + 1
-        const newId = Math.max(...roleData.map(r => r.id), 0) + 1;
-        
-        const newRole: UserRole = {
-            id: newId,
-            role: values.role,
-            created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
-            updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
-        };
+    // Fungsi untuk menambah atau mengupdate role
+    const handleAddRole = async (values: any) => {
+        try {
+            if (isEditing && currentRecord) {
+                // Update role yang sudah ada - panggil API
+                const response = await fetch(`/api/user-roles/${currentRecord.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(values)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    // Tampilkan error ke pengguna
+                    Object.keys(errorData.errors || {}).forEach(field => {
+                        form.setFields([{ name: field, errors: [errorData.errors[field][0]] }]);
+                    });
+                    return; // Jangan lanjutkan jika ada error
+                }
+                
+                const updatedRole = await response.json();
+                
+                // Update data di state
+                setRoleData(prev => prev.map(role =>
+                    role.id === currentRecord.id ? updatedRole : role
+                ));
 
-        // Tambahkan role baru ke state
-        setRoleData(prev => [...prev, newRole]);
-        
-        // Reset form dan tutup modal
-        form.resetFields();
-        setIsModalVisible(false);
+                // Reset mode edit
+                setIsEditing(false);
+                setCurrentRecord(null);
+            } else {
+                // Tambah role baru - panggil API
+                const response = await fetch('/api/user-roles', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(values)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    // Tampilkan error ke pengguna
+                    Object.keys(errorData.errors || {}).forEach(field => {
+                        form.setFields([{ name: field, errors: [errorData.errors[field][0]] }]);
+                    });
+                    return; // Jangan lanjutkan jika ada error
+                }
+                
+                const newRole = await response.json();
+                // Tambahkan role baru ke state
+                setRoleData(prev => [...prev, newRole]);
+            }
+            
+            // Reset form dan tutup modal
+            form.resetFields();
+            setIsModalVisible(false);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     // Fungsi untuk menangani penghapusan role
     const handleDelete = (id: number) => {
-        if (window.confirm('Apakah Anda yakin ingin menghapus role ini?')) {
-            // Hapus dari state
-            setRoleData(prev => prev.filter(role => role.id !== id));
-        }
+        setDeleteRecordId(id);
+        setDeleteModalVisible(true);
     };
 
     // Fungsi untuk menangani edit role
@@ -154,9 +206,44 @@ const ManajemenRolePage = () => {
         form.setFieldsValue({
             role: record.role
         });
-        
-        // Dalam implementasi sebenarnya, Anda akan mengganti state untuk menandai bahwa ini adalah edit
-        console.log('Edit role:', record);
+
+        // Set mode edit dan simpan record yang sedang diedit
+        setCurrentRecord(record);
+        setIsEditing(true);
+        setIsModalVisible(true);
+    };
+
+    // Fungsi untuk mengkonfirmasi penghapusan
+    const confirmDelete = async () => {
+        if (deleteRecordId !== null) {
+            try {
+                const response = await fetch(`/api/user-roles/${deleteRecordId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    }
+                });
+                
+                if (response.ok) {
+                    // Hapus dari state
+                    setRoleData(prev => prev.filter(role => role.id !== deleteRecordId));
+                } else {
+                    console.error('Gagal menghapus role');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
+    };
+
+    // Fungsi untuk membatalkan penghapusan
+    const cancelDelete = () => {
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
     };
 
     return (
@@ -169,6 +256,8 @@ const ManajemenRolePage = () => {
                         type="primary"
                         onClick={() => {
                             form.resetFields();
+                            setIsEditing(false);
+                            setCurrentRecord(null);
                             setIsModalVisible(true);
                         }}
                     >
@@ -202,15 +291,25 @@ const ManajemenRolePage = () => {
                 </Card>
 
                 <Modal
-                    title="Tambah Role Baru"
+                    title={isEditing ? "Edit Role" : "Tambah Role Baru"}
                     open={isModalVisible}
-                    onCancel={() => setIsModalVisible(false)}
+                    onCancel={() => {
+                        setIsModalVisible(false);
+                        setIsEditing(false);
+                        setCurrentRecord(null);
+                        form.resetFields();
+                    }}
                     footer={[
-                        <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+                        <Button key="cancel" onClick={() => {
+                            setIsModalVisible(false);
+                            setIsEditing(false);
+                            setCurrentRecord(null);
+                            form.resetFields();
+                        }}>
                             Batal
                         </Button>,
                         <Button key="submit" type="primary" onClick={() => form.submit()}>
-                            Simpan
+                            {isEditing ? "Update" : "Simpan"}
                         </Button>,
                     ]}
                 >
@@ -223,6 +322,18 @@ const ManajemenRolePage = () => {
                             <Input placeholder="Masukkan nama role" />
                         </Form.Item>
                     </Form>
+                </Modal>
+                {/* Modal untuk konfirmasi penghapusan */}
+                <Modal
+                    title="Konfirmasi Hapus"
+                    open={deleteModalVisible}
+                    onOk={confirmDelete}
+                    onCancel={cancelDelete}
+                    okText="Hapus"
+                    cancelText="Batal"
+                    okType="danger"
+                >
+                    <p>Apakah Anda yakin ingin menghapus role ini?</p>
                 </Modal>
             </div>
         </AdminLayout>

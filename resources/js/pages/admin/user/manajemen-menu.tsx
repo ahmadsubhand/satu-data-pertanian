@@ -4,6 +4,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,6 +32,10 @@ interface MenuItem {
 const ManajemenMenuPage = () => {
     const { auth } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentRecord, setCurrentRecord] = useState<MenuItem | null>(null);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [form] = Form.useForm();
     const [menuData, setMenuData] = useState<MenuItem[]>([
         {
@@ -129,9 +134,20 @@ const ManajemenMenuPage = () => {
             title: 'Aksi',
             key: 'action',
             render: (_, record) => (
-                <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
-                    <Button type="link" danger onClick={() => handleDelete(record.id)}>Hapus</Button>
+                <Space size="small">
+                    <Button
+                        type="text"
+                        icon={<EditOutlined />}
+                        onClick={() => handleEdit(record)}
+                        title="Edit"
+                    />
+                    <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDelete(record.id)}
+                        title="Hapus"
+                    />
                 </Space>
             ),
         },
@@ -140,33 +156,78 @@ const ManajemenMenuPage = () => {
     const { Search } = Input;
     const { Option } = Select;
 
-    // Fungsi untuk menambah menu baru
-    const handleAddMenu = (values: any) => {
-        // Generate ID baru berdasarkan ID terbesar + 1
-        const newId = Math.max(...menuData.map(m => m.id), 0) + 1;
-        
-        const newMenu: MenuItem = {
-            id: newId,
-            menu: values.menu,
-            is_active: values.is_active,
-            created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
-            updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
-        };
+    // Fungsi untuk menambah atau mengupdate menu
+    const handleAddMenu = async (values: any) => {
+        try {
+            if (isEditing && currentRecord) {
+                // Update menu yang sudah ada - panggil API
+                const response = await fetch(`/api/user-menus/${currentRecord.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(values)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    // Tampilkan error ke pengguna
+                    Object.keys(errorData.errors || {}).forEach(field => {
+                        form.setFields([{ name: field, errors: [errorData.errors[field][0]] }]);
+                    });
+                    return; // Jangan lanjutkan jika ada error
+                }
+                
+                const updatedMenu = await response.json();
+                
+                // Update data di state
+                setMenuData(prev => prev.map(menu =>
+                    menu.id === currentRecord.id ? updatedMenu : menu
+                ));
 
-        // Tambahkan menu baru ke state
-        setMenuData(prev => [...prev, newMenu]);
-        
-        // Reset form dan tutup modal
-        form.resetFields();
-        setIsModalVisible(false);
+                // Reset mode edit
+                setIsEditing(false);
+                setCurrentRecord(null);
+            } else {
+                // Tambah menu baru - panggil API
+                const response = await fetch('/api/user-menus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(values)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    // Tampilkan error ke pengguna
+                    Object.keys(errorData.errors || {}).forEach(field => {
+                        form.setFields([{ name: field, errors: [errorData.errors[field][0]] }]);
+                    });
+                    return; // Jangan lanjutkan jika ada error
+                }
+                
+                const newMenu = await response.json();
+                // Tambahkan menu baru ke state
+                setMenuData(prev => [...prev, newMenu]);
+            }
+            
+            // Reset form dan tutup modal
+            form.resetFields();
+            setIsModalVisible(false);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     // Fungsi untuk menangani penghapusan menu
     const handleDelete = (id: number) => {
-        if (window.confirm('Apakah Anda yakin ingin menghapus menu ini?')) {
-            // Hapus dari state
-            setMenuData(prev => prev.filter(menu => menu.id !== id));
-        }
+        setDeleteRecordId(id);
+        setDeleteModalVisible(true);
     };
 
     // Fungsi untuk menangani edit menu
@@ -176,9 +237,44 @@ const ManajemenMenuPage = () => {
             menu: record.menu,
             is_active: record.is_active
         });
-        
-        // Dalam implementasi sebenarnya, Anda akan mengganti state untuk menandai bahwa ini adalah edit
-        console.log('Edit menu:', record);
+
+        // Set mode edit dan simpan record yang sedang diedit
+        setCurrentRecord(record);
+        setIsEditing(true);
+        setIsModalVisible(true);
+    };
+
+    // Fungsi untuk mengkonfirmasi penghapusan
+    const confirmDelete = async () => {
+        if (deleteRecordId !== null) {
+            try {
+                const response = await fetch(`/api/user-menus/${deleteRecordId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    }
+                });
+                
+                if (response.ok) {
+                    // Hapus dari state
+                    setMenuData(prev => prev.filter(menu => menu.id !== deleteRecordId));
+                } else {
+                    console.error('Gagal menghapus menu');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
+    };
+
+    // Fungsi untuk membatalkan penghapusan
+    const cancelDelete = () => {
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
     };
 
     return (
@@ -191,6 +287,8 @@ const ManajemenMenuPage = () => {
                         type="primary"
                         onClick={() => {
                             form.resetFields();
+                            setIsEditing(false);
+                            setCurrentRecord(null);
                             setIsModalVisible(true);
                         }}
                     >
@@ -231,15 +329,25 @@ const ManajemenMenuPage = () => {
                 </Card>
 
                 <Modal
-                    title="Tambah Menu Baru"
+                    title={isEditing ? "Edit Menu" : "Tambah Menu Baru"}
                     open={isModalVisible}
-                    onCancel={() => setIsModalVisible(false)}
+                    onCancel={() => {
+                        setIsModalVisible(false);
+                        setIsEditing(false);
+                        setCurrentRecord(null);
+                        form.resetFields();
+                    }}
                     footer={[
-                        <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+                        <Button key="cancel" onClick={() => {
+                            setIsModalVisible(false);
+                            setIsEditing(false);
+                            setCurrentRecord(null);
+                            form.resetFields();
+                        }}>
                             Batal
                         </Button>,
                         <Button key="submit" type="primary" onClick={() => form.submit()}>
-                            Simpan
+                            {isEditing ? "Update" : "Simpan"}
                         </Button>,
                     ]}
                 >
@@ -258,6 +366,18 @@ const ManajemenMenuPage = () => {
                             </Select>
                         </Form.Item>
                     </Form>
+                </Modal>
+                {/* Modal untuk konfirmasi penghapusan */}
+                <Modal
+                    title="Konfirmasi Hapus"
+                    open={deleteModalVisible}
+                    onOk={confirmDelete}
+                    onCancel={cancelDelete}
+                    okText="Hapus"
+                    cancelText="Batal"
+                    okType="danger"
+                >
+                    <p>Apakah Anda yakin ingin menghapus menu ini?</p>
                 </Modal>
             </div>
         </AdminLayout>

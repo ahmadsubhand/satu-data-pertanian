@@ -4,6 +4,7 @@ import { Head, usePage } from '@inertiajs/react';
 import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -38,6 +39,10 @@ const ManajemenSubmenuPage = () => {
     const { auth } = usePage<SharedData>().props;
     const [selectedMenuParent, setSelectedMenuParent] = useState<number | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentRecord, setCurrentRecord] = useState<SubMenuItem | null>(null);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [form] = Form.useForm();
     
     // Data untuk menu parent
@@ -241,9 +246,20 @@ const ManajemenSubmenuPage = () => {
             title: 'Aksi',
             key: 'action',
             render: (_, record) => (
-                <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>Edit</Button>
-                    <Button type="link" danger onClick={() => handleDelete(record.id)}>Hapus</Button>
+                <Space size="small">
+                    <Button
+                        type="text"
+                        icon={<EditOutlined />}
+                        onClick={() => handleEdit(record)}
+                        title="Edit"
+                    />
+                    <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDelete(record.id)}
+                        title="Hapus"
+                    />
                 </Space>
             ),
         },
@@ -252,34 +268,78 @@ const ManajemenSubmenuPage = () => {
     const { Search } = Input;
     const { Option } = Select;
 
-    // Fungsi untuk menambah submenu baru
-    const handleAddSubmenu = (values: any) => {
-        // Generate ID baru berdasarkan ID terbesar + 1
-        const newId = Math.max(...submenuData.map(s => s.id), 0) + 1;
-        
-        const newSubmenu: SubMenuItem = {
-            id: newId,
-            submenu: values.submenu,
-            menu_parent: values.menu_parent,
-            is_active: values.is_active,
-            created_at: new Date().toISOString().replace('T', ' ').substring(0, 19),
-            updated_at: new Date().toISOString().replace('T', ' ').substring(0, 19)
-        };
+    // Fungsi untuk menambah atau mengupdate submenu
+    const handleAddSubmenu = async (values: any) => {
+        try {
+            if (isEditing && currentRecord) {
+                // Update submenu yang sudah ada - panggil API
+                const response = await fetch(`/api/user-menus/${currentRecord.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(values)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    // Tampilkan error ke pengguna
+                    Object.keys(errorData.errors || {}).forEach(field => {
+                        form.setFields([{ name: field, errors: [errorData.errors[field][0]] }]);
+                    });
+                    return; // Jangan lanjutkan jika ada error
+                }
+                
+                const updatedSubmenu = await response.json();
+                
+                // Update data di state
+                setSubmenuData(prev => prev.map(submenu =>
+                    submenu.id === currentRecord.id ? updatedSubmenu : submenu
+                ));
 
-        // Tambahkan submenu baru ke state
-        setSubmenuData(prev => [...prev, newSubmenu]);
-        
-        // Reset form dan tutup modal
-        form.resetFields();
-        setIsModalVisible(false);
+                // Reset mode edit
+                setIsEditing(false);
+                setCurrentRecord(null);
+            } else {
+                // Tambah submenu baru - panggil API
+                const response = await fetch('/api/user-menus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    },
+                    body: JSON.stringify(values)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    // Tampilkan error ke pengguna
+                    Object.keys(errorData.errors || {}).forEach(field => {
+                        form.setFields([{ name: field, errors: [errorData.errors[field][0]] }]);
+                    });
+                    return; // Jangan lanjutkan jika ada error
+                }
+                
+                const newSubmenu = await response.json();
+                // Tambahkan submenu baru ke state
+                setSubmenuData(prev => [...prev, newSubmenu]);
+            }
+            
+            // Reset form dan tutup modal
+            form.resetFields();
+            setIsModalVisible(false);
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
 
     // Fungsi untuk menangani penghapusan submenu
     const handleDelete = (id: number) => {
-        if (window.confirm('Apakah Anda yakin ingin menghapus submenu ini?')) {
-            // Hapus dari state
-            setSubmenuData(prev => prev.filter(submenu => submenu.id !== id));
-        }
+        setDeleteRecordId(id);
+        setDeleteModalVisible(true);
     };
 
     // Fungsi untuk menangani edit submenu
@@ -290,9 +350,44 @@ const ManajemenSubmenuPage = () => {
             menu_parent: record.menu_parent,
             is_active: record.is_active
         });
-        
-        // Dalam implementasi sebenarnya, Anda akan mengganti state untuk menandai bahwa ini adalah edit
-        console.log('Edit submenu:', record);
+
+        // Set mode edit dan simpan record yang sedang diedit
+        setCurrentRecord(record);
+        setIsEditing(true);
+        setIsModalVisible(true);
+    };
+
+    // Fungsi untuk mengkonfirmasi penghapusan
+    const confirmDelete = async () => {
+        if (deleteRecordId !== null) {
+            try {
+                const response = await fetch(`/api/user-menus/${deleteRecordId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    }
+                });
+                
+                if (response.ok) {
+                    // Hapus dari state
+                    setSubmenuData(prev => prev.filter(submenu => submenu.id !== deleteRecordId));
+                } else {
+                    console.error('Gagal menghapus submenu');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
+    };
+
+    // Fungsi untuk membatalkan penghapusan
+    const cancelDelete = () => {
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
     };
 
     return (
@@ -305,6 +400,8 @@ const ManajemenSubmenuPage = () => {
                         type="primary"
                         onClick={() => {
                             form.resetFields();
+                            setIsEditing(false);
+                            setCurrentRecord(null);
                             setIsModalVisible(true);
                         }}
                     >
@@ -355,15 +452,25 @@ const ManajemenSubmenuPage = () => {
                 </Card>
 
                 <Modal
-                    title="Tambah Submenu Baru"
+                    title={isEditing ? "Edit Submenu" : "Tambah Submenu Baru"}
                     open={isModalVisible}
-                    onCancel={() => setIsModalVisible(false)}
+                    onCancel={() => {
+                        setIsModalVisible(false);
+                        setIsEditing(false);
+                        setCurrentRecord(null);
+                        form.resetFields();
+                    }}
                     footer={[
-                        <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+                        <Button key="cancel" onClick={() => {
+                            setIsModalVisible(false);
+                            setIsEditing(false);
+                            setCurrentRecord(null);
+                            form.resetFields();
+                        }}>
                             Batal
                         </Button>,
                         <Button key="submit" type="primary" onClick={() => form.submit()}>
-                            Simpan
+                            {isEditing ? "Update" : "Simpan"}
                         </Button>,
                     ]}
                 >
@@ -389,6 +496,18 @@ const ManajemenSubmenuPage = () => {
                             </Select>
                         </Form.Item>
                     </Form>
+                </Modal>
+                {/* Modal untuk konfirmasi penghapusan */}
+                <Modal
+                    title="Konfirmasi Hapus"
+                    open={deleteModalVisible}
+                    onOk={confirmDelete}
+                    onCancel={cancelDelete}
+                    okText="Hapus"
+                    cancelText="Batal"
+                    okType="danger"
+                >
+                    <p>Apakah Anda yakin ingin menghapus submenu ini?</p>
                 </Modal>
             </div>
         </AdminLayout>
