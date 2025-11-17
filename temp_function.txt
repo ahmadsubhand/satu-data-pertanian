@@ -1,0 +1,40 @@
+    // Fungsi untuk menambah atau mengupdate data
+    const handleAddData = (values: any) => {
+        try {
+            // Format tanggal ke string ISO sebelum disimpan
+            const formattedTglRilis = values.tgl_rilis instanceof Date 
+                ? values.tgl_rilis.toISOString().split('T')[0] 
+                : values.tgl_rilis;
+
+            if (isEditing && currentRecord) {
+                // Update data yang sudah ada
+                setDataItems(prev =>
+                    prev.map(item =>
+                        item.id === currentRecord.id
+                            ? {
+                                ...item,
+                                judul: values.judul,
+                                tgl_rilis: formattedTglRilis,
+                                abstraksi: values.abstraksi,
+                                produsen_data: values.produsen_data,
+                                tagging_data: typeof values.tagging_data === 'string' 
+                                    ? values.tagging_data.split(',').map((tag: string) => tag.trim())
+                                    : [],
+                                data_prioritas: values.data_prioritas,
+                                kategori_data: values.kategori_data,
+                                progres: values.progres,
+                                status: values.status,
+                                catatan: values.catatan,
+                                file: values.file
+                              }
+                            : item
+                    )
+                );
+
+                // Reset mode edit
+                setIsEditing(false);
+                setCurrentRecord(null);
+            } else {
+                // Tambah data baru
+                const newId = Math.max(...dataItems.map(u => u.id), 0) + 1;
+

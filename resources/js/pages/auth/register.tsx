@@ -8,15 +8,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
+import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 
 export default function Register() {
     return (
-        <AuthLayout
-            title="Create an account"
-            description="Enter your details below to create your account"
+        <AuthSplitLayout
+            title="Buat Akun Baru"
+            description="Silakan isi data berikut untuk membuat akun Anda"
         >
-            <Head title="Register" />
+            <Head title="Daftar | Satudata Pertanian" />
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}
@@ -27,7 +27,7 @@ export default function Register() {
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="nama_lengkap">Full Name</Label>
+                                <Label htmlFor="nama_lengkap">Nama Lengkap</Label>
                                 <Input
                                     id="nama_lengkap"
                                     type="text"
@@ -36,7 +36,8 @@ export default function Register() {
                                     tabIndex={1}
                                     autoComplete="name"
                                     name="nama_lengkap"
-                                    placeholder="Full name"
+                                    placeholder="Masukkan nama lengkap"
+                                    className="h-12"
                                 />
                                 <InputError
                                     message={errors.nama_lengkap}
@@ -45,7 +46,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
+                                <Label htmlFor="email">Alamat Email</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -53,13 +54,14 @@ export default function Register() {
                                     tabIndex={2}
                                     autoComplete="email"
                                     name="email"
-                                    placeholder="email@example.com"
+                                    placeholder="nama@contoh.com"
+                                    className="h-12"
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
+                                <Label htmlFor="password">Kata Sandi</Label>
                                 <Input
                                     id="password"
                                     type="password"
@@ -67,14 +69,15 @@ export default function Register() {
                                     tabIndex={3}
                                     autoComplete="new-password"
                                     name="password"
-                                    placeholder="Password"
+                                    placeholder="Buat kata sandi"
+                                    className="h-12"
                                 />
                                 <InputError message={errors.password} />
                             </div>
 
                             <div className="grid gap-2">
                                 <Label htmlFor="password_confirmation">
-                                    Confirm password
+                                    Konfirmasi Kata Sandi
                                 </Label>
                                 <Input
                                     id="password_confirmation"
@@ -83,7 +86,8 @@ export default function Register() {
                                     tabIndex={4}
                                     autoComplete="new-password"
                                     name="password_confirmation"
-                                    placeholder="Confirm password"
+                                    placeholder="Ulangi kata sandi"
+                                    className="h-12"
                                 />
                                 <InputError
                                     message={errors.password_confirmation}
@@ -92,24 +96,24 @@ export default function Register() {
 
                             <Button
                                 type="submit"
-                                className="mt-2 w-full"
+                                className="mt-2 h-12 w-full bg-green-700 hover:bg-green-800"
                                 tabIndex={5}
                                 data-test="register-user-button"
                             >
-                                {processing && <Spinner />}
-                                Create account
+                                {processing && <Spinner className="mr-2" />}
+                                Buat Akun
                             </Button>
                         </div>
 
                         <div className="text-center text-sm text-muted-foreground">
-                            Already have an account?{' '}
-                            <TextLink href={login()} tabIndex={6}>
-                                Log in
+                            Sudah punya akun?{' '}
+                            <TextLink href={login()} tabIndex={6} className="font-medium hover:underline">
+                                Masuk di sini
                             </TextLink>
                         </div>
                     </>
                 )}
             </Form>
-        </AuthLayout>
+        </AuthSplitLayout>
     );
 }

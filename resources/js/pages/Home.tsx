@@ -141,7 +141,6 @@ const HomePage: React.FC<HomePageProps> = ({
                                     fontFamily: 'inherit',
                                     fontWeight: '700',
                                     textShadow: '2px 2px 8px rgba(45,80,54,0.3)',
-                                    animation: 'pulse 2s infinite alternate'
                                 }}
                             >
                                 Selamat Datang di Satudata Pertanian
@@ -943,7 +942,7 @@ const HomePage: React.FC<HomePageProps> = ({
                           fontSize: "24px",
                           fontWeight: "700",
                           textShadow: "1px 1px 2px rgba(45,80,54,0.3)",
-                          animation: 'softGlow 4s infinite alternate'
+                          animation: 'fadeInScale 1.5s ease-out forwards'
                         }}
                       >
                         Kembangkan Potensi Pertanian Indonesia Bersama Kami
@@ -1106,6 +1105,58 @@ const HomePage: React.FC<HomePageProps> = ({
                     50% {
                       transform: translateY(-2px);
                       text-shadow: 1px 2px 4px rgba(73, 80, 87, 0.3);
+                    }
+                  }
+                  
+                  @keyframes typewriter {
+                    0% {
+                      opacity: 0;
+                      width: 0;
+                      overflow: hidden;
+                    }
+                    100% {
+                      opacity: 1;
+                      width: 100%;
+                      overflow: visible;
+                    }
+                  }
+                  
+                  @keyframes blink {
+                    0%, 50% { 
+                      border-right: 2px solid #2d5036; 
+                    }
+                    51%, 100% { 
+                      border-right: 2px solid transparent; 
+                    }
+                  }
+                `}</style>
+                
+                <style>{`
+                  /* Override the welcome text animation to use typewriter effect */
+                  div[style*="floatUp 1.8s 1.2s both"] {
+                    opacity: 0 !important;
+                    animation: typewriter 4s steps(31) 1s both !important;
+                    overflow: hidden !important;
+                    white-space: nowrap !important;
+                    border-right: 2px solid #2d5036 !important;
+                    width: 0 !important;
+                  }
+                  
+                  div[style*="floatUp 1.8s 1.2s both"] h1 {
+                    animation: none !important;
+                    display: inline-block !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                  }
+                  
+                  @keyframes fadeInScale {
+                    0% {
+                      opacity: 0;
+                      transform: scale(0.8);
+                    }
+                    100% {
+                      opacity: 1;
+                      transform: scale(1);
                     }
                   }
                 `}</style>

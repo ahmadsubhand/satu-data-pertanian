@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
+import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 
 interface ResetPasswordProps {
     token: string;
@@ -15,11 +15,11 @@ interface ResetPasswordProps {
 
 export default function ResetPassword({ token, email }: ResetPasswordProps) {
     return (
-        <AuthLayout
-            title="Reset password"
-            description="Please enter your new password below"
+        <AuthSplitLayout
+            title="Atur ulang kata sandi"
+            description="Silakan masukkan kata sandi baru Anda di bawah"
         >
-            <Head title="Reset password" />
+            <Head title="Atur ulang kata sandi" />
 
             <Form
                 {...update.form()}
@@ -36,7 +36,7 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                                 name="email"
                                 autoComplete="email"
                                 value={email}
-                                className="mt-1 block w-full"
+                                className="mt-1 block w-full h-12"
                                 readOnly
                             />
                             <InputError
@@ -46,30 +46,30 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">Kata sandi baru</Label>
                             <Input
                                 id="password"
                                 type="password"
                                 name="password"
                                 autoComplete="new-password"
-                                className="mt-1 block w-full"
+                                className="mt-1 block w-full h-12"
                                 autoFocus
-                                placeholder="Password"
+                                placeholder="Masukkan kata sandi baru"
                             />
                             <InputError message={errors.password} />
                         </div>
 
                         <div className="grid gap-2">
                             <Label htmlFor="password_confirmation">
-                                Confirm password
+                                Konfirmasi kata sandi
                             </Label>
                             <Input
                                 id="password_confirmation"
                                 type="password"
                                 name="password_confirmation"
                                 autoComplete="new-password"
-                                className="mt-1 block w-full"
-                                placeholder="Confirm password"
+                                className="mt-1 block w-full h-12"
+                                placeholder="Ulangi kata sandi baru"
                             />
                             <InputError
                                 message={errors.password_confirmation}
@@ -79,16 +79,16 @@ export default function ResetPassword({ token, email }: ResetPasswordProps) {
 
                         <Button
                             type="submit"
-                            className="mt-4 w-full"
+                            className="mt-4 h-12 w-full bg-green-700 hover:bg-green-800"
                             disabled={processing}
                             data-test="reset-password-button"
                         >
-                            {processing && <Spinner />}
-                            Reset password
+                            {processing && <Spinner className="mr-2" />}
+                            Atur ulang kata sandi
                         </Button>
                     </div>
                 )}
             </Form>
-        </AuthLayout>
+        </AuthSplitLayout>
     );
 }

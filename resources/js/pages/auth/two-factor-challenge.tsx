@@ -7,7 +7,7 @@ import {
     InputOTPSlot,
 } from '@/components/ui/input-otp';
 import { OTP_MAX_LENGTH } from '@/hooks/use-two-factor-auth';
-import AuthLayout from '@/layouts/auth-layout';
+import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import { store } from '@/routes/two-factor/login';
 import { Form, Head } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
@@ -24,18 +24,18 @@ export default function TwoFactorChallenge() {
     }>(() => {
         if (showRecoveryInput) {
             return {
-                title: 'Recovery Code',
+                title: 'Kode Pemulihan',
                 description:
-                    'Please confirm access to your account by entering one of your emergency recovery codes.',
-                toggleText: 'login using an authentication code',
+                    'Silakan konfirmasi akses ke akun Anda dengan memasukkan salah satu kode pemulihan darurat Anda.',
+                toggleText: 'masuk menggunakan kode autentikasi',
             };
         }
 
         return {
-            title: 'Authentication Code',
+            title: 'Kode Autentikasi',
             description:
-                'Enter the authentication code provided by your authenticator application.',
-            toggleText: 'login using a recovery code',
+                'Masukkan kode autentikasi yang disediakan oleh aplikasi autentikator Anda.',
+            toggleText: 'masuk menggunakan kode pemulihan',
         };
     }, [showRecoveryInput]);
 
@@ -46,11 +46,11 @@ export default function TwoFactorChallenge() {
     };
 
     return (
-        <AuthLayout
+        <AuthSplitLayout
             title={authConfigContent.title}
             description={authConfigContent.description}
         >
-            <Head title="Two-Factor Authentication" />
+            <Head title="Autentikasi Dua Faktor" />
 
             <div className="space-y-6">
                 <Form
@@ -66,9 +66,10 @@ export default function TwoFactorChallenge() {
                                     <Input
                                         name="recovery_code"
                                         type="text"
-                                        placeholder="Enter recovery code"
+                                        placeholder="Masukkan kode pemulihan"
                                         autoFocus={showRecoveryInput}
                                         required
+                                        className="h-12"
                                     />
                                     <InputError
                                         message={errors.recovery_code}
@@ -84,6 +85,7 @@ export default function TwoFactorChallenge() {
                                             onChange={(value) => setCode(value)}
                                             disabled={processing}
                                             pattern={REGEXP_ONLY_DIGITS}
+                                            className="h-12"
                                         >
                                             <InputOTPGroup>
                                                 {Array.from(
@@ -104,14 +106,14 @@ export default function TwoFactorChallenge() {
 
                             <Button
                                 type="submit"
-                                className="w-full"
+                                className="h-12 w-full bg-green-700 hover:bg-green-800"
                                 disabled={processing}
                             >
-                                Continue
+                                Lanjutkan
                             </Button>
 
                             <div className="text-center text-sm text-muted-foreground">
-                                <span>or you can </span>
+                                <span>atau Anda bisa </span>
                                 <button
                                     type="button"
                                     className="cursor-pointer text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
@@ -126,6 +128,6 @@ export default function TwoFactorChallenge() {
                     )}
                 </Form>
             </div>
-        </AuthLayout>
+        </AuthSplitLayout>
     );
 }

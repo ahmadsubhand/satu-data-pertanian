@@ -693,7 +693,7 @@ const PublicLayout = ({
                     padding: '10px 24px',
                 }}
             >
-                {/* Left side - Logo */}
+                {/* Left side - Logo with animated agricultural text */}
                 <div
                     style={{
                         display: 'flex',
@@ -702,7 +702,7 @@ const PublicLayout = ({
                         flex: 1,
                     }}
                 >
-                    <Link href="/">
+                    <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
                         <img
                             src="/images/logos/logo-satudata.png"
                             alt="Logo Satudata Pertanian"
@@ -717,6 +717,30 @@ const PublicLayout = ({
                                 target.style.display = 'none';
                             }}
                         />
+                        <div style={{
+                            marginLeft: '12px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}>
+                            <span style={{
+                                color: '#2d5036',
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                opacity: 0,
+                                animation: 'fadeInScale 1.5s 0.5s forwards',
+                            }}>
+                                Satudata
+                            </span>
+                            <span style={{
+                                color: '#4CAF50',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                opacity: 0,
+                                animation: 'fadeInScale 1.5s 0.8s forwards',
+                            }}>
+                                Pertanian
+                            </span>
+                        </div>
                     </Link>
                 </div>
 
@@ -759,7 +783,7 @@ const PublicLayout = ({
                 >
                     {/* Login link with premium elegant text and icon animations only - enlarged */}
                     <Link
-                        href="/auth/login"
+                        href="/login"
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -1644,6 +1668,18 @@ const PublicLayout = ({
             font-size: 16px;
             line-height: 1.5;
             padding: 12px 16px !important;
+          }
+          
+          /* Fade in and scale animation for agricultural text */
+          @keyframes fadeInScale {
+            0% {
+              opacity: 0;
+              transform: scale(0.8);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+            }
           }
         }
       `}</style>

@@ -1,7 +1,7 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Card, Table, Button, Input, Space, Tag, Select, Modal, Form, DatePicker } from 'antd';
+import { Head, usePage, router } from '@inertiajs/react';
+import { Card, Table, Button, Input, Space, Tag, Select, Modal, Form, DatePicker, message } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined, FileTextOutlined, PlusOutlined } from '@ant-design/icons';
@@ -39,6 +39,11 @@ interface DataItem {
 const InputDataPage = () => {
     const { auth } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [currentRecord, setCurrentRecord] = useState<DataItem | null>(null);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
+    const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
 
     // Data contoh untuk tabel
@@ -132,10 +137,6 @@ const InputDataPage = () => {
 
     const [searchText, setSearchText] = useState('');
 
-    // State untuk menandai mode edit
-    const [isEditing, setIsEditing] = useState(false);
-    const [currentRecord, setCurrentRecord] = useState<DataItem | null>(null);
-
     // Fungsi untuk menghapus item
     const handleDelete = (id: number) => {
         if (!id) {
@@ -152,7 +153,7 @@ const InputDataPage = () => {
             onOk: async () => {
                 try {
                     // Hapus dari state
-                    setDataItems(prev => prev.filter(item => item.id === id ? false : true));
+                    setDataItems(prev => prev.filter(item => item.id !== id));
                 } catch (error) {
                     console.error('Error deleting item:', error);
                 }
@@ -166,9 +167,18 @@ const InputDataPage = () => {
     // Fungsi untuk menangani edit item
     const handleEdit = (record: DataItem) => {
         try {
+            setLoading(true);
+            
+            // Parse tanggal dengan aman
+            let tanggalRilis = null;
+            if (record.tgl_rilis) {
+                const parsedDate = new Date(record.tgl_rilis);
+                tanggalRilis = isNaN(parsedDate.getTime()) ? null : parsedDate;
+            }
+
             form.setFieldsValue({
                 judul: record.judul || '',
-                tgl_rilis: record.tgl_rilis ? new Date(record.tgl_rilis) : null,
+                tgl_rilis: tanggalRilis,
                 abstraksi: record.abstraksi || '',
                 produsen_data: record.produsen_data || '',
                 tagging_data: Array.isArray(record.tagging_data) ? record.tagging_data.join(', ') : '',
@@ -182,8 +192,11 @@ const InputDataPage = () => {
             setCurrentRecord(record);
             setIsEditing(true);
             setIsModalVisible(true);
+            setLoading(false);
         } catch (error) {
             console.error('Error in handleEdit:', error);
+            message.error('Terjadi kesalahan saat memuat data');
+            setLoading(false);
         }
     };
 
@@ -447,6 +460,7 @@ const InputDataPage = () => {
                     <Button
                         type="primary"
                         icon={<PlusOutlined />}
+                        loading={loading}
                         onClick={() => {
                             form.resetFields();
                             setIsEditing(false);
@@ -473,6 +487,7 @@ const InputDataPage = () => {
                         columns={columns}
                         dataSource={filteredData}
                         rowKey="id"
+                        loading={loading}
                         pagination={{
                             pageSize: 10,
                             showSizeChanger: true,
@@ -502,7 +517,7 @@ const InputDataPage = () => {
                         }}>
                             Batal
                         </Button>,
-                        <Button key="submit" type="primary" onClick={() => form.submit()}>
+                        <Button key="submit" type="primary" loading={loading} onClick={() => form.submit()}>
                             {isEditing ? "Update" : "Simpan"}
                         </Button>,
                     ]}
