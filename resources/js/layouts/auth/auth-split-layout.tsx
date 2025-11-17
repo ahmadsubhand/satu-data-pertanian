@@ -51,32 +51,32 @@ export default function AuthSplitLayout({
 
                     <Link
                         href={home()}
-                        className="animate-pulse-grow group relative z-20 flex items-center rounded-xl border border-green-300/40 bg-gradient-to-r from-green-500/30 to-lime-400/30 px-5 py-4 font-medium shadow-lg backdrop-blur-sm"
+                        className="animate-pulse-grow group relative z-20 flex items-center rounded-xl border border-green-300/40 bg-gradient-to-r from-green-500/30 to-lime-400/30 px-5 py-4 font-medium shadow-lg"
                     >
                         <div
-                            className="mr-4 flex flex-shrink-0 items-center justify-center rounded-xl bg-white p-3 shadow-md transition-shadow duration-300 group-hover:shadow-lg"
-                            style={{ height: '60px', width: '140px' }}
+                            className="mr-4 flex flex-shrink-0 items-center justify-center rounded-xl bg-white p-3.5 shadow-md transition-shadow duration-300 group-hover:shadow-lg"
+                            style={{ height: '64px', width: '200px' }}
                         >
                             <img
                                 src="/images/logos/logo-satudata.png"
                                 alt="Logo Portal Satu Data Pertanian"
                                 className="transition-transform duration-300 group-hover:scale-105"
                                 style={{
-                                    height: '44px',
+                                    height: '48px',
                                     width: 'auto',
-                                    maxWidth: '180px',
+                                    maxWidth: '240px',
                                     objectFit: 'contain',
                                 }}
                             />
                         </div>
-                        <div className="flex flex-col justify-center overflow-hidden">
+                        <div className="flex flex-col justify-center overflow-hidden" style={{ flex: 1 }}>
                             <span
                                 className="text-left transition-colors duration-300 group-hover:text-green-100"
                                 style={{
                                     color: '#f0f9f2',
-                                    fontSize: '15px',
+                                    fontSize: '16px',
                                     fontWeight: '700',
-                                    textShadow: '0 1px 3px rgba(0,0,0,0.4)',
+                                    textShadow: '0 1px 2px rgba(0,0,0,0.3)',
                                     lineHeight: '1.3',
                                 }}
                             >

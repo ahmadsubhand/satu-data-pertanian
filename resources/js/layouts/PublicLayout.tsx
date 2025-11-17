@@ -717,30 +717,6 @@ const PublicLayout = ({
                                 target.style.display = 'none';
                             }}
                         />
-                        <div style={{
-                            marginLeft: '12px',
-                            display: 'flex',
-                            flexDirection: 'column',
-                        }}>
-                            <span style={{
-                                color: '#2d5036',
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                opacity: 0,
-                                animation: 'fadeInScale 1.5s 0.5s forwards',
-                            }}>
-                                Satudata
-                            </span>
-                            <span style={{
-                                color: '#4CAF50',
-                                fontSize: '12px',
-                                fontWeight: '500',
-                                opacity: 0,
-                                animation: 'fadeInScale 1.5s 0.8s forwards',
-                            }}>
-                                Pertanian
-                            </span>
-                        </div>
                     </Link>
                 </div>
 
