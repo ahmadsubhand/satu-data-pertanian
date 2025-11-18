@@ -250,7 +250,7 @@ const FarmerExchangeRatePage: React.FC<FarmerExchangeRatePageProps> = () => {
                   dibutuhkan petani baik untuk konsumsi maupun untuk biaya produksi.
                 </Paragraph>
                 <Paragraph>
-                  Jika NTP > 100 artinya petani mendapatkan keuntungan, sedangkan jika NTP < 100 artinya petani mengalami kerugian.
+                  Jika NTP &gt; 100 artinya petani mendapatkan keuntungan, sedangkan jika NTP &lt; 100 artinya petani mengalami kerugian.
                 </Paragraph>
               </Card>
             </Col>

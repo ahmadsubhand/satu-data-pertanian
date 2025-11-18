@@ -1,11 +1,12 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, User as UserType, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, message } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { adminUserDestroy, adminUserStore, adminUserUpdate } from '@/routes';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -42,15 +43,7 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
     const { auth, flash } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     
-    // Tampilkan pesan sukses dari flash session
-    React.useEffect(() => {
-        if (flash?.success) {
-            message.success(flash.success);
-        }
-        if (flash?.error) {
-            message.error(flash.error);
-        }
-    }, [flash]);
+
     const [selectedRole, setSelectedRole] = useState<number | null>(null);
     const [selectedEselon, setSelectedEselon] = useState<number | null>(null); // Changed to number for ID
     const [searchText, setSearchText] = useState('');

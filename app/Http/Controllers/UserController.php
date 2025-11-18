@@ -57,7 +57,7 @@ class UserController extends Controller
             'user_role_id' => $request->user_role_id,
         ]);
 
-        // return redirect()->back()->with('success', 'User berhasil ditambahkan.');
+        session()->flash('success', 'User berhasil ditambahkan.');
         return Inertia::location(route('admin-user-list'));
     }
 
@@ -88,7 +88,7 @@ class UserController extends Controller
             $user->save();
         }
 
-        // return redirect()->route('admin-user-list')->with('success', 'User berhasil diperbarui.');
+        session()->flash('success', 'User berhasil diperbarui.');
         return Inertia::location(route('admin-user-list'));
     }
 
@@ -96,7 +96,7 @@ class UserController extends Controller
     {
         $user->delete();
 
-        // return redirect()->route('admin-user-list')->with('success', 'User berhasil dihapus.');
+        session()->flash('success', 'User berhasil dihapus.');
         return Inertia::location(route('admin-user-list'));
     }
 }
