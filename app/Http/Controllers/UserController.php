@@ -28,7 +28,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'nip' => 'required|string',
@@ -57,10 +57,11 @@ class UserController extends Controller
             'user_role_id' => $request->user_role_id,
         ]);
 
-        return redirect()->back()->with('success', 'User berhasil ditambahkan.');
+        // return redirect()->back()->with('success', 'User berhasil ditambahkan.');
+        return Inertia::location(route('admin-user-list'));
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(Request $request, User $user)
     {
         $request->validate([
             'nip' => 'sometimes|required|string',
@@ -87,13 +88,15 @@ class UserController extends Controller
             $user->save();
         }
 
-        return redirect()->route('admin-user-list')->with('success', 'User berhasil diperbarui.');
+        // return redirect()->route('admin-user-list')->with('success', 'User berhasil diperbarui.');
+        return Inertia::location(route('admin-user-list'));
     }
 
-    public function destroy(User $user): RedirectResponse
+    public function destroy(User $user)
     {
         $user->delete();
 
-        return redirect()->route('admin-user-list')->with('success', 'User berhasil dihapus.');
+        // return redirect()->route('admin-user-list')->with('success', 'User berhasil dihapus.');
+        return Inertia::location(route('admin-user-list'));
     }
 }
