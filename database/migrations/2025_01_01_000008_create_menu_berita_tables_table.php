@@ -18,11 +18,11 @@ return new class extends Migration
             
             $table->string('judul');
             $table->date('tanggal_rilis');
-            $table->string('isi_singkat');
+            $table->string('isi_singkat')->nullable();
             $table->text('isi');
             $table->string('file');
             $table->string('foto');
-            $table->string('status', 20)->default('Private');
+            $table->boolean('status')->default(false);
             $table->foreignId('produsen_data_table_id')->constrained('produsen_data_tables', 'id');
         });
     }

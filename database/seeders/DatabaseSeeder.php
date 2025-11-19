@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             ProdusenDataTableSeeder::class,
             KategoriDataTableSeeder::class,
             UserSeeder::class,
-            MenuMetadataTableSeeder::class
+            MenuMetadataTableSeeder::class,
+            MenuBeritaTableSeeder::class
         ]);
 
         // User::factory(10)->create();
