@@ -13,6 +13,7 @@ use App\Http\Controllers\KalenderDataController;
 use App\Http\Controllers\ManajemenUserController;
 use App\Http\Controllers\MenuBeritaTableController;
 use App\Http\Controllers\MenuInfografisTableController;
+use App\Http\Controllers\MenuPublikasiTableController;
 use App\Http\Controllers\PublikasiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifikasiDataPrioritasController;
@@ -112,8 +113,11 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () 
   });
 
   // Publikasi (ID: 5)
-  Route::middleware('menuAdmin:5')->prefix('publikasi')->group(function () {
-      Route::get('/', [PublikasiController::class, 'index'])->name('admin-publikasi');
+  Route::middleware('menuAdmin:5')->prefix('publikasi')->controller(MenuPublikasiTableController::class)->group(function () {
+      Route::get('/', 'index')->name('admin-publikasi');
+      Route::post('/', 'store')->name('admin-publikasi-store');
+      Route::put('/{menuPublikasiTable}', 'update')->name('admin-publikasi-update');
+      Route::delete('/{menuPublikasiTable}', 'destroy')->name('admin-publikasi-destroy');
   });
 
   // Verifikasi Data Prioritas (ID: 6)

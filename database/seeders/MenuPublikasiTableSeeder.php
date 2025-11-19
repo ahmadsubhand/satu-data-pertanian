@@ -444,7 +444,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Salah satu sumber hewani dengan harga yang relatif terjangkau dan nmudah diperoleh adalah daging ayam ras pedaging atau yang sering disebut sebagai daging ayam broiler.',
                 'cover' => 'Outlook_dagingayam2020.png',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 212,
@@ -459,7 +459,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Buku Statistik Sumber Daya Manusia (SDM) Pertanian dan Kelembagaan Petani Tahun 2020 berisi Data SDM pertanian dan Kelembagaan Petani yang mencakup data : 1).Jumlah pegawai lingkup Kementerian Pertanian, 2). Penyuluh pertanian, 3). Rumah tangga pertanian, 4). Kelompok tani, 5). Gabungan kelompok tani, 6). Kelembagaan ekonomi petani, 7). Unit pelaksana teknis Kementerian Pertanian dan 8). Asosiasi sektor pertanian.',
                 'cover' => 'sdm_pertanian.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 213,
@@ -474,7 +474,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Komoditas karet merupakan salah satu komoditas strategis penghasil devisa negara karena sebagian besar produksi karet nasional untuk diekspor.',
                 'cover' => 'kajian_bun.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 214,
@@ -489,7 +489,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Komoditas karet merupakan salah satu komoditas strategis penghasil devisa negara karena sebagian besar produksi karet nasional untuk diekspor.',
                 'cover' => 'kajian_bun.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 215,
@@ -504,7 +504,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => '',
                 'cover' => 'Stats_Iklim_dan_OPT.png',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 216,
@@ -519,7 +519,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Produksi kelapa Indonesia Tahun 2019 (Angka Sementara) sebesar 2,83 juta ton yang berasal dari produksi dari Perkebunan Rakyat (PR) dan Perkebunan Besar Swasta (PBS).',
                 'cover' => 'Outlook_Komoditas_Perkebunan_Kelapa_Tahun_2020.jpg',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 217,
@@ -534,7 +534,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => '-',
                 'cover' => 'sarana.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 218,
@@ -549,7 +549,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Cabai (Capsicum annuum L) merupakan komoditas hortikultura termasuk tanaman sayuran yang tergolong tanaman semusim dibagi menjadi beberapa jenis yaitu cabai merah besar, cabai merah keriting dan cabai rawit.',
                 'cover' => 'cabai.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 219,
@@ -564,7 +564,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Proyeksi produksi jagung pada tahun 2020 diramalkan akan meningkat menjadi 23,95 juta ton dari 22,59 juta ton dari tahun 2019 atau naik sebesar 6,04%.',
                 'cover' => 'outlook_jagung.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 220,
@@ -579,7 +579,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Kinerja perekonomian Indonesia pada periode tahun 2016-2019 menunjukkan peningkatan. Hal ini tercermin dari capaian Produk Domestik Bruto (PDB) baik secara nominal maupun riil.',
                 'cover' => 'makro.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 221,
@@ -594,7 +594,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Berdasarkan data dari Badan Pusat Statistik, tahun 2018 harga konsumen bulanan gula pasir sedikit mengalami penurunan (trend menurun) dengan rata-rata harga sebesar Rp.12.354/Kg.',
                 'cover' => 'Analisis_Kinerja_Komoditas_Gula_Semester_I_Tahun_2021.jpg',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 222,
@@ -609,7 +609,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Cabai merupakan salah satu komoditas unggulan sub sektor hortikultura Indonesia yang telah dikenal di seluruh dunia, potensi Cabai sebagai komoditi andalan ekspor Indonesia sebenarnya cukup besar, namun peran Indonesia sebagai produsen maupun eksportir Cabai segar masih kecil.',
                 'cover' => 'cabai_merah.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 223,
@@ -624,7 +624,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => '',
                 'cover' => 'outlook_salak.png',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 224,
@@ -639,7 +639,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => 'Sumbangan devisa terbesar dari neraca perdagangan sektor pertanian tahun 2020 diisumbang dari surplus neraca perdagangan subsektor perkebunan hingga mencapai USD 23,4 milyar atau senilai Rp 335,56 trilyun.',
                 'cover' => 'kakao.JPG',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 225,
@@ -654,7 +654,7 @@ class MenuPublikasiTableSeeder extends Seeder
                 'produsen_data_table_id' => $this->getProdusenDataTableId($produsenMapping['0100000000']),
                 'abstraksi' => '-',
                 'cover' => 'outlookUbikayu.png',
-                'status' => true,
+                'status' => false,
             ],
             [
                 'id' => 226,
