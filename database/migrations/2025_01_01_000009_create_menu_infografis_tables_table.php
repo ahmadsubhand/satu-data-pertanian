@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('keterangan');
             $table->string('file');
             $table->foreignId('produsen_data_table_id')->constrained('produsen_data_tables', 'id');
-            $table->string('status', 20)->default('Private');
+            $table->boolean('status')->default(false);
         });
     }
 
