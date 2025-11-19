@@ -1,10 +1,12 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Input, Space, Tag, Select, Modal, Form, DatePicker, message } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
-import React, { useState } from 'react';
-import { EditOutlined, DeleteOutlined, FileTextOutlined, PlusOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy } from '@/routes';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,406 +33,161 @@ interface DataItem {
     data_prioritas: boolean;
     kategori_data: string;
     progres: number;
-    status: 'draft' | 'review' | 'published' | 'rejected';
+    status: string;
     catatan: string;
     file: string;
+    created_at: string;
+    updated_at: string;
 }
 
-const InputDataPage = () => {
-    const { auth } = usePage<SharedData>().props;
+interface Props {
+    dataItems: DataItem[];
+}
+
+const InputDataPage = ({ dataItems }: Props) => {
+    const { auth, flash } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<DataItem | null>(null);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [searchText, setSearchText] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+    const [selectedKategori, setSelectedKategori] = useState<string | null>(null);
     const [form] = Form.useForm();
 
-    // Data contoh untuk tabel
-    const [dataItems, setDataItems] = useState<DataItem[]>([
-        {
-            id: 1,
-            judul: 'Statistik Produksi Pertanian 2023',
-            tgl_rilis: '2023-12-15',
-            abstraksi: 'Data statistik produksi pertanian tahun 2023',
-            produsen_data: 'Pusdatin',
-            tagging_data: ['produksi', 'statistik', '2023'],
-            data_prioritas: true,
-            kategori_data: 'Statistik',
-            progres: 90,
-            status: 'published',
-            catatan: 'Sudah diverifikasi',
-            file: 'produksi_2023.pdf'
-        },
-        {
-            id: 2,
-            judul: 'Data Geospasial Irigasi',
-            tgl_rilis: '2023-11-20',
-            abstraksi: 'Peta geospasial sistem irigasi di Indonesia',
-            produsen_data: 'Badan Geospasial',
-            tagging_data: ['geospasial', 'irigasi', 'peta'],
-            data_prioritas: false,
-            kategori_data: 'Geospasial',
-            progres: 75,
-            status: 'review',
-            catatan: 'Butuh revisi',
-            file: 'irigasi.geojson'
-        },
-        {
-            id: 3,
-            judul: 'Indikator Harga Komoditas',
-            tgl_rilis: '2023-10-05',
-            abstraksi: 'Data indikator harga komoditas pertanian',
-            produsen_data: 'Pusdatin',
-            tagging_data: ['harga', 'komoditas', 'indikator'],
-            data_prioritas: true,
-            kategori_data: 'Indikator',
-            progres: 100,
-            status: 'published',
-            catatan: 'Selesai',
-            file: 'harga_komoditas.xlsx'
-        },
-        {
-            id: 4,
-            judul: 'Data Variabel Cuaca',
-            tgl_rilis: '2023-09-12',
-            abstraksi: 'Data variabel cuaca dan iklim',
-            produsen_data: 'BMKG',
-            tagging_data: ['cuaca', 'iklim', 'variabel'],
-            data_prioritas: false,
-            kategori_data: 'Variabel',
-            progres: 60,
-            status: 'draft',
-            catatan: 'Dalam pengumpulan',
-            file: 'cuaca.csv'
-        },
-        {
-            id: 5,
-            judul: 'Dataset Link Terkait',
-            tgl_rilis: '2023-08-30',
-            abstraksi: 'Kumpulan link website terkait data pertanian',
-            produsen_data: 'Pusdatin',
-            tagging_data: ['link', 'website', 'referensi'],
-            data_prioritas: false,
-            kategori_data: 'Link',
-            progres: 45,
-            status: 'draft',
-            catatan: 'Perlu dilengkapi',
-            file: 'links.json'
+    // Initialize data from props
+    const [dataItemsState, setDataItemsState] = useState<DataItem[]>(dataItems || []);
+
+    // Handle flash messages
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
         }
-    ].map(item => { // Validasi dan normalisasi data saat inisialisasi
-        return {
-            ...item,
-            judul: item.judul || '',
-            tgl_rilis: item.tgl_rilis || '',
-            abstraksi: item.abstraksi || '',
-            produsen_data: item.produsen_data || '',
-            tagging_data: Array.isArray(item.tagging_data) ? item.tagging_data : [],
-            data_prioritas: typeof item.data_prioritas === 'boolean' ? item.data_prioritas : false,
-            kategori_data: item.kategori_data || '',
-            progres: typeof item.progres === 'number' ? item.progres : 0,
-            status: item.status || 'draft',
-            catatan: item.catatan || '',
-            file: item.file || ''
-        };
-    }));
-
-    const [searchText, setSearchText] = useState('');
-
-    // Fungsi untuk menghapus item
-    const handleDelete = (id: number) => {
-        if (!id) {
-            console.error('Invalid ID for deletion');
-            return;
+        if (flash?.error) {
+            toast.error(flash.error);
         }
-        
-        Modal.confirm({
-            title: 'Konfirmasi Hapus',
-            content: 'Apakah Anda yakin ingin menghapus data ini?',
-            okText: 'Hapus',
-            okType: 'danger',
-            cancelText: 'Batal',
-            onOk: async () => {
-                try {
-                    // Hapus dari state
-                    setDataItems(prev => prev.filter(item => item.id !== id));
-                } catch (error) {
-                    console.error('Error deleting item:', error);
-                }
-            },
-            onCancel: () => {
-                console.log('Penghapusan dibatalkan');
-            },
-        });
-    };
+    }, [flash]);
 
-    // Fungsi untuk menangani edit item
-    const handleEdit = (record: DataItem) => {
-        try {
-            setLoading(true);
-            
-            // Parse tanggal dengan aman
-            let tanggalRilis = null;
-            if (record.tgl_rilis) {
-                const parsedDate = new Date(record.tgl_rilis);
-                tanggalRilis = isNaN(parsedDate.getTime()) ? null : parsedDate;
-            }
+    // Filter data based on search and filters
+    const filteredData = dataItemsState.filter(item =>
+        item.judul.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.produsen_data.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.kategori_data.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.catatan.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.file.toLowerCase().includes(searchText.toLowerCase())
+    ).filter(item =>
+        selectedStatus ? item.status === selectedStatus : true
+    ).filter(item =>
+        selectedKategori ? item.kategori_data === selectedKategori : true
+    );
 
-            form.setFieldsValue({
-                judul: record.judul || '',
-                tgl_rilis: tanggalRilis,
-                abstraksi: record.abstraksi || '',
-                produsen_data: record.produsen_data || '',
-                tagging_data: Array.isArray(record.tagging_data) ? record.tagging_data.join(', ') : '',
-                data_prioritas: record.data_prioritas,
-                kategori_data: record.kategori_data || '',
-                progres: record.progres || 0,
-                status: record.status || 'draft',
-                catatan: record.catatan || '',
-                file: record.file || ''
-            });
-            setCurrentRecord(record);
-            setIsEditing(true);
-            setIsModalVisible(true);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error in handleEdit:', error);
-            message.error('Terjadi kesalahan saat memuat data');
-            setLoading(false);
-        }
-    };
-
-    // Fungsi untuk menambah atau mengupdate data
-    const handleAddData = (values: any) => {
-        try {
-            // Format tanggal ke string ISO sebelum disimpan
-            const formattedTglRilis = values.tgl_rilis instanceof Date 
-                ? values.tgl_rilis.toISOString().split('T')[0] 
-                : values.tgl_rilis;
-
-            if (isEditing && currentRecord) {
-                // Update data yang sudah ada
-                setDataItems(prev =>
-                    prev.map(item =>
-                        item.id === currentRecord.id
-                            ? {
-                                ...item,
-                                judul: values.judul,
-                                tgl_rilis: formattedTglRilis,
-                                abstraksi: values.abstraksi,
-                                produsen_data: values.produsen_data,
-                                tagging_data: typeof values.tagging_data === 'string' 
-                                    ? values.tagging_data.split(',').map((tag: string) => tag.trim())
-                                    : [],
-                                data_prioritas: values.data_prioritas,
-                                kategori_data: values.kategori_data,
-                                progres: values.progres,
-                                status: values.status,
-                                catatan: values.catatan,
-                                file: values.file
-                              }
-                            : item
-                    )
-                );
-
-                // Reset mode edit
-                setIsEditing(false);
-                setCurrentRecord(null);
-            } else {
-                // Tambah data baru
-                const newId = Math.max(...dataItems.map(u => u.id), 0) + 1;
-
-                const newData: DataItem = {
-                    id: newId,
-                    judul: values.judul,
-                    tgl_rilis: formattedTglRilis,
-                    abstraksi: values.abstraksi,
-                    produsen_data: values.produsen_data,
-                    tagging_data: typeof values.tagging_data === 'string' 
-                        ? values.tagging_data.split(',').map((tag: string) => tag.trim())
-                        : [],
-                    data_prioritas: values.data_prioritas,
-                    kategori_data: values.kategori_data,
-                    progres: values.progres,
-                    status: values.status,
-                    catatan: values.catatan,
-                    file: values.file
-                };
-
-                setDataItems(prev => [...prev, newData]);
-            }
-
-            form.resetFields();
-            setIsModalVisible(false);
-        } catch (error) {
-            console.error('Error processing data:', error);
-        }
-    };
-
-    // Kolom tabel
     const columns: TableColumnsType<DataItem> = [
         {
-            title: 'No',
-            key: 'no',
-            render: (text, record, index) => index + 1,
-            width: 50,
+            title: 'ID',
+            dataIndex: 'id',
+            key: 'id',
+            sorter: (a, b) => a.id - b.id,
+            width: 80,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 150,
+            width: 200,
         },
         {
-            title: 'Tgl Rilis',
+            title: 'Tanggal Rilis',
             dataIndex: 'tgl_rilis',
             key: 'tgl_rilis',
-            render: (tgl) => {
-                const date = new Date(tgl);
-                return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleDateString('id-ID');
-            },
-            sorter: (a, b) => {
-                const dateA = new Date(a.tgl_rilis);
-                const dateB = new Date(b.tgl_rilis);
-                return (isNaN(dateA.getTime()) ? 0 : dateA.getTime()) - (isNaN(dateB.getTime()) ? 0 : dateB.getTime());
-            },
-            width: 100,
+            sorter: (a, b) => a.tgl_rilis.localeCompare(b.tgl_rilis),
+            width: 120,
         },
         {
             title: 'Abstraksi',
             dataIndex: 'abstraksi',
             key: 'abstraksi',
-            width: 200,
+            width: 250,
         },
         {
             title: 'Produsen Data',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => a.produsen_data.localeCompare(b.produsen_data),
-            width: 120,
+            width: 150,
         },
         {
-            title: 'Tagging Data',
-            dataIndex: 'tagging_data',
-            key: 'tagging_data',
-            render: (tags) => (
-                <Space wrap>
-                    {Array.isArray(tags) 
-                        ? tags.map((tag: string, index: number) => (
-                            <Tag key={index} color="blue">{tag}</Tag>
-                          ))
-                        : null}
-                </Space>
-            ),
-            width: 150,
+            title: 'Kategori',
+            dataIndex: 'kategori_data',
+            key: 'kategori_data',
+            sorter: (a, b) => a.kategori_data.localeCompare(b.kategori_data),
+            width: 120,
         },
         {
             title: 'Data Prioritas',
             dataIndex: 'data_prioritas',
             key: 'data_prioritas',
-            render: (isPrioritas) => {
-                if (isPrioritas === undefined || isPrioritas === null) return <Tag color="default">N/A</Tag>;
-                return isPrioritas ? (
-                    <Tag color="red">Prioritas</Tag>
-                ) : (
-                    <Tag color="default">Biasa</Tag>
-                );
-            },
-            filters: [
-                { text: 'Prioritas', value: true },
-                { text: 'Biasa', value: false },
-            ],
-            onFilter: (value, record) => record.data_prioritas === value,
-            width: 100,
-        },
-        {
-            title: 'Kategori Data',
-            dataIndex: 'kategori_data',
-            key: 'kategori_data',
-            sorter: (a, b) => a.kategori_data.localeCompare(b.kategori_data),
-            filters: [
-                { text: 'Statistik', value: 'Statistik' },
-                { text: 'Geospasial', value: 'Geospasial' },
-                { text: 'Indikator', value: 'Indikator' },
-                { text: 'Variabel', value: 'Variabel' },
-                { text: 'Link', value: 'Link' },
-            ],
-            onFilter: (value, record) => record.kategori_data === value,
+            render: (prioritas) => (
+                <Tag color={prioritas ? 'red' : 'default'}>
+                    {prioritas ? 'Prioritas' : 'Biasa'}
+                </Tag>
+            ),
             width: 100,
         },
         {
             title: 'Progres',
             dataIndex: 'progres',
             key: 'progres',
-            render: (progress) => (
+            sorter: (a, b) => a.progres - b.progres,
+            render: (progres) => (
                 <div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                            className="bg-blue-600 h-2 rounded-full" 
-                            style={{ width: `${progress}%` }}
+                        <div
+                            className="bg-blue-600 h-2 rounded-full"
+                            style={{ width: `${progres}%` }}
                         ></div>
                     </div>
-                    <span className="text-xs">{progress}%</span>
+                    <span className="text-xs">{progres}%</span>
                 </div>
             ),
-            sorter: (a, b) => a.progres - b.progres,
-            width: 80,
+            width: 100,
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (status) => {
-                if (!status) return <Tag color="default">N/A</Tag>;
-                
+            render: (_, record) => {
                 let color = 'default';
-                if (status === 'published') color = 'green';
-                if (status === 'review') color = 'orange';
-                if (status === 'rejected') color = 'red';
+                if (record.status === 'published') color = 'green';
+                if (record.status === 'review') color = 'orange';
+                if (record.status === 'rejected') color = 'red';
+                if (record.status === 'draft') color = 'blue';
                 
-                return <Tag color={color}>{status.charAt(0).toUpperCase() + status.slice(1)}</Tag>;
+                return <Tag color={color}>{record.status.charAt(0).toUpperCase() + record.status.slice(1)}</Tag>;
             },
-            filters: [
-                { text: 'Draft', value: 'draft' },
-                { text: 'Review', value: 'review' },
-                { text: 'Published', value: 'published' },
-                { text: 'Rejected', value: 'rejected' },
-            ],
-            onFilter: (value, record) => record.status === value,
             width: 100,
-        },
-        {
-            title: 'Catatan',
-            dataIndex: 'catatan',
-            key: 'catatan',
-            width: 120,
         },
         {
             title: 'File',
             dataIndex: 'file',
             key: 'file',
-            render: (fileName) => (
-                <Space>
-                    <FileTextOutlined />
-                    <span>{fileName}</span>
-                </Space>
-            ),
-            width: 100,
+            render: (fileName) => <span>{fileName}</span>,
+            width: 120,
         },
         {
             title: 'Aksi',
             key: 'action',
             render: (_, record) => (
                 <Space size="small">
-                    <Button 
-                        type="text" 
+                    <Button
+                        type="text"
                         icon={<EditOutlined />}
                         onClick={() => handleEdit(record)}
                         title="Edit"
                     />
-                    <Button 
-                        type="text" 
+                    <Button
+                        type="text"
                         danger
                         icon={<DeleteOutlined />}
                         onClick={() => handleDelete(record.id)}
@@ -442,14 +199,67 @@ const InputDataPage = () => {
         },
     ];
 
-    // Filter data berdasarkan pencarian
-    const filteredData = dataItems.filter(item => 
-        item.judul.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.produsen_data.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.kategori_data.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.catatan.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.file.toLowerCase().includes(searchText.toLowerCase())
-    );
+    const { Search } = Input;
+    const { Option } = Select;
+
+    // Function to handle adding or updating data
+    const handleAddData = (values: any) => {
+        if (isEditing && currentRecord) {
+            // Update existing data via API
+            router.put(adminDataInputUpdate.url(currentRecord.id), {
+                ...values,
+                tagging_data: values.tagging_data || '' // Handle empty tagging_data
+            });
+        } else {
+            // Add new data via API
+            router.post(adminDataInputStore.url(), {
+                ...values,
+                tagging_data: values.tagging_data || '' // Handle empty tagging_data
+            });
+        }
+    };
+
+    // Function to handle data deletion
+    const handleDelete = (id: number) => {
+        setDeleteRecordId(id);
+        setDeleteModalVisible(true);
+    };
+
+    // Function to confirm deletion
+    const confirmDelete = () => {
+        if (deleteRecordId) {
+            router.delete(adminDataInputDestroy.url(deleteRecordId));
+        }
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
+    };
+
+    // Function to cancel deletion
+    const cancelDelete = () => {
+        setDeleteModalVisible(false);
+        setDeleteRecordId(null);
+    };
+
+    // Function to handle editing data
+    const handleEdit = (record: DataItem) => {
+        form.setFieldsValue({
+            judul: record.judul,
+            tgl_rilis: record.tgl_rilis,
+            abstraksi: record.abstraksi,
+            produsen_data: record.produsen_data,
+            tagging_data: Array.isArray(record.tagging_data) ? record.tagging_data.join(', ') : record.tagging_data,
+            data_prioritas: record.data_prioritas,
+            kategori_data: record.kategori_data,
+            progres: record.progres,
+            status: record.status,
+            catatan: record.catatan,
+            file: record.file
+        });
+
+        setCurrentRecord(record);
+        setIsEditing(true);
+        setIsModalVisible(true);
+    };
 
     return (
         <AdminLayout breadcrumbs={breadcrumbs}>
@@ -459,8 +269,6 @@ const InputDataPage = () => {
                     <h1 className="text-2xl font-bold">Input Data</h1>
                     <Button
                         type="primary"
-                        icon={<PlusOutlined />}
-                        loading={loading}
                         onClick={() => {
                             form.resetFields();
                             setIsEditing(false);
@@ -475,27 +283,48 @@ const InputDataPage = () => {
 
                 <Card className="mt-4">
                     <div className="flex flex-wrap gap-4 mb-4">
-                        <Input
-                            placeholder="Cari data (judul, produsen, kategori, catatan, file)"
-                            value={searchText}
-                            onChange={(e) => setSearchText(e.target.value)}
+                        <Search
+                            placeholder="Cari data (judul, produsen, kategori, catatan, file)..."
+                            onSearch={value => setSearchText(value)}
                             style={{ width: 300 }}
+                            enterButton
                         />
+                        <Select
+                            placeholder="Filter Status"
+                            style={{ width: 150 }}
+                            allowClear
+                            onChange={(value) => setSelectedStatus(value || null)}
+                        >
+                            <Option value="draft">Draft</Option>
+                            <Option value="review">Review</Option>
+                            <Option value="published">Published</Option>
+                            <Option value="rejected">Rejected</Option>
+                        </Select>
+                        <Select
+                            placeholder="Filter Kategori"
+                            style={{ width: 150 }}
+                            allowClear
+                            onChange={(value) => setSelectedKategori(value || null)}
+                        >
+                            <Option value="Statistik">Statistik</Option>
+                            <Option value="Geospasial">Geospasial</Option>
+                            <Option value="Indikator">Indikator</Option>
+                            <Option value="Variabel">Variabel</Option>
+                            <Option value="Link">Link</Option>
+                        </Select>
                     </div>
 
                     <Table
                         columns={columns}
                         dataSource={filteredData}
                         rowKey="id"
-                        loading={loading}
                         pagination={{
                             pageSize: 10,
                             showSizeChanger: true,
                             showQuickJumper: true,
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} data`
                         }}
-                        scroll={{ x: 'max-content' }}
-                        size="small"
+                        scroll={{ x: 1200 }}
                     />
                 </Card>
 
@@ -517,21 +346,21 @@ const InputDataPage = () => {
                         }}>
                             Batal
                         </Button>,
-                        <Button key="submit" type="primary" loading={loading} onClick={() => form.submit()}>
+                        <Button key="submit" type="primary" onClick={() => form.submit()}>
                             {isEditing ? "Update" : "Simpan"}
                         </Button>,
                     ]}
                 >
-                    <Form 
+                    <Form
                         form={form}
-                        layout="vertical" 
+                        layout="vertical"
                         onFinish={handleAddData}
                     >
                         <Form.Item label="Judul" name="judul" rules={[{ required: true, message: 'Judul wajib diisi' }]}>
                             <Input placeholder="Masukkan judul data" />
                         </Form.Item>
                         <Form.Item label="Tanggal Rilis" name="tgl_rilis" rules={[{ required: true, message: 'Tanggal rilis wajib diisi' }]}>
-                            <DatePicker style={{ width: '100%' }} />
+                            <Input placeholder="Masukkan tanggal rilis (YYYY-MM-DD)" />
                         </Form.Item>
                         <Form.Item label="Abstraksi" name="abstraksi" rules={[{ required: true, message: 'Abstraksi wajib diisi' }]}>
                             <Input.TextArea placeholder="Masukkan abstraksi data" rows={3} />
@@ -544,32 +373,26 @@ const InputDataPage = () => {
                         </Form.Item>
                         <Form.Item label="Data Prioritas" name="data_prioritas" valuePropName="checked">
                             <Select placeholder="Pilih status prioritas">
-                                <Select.Option value={true}>Prioritas</Select.Option>
-                                <Select.Option value={false}>Biasa</Select.Option>
+                                <Option value={true}>Prioritas</Option>
+                                <Option value={false}>Biasa</Option>
                             </Select>
                         </Form.Item>
                         <Form.Item label="Kategori Data" name="kategori_data" rules={[{ required: true, message: 'Kategori data wajib dipilih' }]}>
-                            <Select placeholder="Pilih kategori data">
-                                <Select.Option value="Statistik">Statistik</Select.Option>
-                                <Select.Option value="Geospasial">Geospasial</Select.Option>
-                                <Select.Option value="Indikator">Indikator</Select.Option>
-                                <Select.Option value="Variabel">Variabel</Select.Option>
-                                <Select.Option value="Link">Link</Select.Option>
-                            </Select>
+                            <Input placeholder="Masukkan kategori data" />
                         </Form.Item>
                         <Form.Item label="Progres (%)" name="progres" rules={[{ required: true, message: 'Progres wajib diisi' }]}>
                             <Select placeholder="Pilih progres">
                                 {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(num => (
-                                    <Select.Option key={num} value={num}>{num}%</Select.Option>
+                                    <Option key={num} value={num}>{num}%</Option>
                                 ))}
                             </Select>
                         </Form.Item>
                         <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Status wajib dipilih' }]}>
                             <Select placeholder="Pilih status">
-                                <Select.Option value="draft">Draft</Select.Option>
-                                <Select.Option value="review">Review</Select.Option>
-                                <Select.Option value="published">Published</Select.Option>
-                                <Select.Option value="rejected">Rejected</Select.Option>
+                                <Option value="draft">Draft</Option>
+                                <Option value="review">Review</Option>
+                                <Option value="published">Published</Option>
+                                <Option value="rejected">Rejected</Option>
                             </Select>
                         </Form.Item>
                         <Form.Item label="Catatan" name="catatan">
@@ -579,6 +402,19 @@ const InputDataPage = () => {
                             <Input placeholder="Masukkan nama file" />
                         </Form.Item>
                     </Form>
+                </Modal>
+
+                {/* Modal for deletion confirmation */}
+                <Modal
+                    title="Konfirmasi Hapus"
+                    open={deleteModalVisible}
+                    onOk={confirmDelete}
+                    onCancel={cancelDelete}
+                    okText="Hapus"
+                    cancelText="Batal"
+                    okType="danger"
+                >
+                    <p>Apakah Anda yakin ingin menghapus data ini?</p>
                 </Modal>
             </div>
         </AdminLayout>

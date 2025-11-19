@@ -31,11 +31,11 @@ export default function DataManagementDashboard() {
                         Kelola data statistik, geospasial, indikator, variabel, dan link terkait.
                     </p>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Input Data Card */}
-                    <Link 
-                        href="/admin/data/input-data" 
+                    <Link
+                        href="/admin/data/input-data"
                         className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow hover:bg-green-50 dark:hover:bg-green-900/20"
                     >
                         <FileText className="h-10 w-10 text-blue-500 mb-3" />
@@ -44,10 +44,10 @@ export default function DataManagementDashboard() {
                             Input dan kelola data statistik, geospasial, indikator, variabel, dan link
                         </p>
                     </Link>
-                    
+
                     {/* Input Daftar Data Card */}
-                    <Link 
-                        href="/admin/data/input-daftar-data" 
+                    <Link
+                        href="/admin/data/input-daftar-data"
                         className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow hover:bg-green-50 dark:hover:bg-green-900/20"
                     >
                         <FolderOpen className="h-10 w-10 text-green-500 mb-3" />
@@ -56,10 +56,10 @@ export default function DataManagementDashboard() {
                             Input daftar data yang tersedia dalam sistem
                         </p>
                     </Link>
-                    
+
                     {/* Input Data Variabel Card */}
-                    <Link 
-                        href="/admin/data/input-data-variabel" 
+                    <Link
+                        href="/admin/data/input-data-variabel"
                         className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow hover:bg-green-50 dark:hover:bg-green-900/20"
                     >
                         <Database className="h-10 w-10 text-purple-500 mb-3" />
@@ -68,10 +68,10 @@ export default function DataManagementDashboard() {
                             Input variabel-variabel yang digunakan dalam data
                         </p>
                     </Link>
-                    
+
                     {/* Input Data Indikator Card */}
-                    <Link 
-                        href="/admin/data/input-data-indikator" 
+                    <Link
+                        href="/admin/data/input-data-indikator"
                         className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow hover:bg-green-50 dark:hover:bg-green-900/20"
                     >
                         <FileSearch className="h-10 w-10 text-orange-500 mb-3" />
@@ -80,10 +80,10 @@ export default function DataManagementDashboard() {
                             Input indikator-indikator untuk pengukuran
                         </p>
                     </Link>
-                    
+
                     {/* Input Link Website Card */}
-                    <Link 
-                        href="/admin/data/input-link-website" 
+                    <Link
+                        href="/admin/data/input-link-website"
                         className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow hover:bg-green-50 dark:hover:bg-green-900/20"
                     >
                         <LinkIcon className="h-10 w-10 text-teal-500 mb-3" />
@@ -92,10 +92,10 @@ export default function DataManagementDashboard() {
                             Input link-link website terkait data
                         </p>
                     </Link>
-                    
+
                     {/* Kalender Data Card */}
-                    <Link 
-                        href="/admin/data/kalender" 
+                    <Link
+                        href="/admin/data/kalender"
                         className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 flex flex-col items-center border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow hover:bg-green-50 dark:hover:bg-green-900/20"
                     >
                         <Calendar className="h-10 w-10 text-amber-500 mb-3" />
