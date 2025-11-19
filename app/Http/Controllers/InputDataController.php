@@ -25,6 +25,7 @@ class InputDataController extends Controller
                     'produsen_data' => $item->produsenDataTable->value ?? 'Tidak Diketahui',
                     'produsen_data_table_id' => $item->produsen_data_table_id,
                     'data_prioritas' => $item->is_data_prioritas,
+                    'is_data_prioritas' => $item->is_data_prioritas,
                     'kategori_data' => $item->kategoriDataTable->value ?? 'Tidak Diketahui',
                     'kategori_data_table_id' => $item->kategori_data_table_id,
                     'link_meta' => $item->link_meta,

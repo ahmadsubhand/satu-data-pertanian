@@ -240,18 +240,18 @@ Route::get('/statistical-data/prices', function () {
 //     return 'Test Page';
 // })->name('test.page');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        $firstAccessibleMenu = MenuHelper::getFirstAccessibleMenu();
+// Route::middleware(['auth', 'verified'])->group(function () {
+//     Route::get('dashboard', function () {
+//         $firstAccessibleMenu = MenuHelper::getFirstAccessibleMenu();
 
-        if ($firstAccessibleMenu && Route::has($firstAccessibleMenu)) {
-            return redirect()->route($firstAccessibleMenu);
-        }
+//         if ($firstAccessibleMenu && Route::has($firstAccessibleMenu)) {
+//             return redirect()->route($firstAccessibleMenu);
+//         }
 
-        // If no accessible menu found, redirect to home with error message
-        return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman apapun.');
-    })->name('dashboard');
-});
+//         // If no accessible menu found, redirect to home with error message
+//         return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman apapun.');
+//     })->name('dashboard');
+// });
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/admin/admin.php';

@@ -18,10 +18,20 @@ import {
     adminFotoVideo,
     adminVerifikasiAllData,
     home,
+    adminUserList,
+    dashboard,
+    adminMenuManagement,
+    adminSubmenuManagement,
+    adminRoleManagement,
+    adminDataInput,
+    adminDataInputDaftar,
+    adminDataInputVariabel,
+    adminDataInputIndikator,
+    adminDataInputLink,
 } from '@/routes';
 import { User, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Database, Newspaper, Image, FileText, Video, Eye, User as UserIcon, Users, Menu as MenuIcon, Settings, UserRoundCog, Calendar as CalendarOutlined } from 'lucide-react';
+import { Database, Newspaper, Image, FileText, Video, Eye, User as UserIcon, Users, Menu as MenuIcon, Settings, UserRoundCog } from 'lucide-react';
 import AppLogo from './app-logo';
 import { usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
@@ -35,19 +45,19 @@ export const getAdminNavItems = (user: User): NavItem[] => {
     const menuMap: Record<number, NavItem> = {
         1: {
             title: 'User Management',
-            href: '/admin/manajemen-user',
+            href: dashboard.url(),
             icon: UserIcon,
             // This should be a direct link, no submenu
         },
         2: {
             title: 'User',
-            href: '/admin/user',
+            href: adminUserList.url(),
             icon: UserIcon,
             submenu: [
-                { title: 'Daftar User', href: '/admin/user/daftar-user', icon: Users },
-                { title: 'Manajemen Menu', href: '/admin/user/manajemen-menu', icon: MenuIcon },
-                { title: 'Manajemen Submenu', href: '/admin/user/manajemen-submenu', icon: Settings },
-                { title: 'Manajemen Role', href: '/admin/user/manajemen-role', icon: UserRoundCog },
+                { title: 'Daftar User', href: adminUserList.url(), icon: Users },
+                { title: 'Manajemen Menu', href: adminMenuManagement.url(), icon: MenuIcon },
+                { title: 'Manajemen Submenu', href: adminSubmenuManagement.url(), icon: Settings },
+                { title: 'Manajemen Role', href: adminRoleManagement.url(), icon: UserRoundCog },
             ]
         },
         3: {
@@ -55,11 +65,11 @@ export const getAdminNavItems = (user: User): NavItem[] => {
             href: adminData.url(),
             icon: Database,
             submenu: [
-                { title: 'Input Data', href: '/admin/data/input-data', icon: MenuIcon },
-                { title: 'Input Daftar Data', href: '/admin/data/input-daftar-data', icon: MenuIcon },
-                { title: 'Input Data Variabel', href: '/admin/data/input-data-variabel', icon: MenuIcon },
-                { title: 'Input Data Indikator', href: '/admin/data/input-data-indikator', icon: MenuIcon },
-                { title: 'Input Link Website', href: '/admin/data/input-link-website', icon: MenuIcon },
+                { title: 'Input Data', href: adminDataInput.url(), icon: MenuIcon },
+                { title: 'Input Daftar Data', href: adminDataInputDaftar.url(), icon: MenuIcon },
+                { title: 'Input Data Variabel', href: adminDataInputVariabel.url(), icon: MenuIcon },
+                { title: 'Input Data Indikator', href: adminDataInputIndikator.url(), icon: MenuIcon },
+                { title: 'Input Link Website', href: adminDataInputLink.url(), icon: MenuIcon },
             ]
         },
         4: {

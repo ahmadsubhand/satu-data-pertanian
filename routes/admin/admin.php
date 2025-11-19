@@ -19,13 +19,14 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Menu Admin (ID: 1)
-Route::middleware(['auth', 'verified'])->group(function () {
-  Route::middleware('menuAdmin:1')->prefix('admin')->group(function () {
-    Route::get('/manajemen-user', [ManajemenUserController::class, 'index'])->name('admin-manajemen-user');
-  });
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () {
+  // Default admin page
+  Route::get('/', function() {
+    return Inertia::render('admin/user/index');
+  })->name('dashboard');
 
-  Route::middleware('menuAdmin:1')->prefix('admin/user')->group(function () {
-
+  // User (ID: 1)
+  Route::middleware('menuAdmin:1')->prefix('user')->group(function () {
     // Submenu routes for user management
     Route::prefix('daftar-user')->group(function () {
       Route::get('/', [UserController::class, 'index'])->name('admin-user-list');
@@ -48,15 +49,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
   });
 
   // Data (ID: 2)
-  Route::middleware('menuAdmin:2')->prefix('admin/data')->group(function () {
+  Route::middleware('menuAdmin:2')->prefix('data')->group(function () {
       Route::get('/', [DataController::class, 'index'])->name('admin-data');
 
       // Submenu routes for data management
       Route::prefix('input-data')->group(function () {
           Route::get('/', [InputDataController::class, 'index'])->name('admin-data-input');
           Route::post('/', [InputDataController::class, 'store'])->name('admin-data-input-store');
-          Route::put('/{id}', [InputDataController::class, 'update'])->name('admin-data-input-update');
-          Route::delete('/{id}', [InputDataController::class, 'destroy'])->name('admin-data-input-destroy');
+          Route::put('/{menuMetadataTable}', [InputDataController::class, 'update'])->name('admin-data-input-update');
+          Route::delete('/{menuMetadataTable}', [InputDataController::class, 'destroy'])->name('admin-data-input-destroy');
       });
 
       Route::prefix('input-daftar-data')->group(function () {
@@ -96,37 +97,37 @@ Route::middleware(['auth', 'verified'])->group(function () {
   });
   
   // Berita (ID: 3)
-  Route::middleware('menuAdmin:3')->prefix('admin/berita')->group(function () {
+  Route::middleware('menuAdmin:3')->prefix('berita')->group(function () {
       Route::get('/', [BeritaController::class, 'index'])->name('admin-berita');
   });
 
   // Infografis (ID: 4)
-  Route::middleware('menuAdmin:4')->prefix('admin/infografis')->group(function () {
+  Route::middleware('menuAdmin:4')->prefix('infografis')->group(function () {
       Route::get('/', [InfografisController::class, 'index'])->name('admin-infografis');
   });
 
   // Publikasi (ID: 5)
-  Route::middleware('menuAdmin:5')->prefix('admin/publikasi')->group(function () {
+  Route::middleware('menuAdmin:5')->prefix('publikasi')->group(function () {
       Route::get('/', [PublikasiController::class, 'index'])->name('admin-publikasi');
   });
 
   // Verifikasi Data Prioritas (ID: 6)
-  Route::middleware('menuAdmin:6')->prefix('admin/verifikasi-data-prioritas')->group(function () {
+  Route::middleware('menuAdmin:6')->prefix('verifikasi-data-prioritas')->group(function () {
       Route::get('/', [VerifikasiDataPrioritasController::class, 'index'])->name('admin-verifikasi-data-prioritas');
   });
 
   // Verifikasi All Data (ID: 9)
-  Route::middleware('menuAdmin:9')->prefix('admin/verifikasi-all-data')->group(function () {
+  Route::middleware('menuAdmin:9')->prefix('verifikasi-all-data')->group(function () {
       Route::get('/', [VerifikasiAllDataController::class, 'index'])->name('admin-verifikasi-all-data');
   });
 
   // Foto/Video (ID: 7)
-  Route::middleware('menuAdmin:7')->prefix('admin/foto-video')->group(function () {
+  Route::middleware('menuAdmin:7')->prefix('foto-video')->group(function () {
       Route::get('/', [FotoVideoController::class, 'index'])->name('admin-foto-video');
   });
 
   // Media (ID: 8)
-  Route::middleware('menuAdmin:8')->prefix('admin/media')->group(function () {
+  Route::middleware('menuAdmin:8')->prefix('media')->group(function () {
       Route::get('/', [FotoVideoController::class, 'index'])->name('admin-media');
       Route::post('/', [FotoVideoController::class, 'store'])->name('admin-media-store');
       Route::put('/{id}', [FotoVideoController::class, 'update'])->name('admin-media-update');

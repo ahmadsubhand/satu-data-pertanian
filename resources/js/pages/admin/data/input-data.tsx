@@ -3,10 +3,9 @@ import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
 import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Checkbox } from 'antd';
 import type { TableColumnsType } from 'antd';
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy } from '@/routes';
-import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,8 +30,14 @@ interface DataItem {
     produsen_data: string;
     produsen_data_table_id: number;
     data_prioritas: boolean;
+    is_data_prioritas: boolean;
     kategori_data: string;
     kategori_data_table_id: number;
+    link_meta: string;
+    file_meta1: string;
+    file_meta2: string;
+    file_meta3: string;
+    ukuran_file: number;
     file_statistik: string;
     created_at: string;
     updated_at: string;
@@ -59,16 +64,6 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
 
     // Initialize data from props
     const [dataItemsState, setDataItemsState] = useState<DataItem[]>(dataItems || []);
-
-    // Handle flash messages
-    useEffect(() => {
-        if (flash?.success) {
-            toast.success(flash.success);
-        }
-        if (flash?.error) {
-            toast.error(flash.error);
-        }
-    }, [flash]);
 
     // Filter data based on search and filters
     const filteredData = dataItemsState.filter(item =>
@@ -209,21 +204,21 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
         setDeleteRecordId(null);
     };
 
-    // Function to get ID based on name
-    const getIdByName = (name: string, dataArray: Array<{id: number, value: string}>) => {
-        const item = dataArray.find(item => item.value === name);
-        return item ? item.id : null;
-    };
 
     // Function to handle editing data
     const handleEdit = (record: DataItem) => {
         form.setFieldsValue({
             judul: record.judul,
-            tgl_rilis: record.tgl_rilis,
+            tanggal_rilis: record.tgl_rilis,
             abstraksi: record.abstraksi,
-            produsen_data_table_id: getIdByName(record.produsen_data, produsenData),
-            data_prioritas: record.data_prioritas,
-            kategori_data_table_id: getIdByName(record.kategori_data, kategoriData),
+            produsen_data_table_id: record.produsen_data_table_id,
+            is_data_prioritas: record.is_data_prioritas,
+            kategori_data_table_id: record.kategori_data_table_id,
+            link_meta: record.link_meta,
+            file_meta1: record.file_meta1,
+            file_meta2: record.file_meta2,
+            file_meta3: record.file_meta3,
+            ukuran_file: record.ukuran_file,
             file_statistik: record.file_statistik
         });
 
@@ -326,7 +321,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                         <Form.Item label="Judul" name="judul" rules={[{ required: true, message: 'Judul wajib diisi' }]}>
                             <Input placeholder="Masukkan judul data" />
                         </Form.Item>
-                        <Form.Item label="Tanggal Rilis" name="tgl_rilis" rules={[{ required: true, message: 'Tanggal rilis wajib diisi' }]}>
+                        <Form.Item label="Tanggal Rilis" name="tanggal_rilis" rules={[{ required: true, message: 'Tanggal rilis wajib diisi' }]}>
                             <Input type="date" placeholder="Masukkan tanggal rilis (YYYY-MM-DD)" />
                         </Form.Item>
                         <Form.Item label="Abstraksi" name="abstraksi" rules={[{ required: true, message: 'Abstraksi wajib diisi' }]}>
@@ -339,10 +334,10 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                                 ))}
                             </Select>
                         </Form.Item>
-                        <Form.Item label="Tagging Data Prioritas" name="data_prioritas" valuePropName="checked">
+                        <Form.Item label="Tagging Data Prioritas" name="is_data_prioritas" valuePropName="checked">
                             <Select placeholder="Pilih status prioritas">
                                 <Option value={true}>Prioritas</Option>
-                                <Option value={false}>Biasa</Option>
+                                <Option value={false}>Non Prioritas</Option>
                             </Select>
                         </Form.Item>
                         <Form.Item label="Kategori Data" name="kategori_data_table_id" rules={[{ required: true, message: 'Kategori data wajib dipilih' }]}>
@@ -351,6 +346,21 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                                     <Option key={kategori.id} value={kategori.id}>{kategori.value}</Option>
                                 ))}
                             </Select>
+                        </Form.Item>
+                        <Form.Item label="Link Meta" name="link_meta">
+                            <Input placeholder="Masukkan link metadata" />
+                        </Form.Item>
+                        <Form.Item label="File Meta 1" name="file_meta1">
+                            <Input placeholder="Masukkan nama file meta 1" />
+                        </Form.Item>
+                        <Form.Item label="File Meta 2" name="file_meta2">
+                            <Input placeholder="Masukkan nama file meta 2" />
+                        </Form.Item>
+                        <Form.Item label="File Meta 3" name="file_meta3">
+                            <Input placeholder="Masukkan nama file meta 3" />
+                        </Form.Item>
+                        <Form.Item label="Ukuran File" name="ukuran_file" rules={[{ required: true, message: 'Ukuran file wajib diisi' }]}>
+                            <Input type="number" placeholder="Masukkan ukuran file dalam bytes" />
                         </Form.Item>
                         <Form.Item label="File" name="file_statistik">
                             <Input placeholder="Masukkan nama file" />
