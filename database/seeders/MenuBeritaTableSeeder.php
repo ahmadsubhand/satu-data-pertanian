@@ -385,7 +385,7 @@ alokasi pupuk bersubsidi pada 2021 tidak sebanyak permintaan dari
 petani," imbuhnya.</div>',
                 'file_berita' => 'Pupuk_Kementan.jpg',
                 'file_foto' => 'Pupuk_Kementan.jpg',
-                'status_berita' => 1, // publish
+                'status_berita' => 0, // publish
                 'owner_berita' => '0000000000',
             ],
             [
@@ -455,7 +455,7 @@ miliar dan Tanjung Emas Semarang sebesar Rp 400 miliar lebih.</div>
 <p align="justify"> </p>',
                 'file_berita' => 'merdeka_ekspor.jpg',
                 'file_foto' => 'merdeka_ekspor.jpg',
-                'status_berita' => 1, // publish
+                'status_berita' => 0, // publish
                 'owner_berita' => '0000000000',
             ],
             [
@@ -518,7 +518,7 @@ keras bersama dalam membangun pertanian Indonesia yang maju dan
 sejahtera," pungkasnya.</span></div>',
                 'file_berita' => '',
                 'file_foto' => 'mentan_pahlawan.jpg',
-                'status_berita' => 1, // publish
+                'status_berita' => 0, // publish
                 'owner_berita' => '0000000000',
             ],
         ];

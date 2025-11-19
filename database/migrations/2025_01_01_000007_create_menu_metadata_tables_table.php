@@ -22,11 +22,11 @@ return new class extends Migration
             $table->foreignId('produsen_data_table_id')->constrained('produsen_data_tables', 'id');
             $table->boolean('is_data_prioritas')->default(false);
             $table->foreignId('kategori_data_table_id')->constrained('kategori_data_tables', 'id');
-            $table->string('link_meta');
-            $table->string('file_meta1');
-            $table->string('file_meta2');
-            $table->string('file_meta3');
-            $table->integer('ukuran_file');
+            $table->string('link_meta')->nullable();
+            $table->string('file_meta1')->nullable();
+            $table->string('file_meta2')->nullable();
+            $table->string('file_meta3')->nullable();
+            $table->integer('ukuran_file')->nullable();
             $table->string('file_statistik');
         });
     }

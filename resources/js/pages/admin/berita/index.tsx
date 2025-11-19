@@ -1,11 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Card, Table, Button, Space, Input, Modal, Form } from 'antd';
+import { Head, usePage, router } from '@inertiajs/react';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { toast } from 'sonner';
+import { adminBeritaStore, adminBeritaUpdate, adminBeritaDestroy } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,38 +21,46 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface NewsType {
     id: number;
     judul: string;
-    konten: string;
-    tanggal_publikasi: string;
-    status: string;
-    kategori: string;
-    penulis: string;
+    tanggal_rilis: string;
+    isi_singkat: string | null;
+    isi: string;
+    file: string;
+    foto: string;
+    status: boolean;
+    produsen_data_table_id: number;
+    produsen_data?: string; // Nama produsen
     created_at: string;
     updated_at: string;
 }
 
 interface Props {
     berita: NewsType[];
+    produsenData?: Array<{id: number, value: string}>;
 }
 
-export default function BeritaPage({ berita }: Props) {
+export default function BeritaPage({ berita, produsenData = [] }: Props) {
     const { auth, flash } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState<boolean | null>(null);
     const [form] = Form.useForm();
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<NewsType | null>(null);
 
-    // Use data from props instead of hardcoded values
-    const [newsData, setNewsData] = useState<NewsType[]>(berita || []);
-
-    // Filter data based on search
-    const filteredData = newsData.filter(news =>
+    // Filter data based on search and status
+    const filteredData = berita.filter(news =>
         news.judul.toLowerCase().includes(searchText.toLowerCase()) ||
-        news.konten.toLowerCase().includes(searchText.toLowerCase()) ||
-        news.penulis.toLowerCase().includes(searchText.toLowerCase()) ||
-        news.status.toLowerCase().includes(searchText.toLowerCase())
+        news.produsen_data?.toLowerCase().includes(searchText.toLowerCase()) ||
+        news.foto.toLowerCase().includes(searchText.toLowerCase())
+    ).filter(news =>
+        selectedStatus !== null && selectedStatus !== undefined
+            ? (selectedStatus ?
+                (news.status === 1 || news.status === '1' || news.status === true) :
+                !(news.status === 1 || news.status === '1' || news.status === true)
+              )
+            : true
     );
 
     const columns: TableColumnsType<NewsType> = [
@@ -71,43 +79,34 @@ export default function BeritaPage({ berita }: Props) {
             width: 200,
         },
         {
-            title: 'Konten',
-            dataIndex: 'konten',
-            key: 'konten',
-            render: (konten: string) => (
-                <div style={{ maxWidth: '200px', whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                    {konten.length > 50 ? `${konten.substring(0, 50)}...` : konten}
-                </div>
-            ),
-            width: 250,
+            title: 'Tanggal Berita',
+            dataIndex: 'tanggal_rilis',
+            key: 'tanggal_rilis',
+            sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
+            width: 120,
         },
         {
-            title: 'Tanggal Publikasi',
-            dataIndex: 'tanggal_publikasi',
-            key: 'tanggal_publikasi',
-            sorter: (a, b) => a.tanggal_publikasi.localeCompare(b.tanggal_publikasi),
+            title: 'Owner',
+            dataIndex: 'produsen_data',
+            key: 'produsen_data',
+            sorter: (a, b) => (a.produsen_data || '').localeCompare(b.produsen_data || ''),
             width: 150,
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            sorter: (a, b) => a.status.localeCompare(b.status),
+            render: (status) => (
+                <Tag color={status ? 'green' : 'orange'}>
+                    {(status === 1 || status === '1' || status === true) ? 'Publish' : 'Preview'}
+                </Tag>
+            ),
+            sorter: (a, b) => {
+                const aStatus = (a.status === 1 || a.status === '1' || a.status === true);
+                const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
+                return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
+            },
             width: 100,
-        },
-        {
-            title: 'Kategori',
-            dataIndex: 'kategori',
-            key: 'kategori',
-            sorter: (a, b) => a.kategori.localeCompare(b.kategori),
-            width: 120,
-        },
-        {
-            title: 'Penulis',
-            dataIndex: 'penulis',
-            key: 'penulis',
-            sorter: (a, b) => a.penulis.localeCompare(b.penulis),
-            width: 150,
         },
         {
             title: 'Aksi',
@@ -134,36 +133,23 @@ export default function BeritaPage({ berita }: Props) {
     ];
 
     const { Search } = Input;
+    const { Option } = Select;
 
     // Function to add or update news
     const handleAddNews = (values: any) => {
         if (isEditing && currentRecord) {
-            // Update existing news
-            setNewsData(prevData => 
-                prevData.map(item => 
-                    item.id === currentRecord.id 
-                        ? { ...item, ...values, updated_at: new Date().toISOString() } 
-                        : item
-                )
-            );
-            toast.success('Berita berhasil diperbarui.');
-        } else {
-            // Add new news
-            const newId = Math.max(...newsData.map(item => item.id), 0) + 1;
-            const newNews = {
-                id: newId,
+            // Update existing news via API
+            router.put(adminBeritaUpdate.url(currentRecord.id), {
                 ...values,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            };
-            setNewsData(prevData => [...prevData, newNews]);
-            toast.success('Berita baru berhasil ditambahkan.');
+                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            });
+        } else {
+            // Add new news via API
+            router.post(adminBeritaStore.url(), {
+                ...values,
+                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            });
         }
-        
-        setIsModalVisible(false);
-        setIsEditing(false);
-        setCurrentRecord(null);
-        form.resetFields();
     };
 
     // Function to handle news deletion
@@ -175,8 +161,7 @@ export default function BeritaPage({ berita }: Props) {
     // Function to confirm deletion
     const confirmDelete = () => {
         if (deleteRecordId) {
-            setNewsData(prevData => prevData.filter(item => item.id !== deleteRecordId));
-            toast.success('Berita berhasil dihapus.');
+            router.delete(adminBeritaDestroy.url(deleteRecordId));
         }
         setDeleteModalVisible(false);
         setDeleteRecordId(null);
@@ -192,11 +177,13 @@ export default function BeritaPage({ berita }: Props) {
     const handleEdit = (record: NewsType) => {
         form.setFieldsValue({
             judul: record.judul,
-            konten: record.konten,
-            tanggal_publikasi: record.tanggal_publikasi,
-            status: record.status,
-            kategori: record.kategori,
-            penulis: record.penulis,
+            tanggal_rilis: record.tanggal_rilis,
+            isi_singkat: record.isi_singkat,
+            isi: record.isi,
+            file: record.file,
+            foto: record.foto,
+            status: (record.status === 1 || record.status === '1' || record.status === true),
+            produsen_data_table_id: record.produsen_data_table_id,
         });
 
         setCurrentRecord(record);
@@ -226,13 +213,22 @@ export default function BeritaPage({ berita }: Props) {
                 <p>Daftar semua berita yang dikelola dalam sistem.</p>
 
                 <Card className="mt-4">
-                    <div className="mb-4">
+                    <div className="flex flex-wrap gap-4 mb-4">
                         <Search
-                            placeholder="Cari berita (judul, konten, penulis, kategori)..."
+                            placeholder="Cari berita (judul, owner, foto)..."
                             onSearch={value => setSearchText(value)}
-                            style={{ width: 400 }}
+                            style={{ width: 300 }}
                             enterButton
                         />
+                        <Select
+                            placeholder="Filter Status"
+                            style={{ width: 150 }}
+                            allowClear
+                            onChange={(value) => setSelectedStatus(value === undefined ? null : value)}
+                        >
+                            <Option value={true}>Publish</Option>
+                            <Option value={false}>Preview</Option>
+                        </Select>
                     </div>
 
                     <Table
@@ -245,7 +241,7 @@ export default function BeritaPage({ berita }: Props) {
                             showQuickJumper: true,
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} berita`
                         }}
-                        scroll={{ x: 1200 }}
+                        scroll={{ x: 800 }}
                     />
                 </Card>
 
@@ -278,57 +274,80 @@ export default function BeritaPage({ berita }: Props) {
                         onFinish={handleAddNews}
                         initialValues={{
                             judul: '',
-                            konten: '',
-                            tanggal_publikasi: new Date().toISOString().split('T')[0],
-                            status: 'aktif',
-                            kategori: '',
-                            penulis: ''
+                            tanggal_rilis: new Date().toISOString().split('T')[0],
+                            isi_singkat: '',
+                            isi: '',
+                            file: '',
+                            foto: '',
+                            status: false,
+                            produsen_data_table_id: undefined
                         }}
                     >
-                        <Form.Item 
-                            label="Judul" 
-                            name="judul" 
+                        <Form.Item
+                            label="Judul"
+                            name="judul"
                             rules={[{ required: true, message: 'Judul wajib diisi' }]}
                         >
                             <Input placeholder="Masukkan judul berita" />
                         </Form.Item>
-                        <Form.Item 
-                            label="Konten" 
-                            name="konten" 
-                            rules={[{ required: true, message: 'Konten wajib diisi' }]}
+                        <Form.Item
+                            label="Tanggal Rilis"
+                            name="tanggal_rilis"
+                            rules={[{ required: true, message: 'Tanggal rilis wajib diisi' }]}
                         >
-                            <Input.TextArea 
-                                rows={4} 
-                                placeholder="Masukkan konten berita" 
+                            <Input type="date" placeholder="Masukkan tanggal rilis (YYYY-MM-DD)" />
+                        </Form.Item>
+                        <Form.Item
+                            label="Isi Singkat"
+                            name="isi_singkat"
+                        >
+                            <Input.TextArea
+                                rows={2}
+                                placeholder="Masukkan isi singkat berita"
                             />
                         </Form.Item>
-                        <Form.Item 
-                            label="Tanggal Publikasi" 
-                            name="tanggal_publikasi"
-                            rules={[{ required: true, message: 'Tanggal publikasi wajib diisi' }]}
+                        <Form.Item
+                            label="Isi"
+                            name="isi"
+                            rules={[{ required: true, message: 'Isi wajib diisi' }]}
                         >
-                            <Input placeholder="Masukkan tanggal publikasi (YYYY-MM-DD)" />
+                            <Input.TextArea
+                                rows={4}
+                                placeholder="Masukkan isi berita"
+                            />
                         </Form.Item>
-                        <Form.Item 
-                            label="Status" 
+                        <Form.Item
+                            label="File"
+                            name="file"
+                        >
+                            <Input placeholder="Masukkan nama file" />
+                        </Form.Item>
+                        <Form.Item
+                            label="Foto"
+                            name="foto"
+                        >
+                            <Input placeholder="Masukkan nama foto" />
+                        </Form.Item>
+                        <Form.Item
+                            label="Status"
                             name="status"
-                            rules={[{ required: true, message: 'Status wajib dipilih' }]}
+                            valuePropName="checked"
                         >
-                            <Input placeholder="Masukkan status (aktif/inaktif)" />
+                            <Select placeholder="Pilih status">
+                                <Option value={true}>Publish</Option>
+                                <Option value={false}>Preview</Option>
+                            </Select>
                         </Form.Item>
-                        <Form.Item 
-                            label="Kategori" 
-                            name="kategori"
-                            rules={[{ required: true, message: 'Kategori wajib diisi' }]}
+                        <Form.Item
+                            label="Produsen Data (Owner)"
+                            name="produsen_data_table_id"
+                            rules={[{ required: true, message: 'Produsen data wajib dipilih' }]}
                         >
-                            <Input placeholder="Masukkan kategori berita" />
-                        </Form.Item>
-                        <Form.Item 
-                            label="Penulis" 
-                            name="penulis"
-                            rules={[{ required: true, message: 'Penulis wajib diisi' }]}
-                        >
-                            <Input placeholder="Masukkan nama penulis" />
+                            <Select placeholder="Pilih produsen data">
+                                {produsenData.map((produsen) => (
+                                    <Option key={produsen.id} value={produsen.id}>{produsen.value}</Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Form>
                 </Modal>
