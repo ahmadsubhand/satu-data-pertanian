@@ -1,11 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Card, Table, Button, Space, Input, Modal, Form } from 'antd';
+import { Head, usePage, router } from '@inertiajs/react';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
 import type { TableColumnsType } from 'antd';
-import React, { useState } from 'react';
-import { EditOutlined, DeleteOutlined, PlusOutlined, FileImageOutlined } from '@ant-design/icons';
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { adminInfografisStore, adminInfografisUpdate, adminInfografisDestroy } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -21,23 +21,30 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface InfografisType {
     id: number;
     judul: string;
-    deskripsi: string;
-    tanggal_publikasi: string;
+    tanggal_rilis: string; // Changed from tanggal_publikasi
+    keterangan: string; // Changed from deskripsi
+    file: string;
     status: string;
-    kategori: string;
-    url_gambar: string;
+    produsen_data_table_id: number;
+    produsen_data?: string; // Nama produsen
     created_at: string;
     updated_at: string;
 }
 
-interface Props {
-    infografis: InfografisType[];
+interface ProdusenData {
+    id: number;
+    value: string;
 }
 
-export default function InfografisPage({ infografis }: Props) {
-    const { auth, flash } = usePage<SharedData>().props;
+interface Props {
+    infografis: InfografisType[];
+    produsenData?: ProdusenData[];
+}
+
+export default function InfografisPage({ infografis, produsenData = [] }: Props) {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
+    const [selectedStatus, setSelectedStatus] = useState<boolean | null>(null);
     const [form] = Form.useForm();
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
@@ -45,14 +52,21 @@ export default function InfografisPage({ infografis }: Props) {
     const [currentRecord, setCurrentRecord] = useState<InfografisType | null>(null);
 
     // Use data from props instead of hardcoded values
-    const [infografisData, setInfografisData] = useState<InfografisType[]>(infografis || []);
+    // No local state needed anymore since we'll use API calls
 
-    // Filter data based on search
-    const filteredData = infografisData.filter(item =>
+    // Filter data based on search and status
+    const filteredData = infografis.filter(item =>
         item.judul.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.deskripsi.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.kategori.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.status.toLowerCase().includes(searchText.toLowerCase())
+        item.keterangan.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.produsen_data?.toLowerCase().includes(searchText.toLowerCase()) ||
+        item.file.toLowerCase().includes(searchText.toLowerCase())
+    ).filter(item =>
+        selectedStatus !== null && selectedStatus !== undefined
+            ? (selectedStatus ?
+                (item.status === 1 || item.status === '1' || item.status === true) :
+                !(item.status === 1 || item.status === '1' || item.status === true)
+              )
+            : true
     );
 
     const columns: TableColumnsType<InfografisType> = [
@@ -71,47 +85,51 @@ export default function InfografisPage({ infografis }: Props) {
             width: 200,
         },
         {
-            title: 'Deskripsi',
-            dataIndex: 'deskripsi',
-            key: 'deskripsi',
-            render: (deskripsi: string) => (
+            title: 'Tanggal Rilis',
+            dataIndex: 'tanggal_rilis',
+            key: 'tanggal_rilis',
+            sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
+            width: 120,
+        },
+        {
+            title: 'Keterangan',
+            dataIndex: 'keterangan',
+            key: 'keterangan',
+            render: (keterangan: string) => (
                 <div style={{ maxWidth: '200px', whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                    {deskripsi.length > 50 ? `${deskripsi.substring(0, 50)}...` : deskripsi}
+                    {keterangan.length > 50 ? `${keterangan.substring(0, 50)}...` : keterangan}
                 </div>
             ),
             width: 250,
         },
         {
-            title: 'Tanggal Publikasi',
-            dataIndex: 'tanggal_publikasi',
-            key: 'tanggal_publikasi',
-            sorter: (a, b) => a.tanggal_publikasi.localeCompare(b.tanggal_publikasi),
+            title: 'File',
+            dataIndex: 'file',
+            key: 'file',
+            width: 150,
+        },
+        {
+            title: 'Owner',
+            dataIndex: 'produsen_data',
+            key: 'produsen_data',
+            sorter: (a, b) => (a.produsen_data || '').localeCompare(b.produsen_data || ''),
             width: 150,
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            sorter: (a, b) => a.status.localeCompare(b.status),
-            width: 100,
-        },
-        {
-            title: 'Kategori',
-            dataIndex: 'kategori',
-            key: 'kategori',
-            sorter: (a, b) => a.kategori.localeCompare(b.kategori),
-            width: 120,
-        },
-        {
-            title: 'URL Gambar',
-            dataIndex: 'url_gambar',
-            key: 'url_gambar',
-            render: (url: string) => (
-                <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff' }}>
-                    Tampilkan Gambar
-                </a>
+            render: (status) => (
+                <Tag color={status ? 'green' : 'orange'}>
+                    {(status === 1 || status === '1' || status === true) ? 'Publish' : 'Preview'}
+                </Tag>
             ),
-            width: 150,
+            sorter: (a, b) => {
+                const aStatus = (a.status === 1 || a.status === '1' || a.status === true);
+                const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
+                return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
+            },
+            width: 100,
         },
         {
             title: 'Aksi',
@@ -138,36 +156,23 @@ export default function InfografisPage({ infografis }: Props) {
     ];
 
     const { Search } = Input;
+    const { Option } = Select;
 
     // Function to add or update infografis
     const handleAddInfografis = (values: any) => {
         if (isEditing && currentRecord) {
-            // Update existing infografis
-            setInfografisData(prevData => 
-                prevData.map(item => 
-                    item.id === currentRecord.id 
-                        ? { ...item, ...values, updated_at: new Date().toISOString() } 
-                        : item
-                )
-            );
-            toast.success('Infografis berhasil diperbarui.');
-        } else {
-            // Add new infografis
-            const newId = Math.max(...infografisData.map(item => item.id), 0) + 1;
-            const newInfografis = {
-                id: newId,
+            // Update existing infografis via API
+            router.put(adminInfografisUpdate.url(currentRecord.id), {
                 ...values,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            };
-            setInfografisData(prevData => [...prevData, newInfografis]);
-            toast.success('Infografis baru berhasil ditambahkan.');
+                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            });
+        } else {
+            // Add new infografis via API
+            router.post(adminInfografisStore.url(), {
+                ...values,
+                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            });
         }
-        
-        setIsModalVisible(false);
-        setIsEditing(false);
-        setCurrentRecord(null);
-        form.resetFields();
     };
 
     // Function to handle infografis deletion
@@ -179,8 +184,7 @@ export default function InfografisPage({ infografis }: Props) {
     // Function to confirm deletion
     const confirmDelete = () => {
         if (deleteRecordId) {
-            setInfografisData(prevData => prevData.filter(item => item.id !== deleteRecordId));
-            toast.success('Infografis berhasil dihapus.');
+            router.delete(adminInfografisDestroy.url(deleteRecordId));
         }
         setDeleteModalVisible(false);
         setDeleteRecordId(null);
@@ -196,11 +200,11 @@ export default function InfografisPage({ infografis }: Props) {
     const handleEdit = (record: InfografisType) => {
         form.setFieldsValue({
             judul: record.judul,
-            deskripsi: record.deskripsi,
-            tanggal_publikasi: record.tanggal_publikasi,
-            status: record.status,
-            kategori: record.kategori,
-            url_gambar: record.url_gambar,
+            tanggal_rilis: record.tanggal_rilis,
+            keterangan: record.keterangan,
+            file: record.file,
+            status: record.status ? 1 : 0,
+            produsen_data_table_id: record.produsen_data_table_id,
         });
 
         setCurrentRecord(record);
@@ -230,13 +234,22 @@ export default function InfografisPage({ infografis }: Props) {
                 <p>Daftar semua infografis yang dikelola dalam sistem.</p>
 
                 <Card className="mt-4">
-                    <div className="mb-4">
+                    <div className="flex flex-wrap gap-4 mb-4">
                         <Search
-                            placeholder="Cari infografis (judul, deskripsi, kategori)..."
+                            placeholder="Cari infografis (judul, keterangan, owner, file)..."
                             onSearch={value => setSearchText(value)}
-                            style={{ width: 400 }}
+                            style={{ width: 300 }}
                             enterButton
                         />
+                        <Select
+                            placeholder="Filter Status"
+                            style={{ width: 150 }}
+                            allowClear
+                            onChange={(value) => setSelectedStatus(value === undefined ? null : value)}
+                        >
+                            <Option value={true}>Publish</Option>
+                            <Option value={false}>Preview</Option>
+                        </Select>
                     </div>
 
                     <Table
@@ -249,7 +262,7 @@ export default function InfografisPage({ infografis }: Props) {
                             showQuickJumper: true,
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} infografis`
                         }}
-                        scroll={{ x: 1200 }}
+                        scroll={{ x: 800 }}
                     />
                 </Card>
 
@@ -282,57 +295,65 @@ export default function InfografisPage({ infografis }: Props) {
                         onFinish={handleAddInfografis}
                         initialValues={{
                             judul: '',
-                            deskripsi: '',
-                            tanggal_publikasi: new Date().toISOString().split('T')[0],
-                            status: 'aktif',
-                            kategori: '',
-                            url_gambar: ''
+                            tanggal_rilis: new Date().toISOString().split('T')[0],
+                            keterangan: '',
+                            file: '',
+                            status: 0,
+                            produsen_data_table_id: undefined
                         }}
                     >
-                        <Form.Item 
-                            label="Judul" 
-                            name="judul" 
+                        <Form.Item
+                            label="Judul"
+                            name="judul"
                             rules={[{ required: true, message: 'Judul wajib diisi' }]}
                         >
                             <Input placeholder="Masukkan judul infografis" />
                         </Form.Item>
-                        <Form.Item 
-                            label="Deskripsi" 
-                            name="deskripsi" 
-                            rules={[{ required: true, message: 'Deskripsi wajib diisi' }]}
+                        <Form.Item
+                            label="Tanggal Rilis"
+                            name="tanggal_rilis"
+                            rules={[{ required: true, message: 'Tanggal rilis wajib diisi' }]}
                         >
-                            <Input.TextArea 
-                                rows={4} 
-                                placeholder="Masukkan deskripsi infografis" 
+                            <Input type="date" placeholder="Masukkan tanggal rilis (YYYY-MM-DD)" />
+                        </Form.Item>
+                        <Form.Item
+                            label="Keterangan"
+                            name="keterangan"
+                        >
+                            <Input.TextArea
+                                rows={4}
+                                placeholder="Masukkan keterangan infografis"
                             />
                         </Form.Item>
-                        <Form.Item 
-                            label="Tanggal Publikasi" 
-                            name="tanggal_publikasi"
-                            rules={[{ required: true, message: 'Tanggal publikasi wajib diisi' }]}
+                        <Form.Item
+                            label="File"
+                            name="file"
+                            rules={[{ required: true, message: 'Nama file wajib diisi' }]}
                         >
-                            <Input placeholder="Masukkan tanggal publikasi (YYYY-MM-DD)" />
+                            <Input placeholder="Masukkan nama file" />
                         </Form.Item>
-                        <Form.Item 
-                            label="Status" 
+                        <Form.Item
+                            label="Status"
                             name="status"
-                            rules={[{ required: true, message: 'Status wajib dipilih' }]}
+                            rules={[{ required: true, message: "Status wajib dipilih" }]}
                         >
-                            <Input placeholder="Masukkan status (aktif/inaktif)" />
+                            <Select placeholder="Pilih status">
+                                <Option value={1}>Publish</Option>
+                                <Option value={0}>Preview</Option>
+                            </Select>
                         </Form.Item>
-                        <Form.Item 
-                            label="Kategori" 
-                            name="kategori"
-                            rules={[{ required: true, message: 'Kategori wajib diisi' }]}
+                        <Form.Item
+                            label="Produsen Data"
+                            name="produsen_data_table_id"
+                            rules={[{ required: true, message: 'Produsen data wajib dipilih' }]}
                         >
-                            <Input placeholder="Masukkan kategori infografis" />
-                        </Form.Item>
-                        <Form.Item 
-                            label="URL Gambar" 
-                            name="url_gambar"
-                            rules={[{ required: true, message: 'URL gambar wajib diisi' }]}
-                        >
-                            <Input placeholder="Masukkan URL gambar infografis" />
+                            <Select placeholder="Pilih produsen data">
+                                {produsenData.map((produsen) => (
+                                    <Option key={produsen.id} value={produsen.id}>
+                                        {produsen.value}
+                                    </Option>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Form>
                 </Modal>

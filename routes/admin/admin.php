@@ -12,6 +12,7 @@ use App\Http\Controllers\InputLinkWebsiteController;
 use App\Http\Controllers\KalenderDataController;
 use App\Http\Controllers\ManajemenUserController;
 use App\Http\Controllers\MenuBeritaTableController;
+use App\Http\Controllers\MenuInfografisTableController;
 use App\Http\Controllers\PublikasiController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VerifikasiDataPrioritasController;
@@ -103,8 +104,11 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () 
   });
 
   // Infografis (ID: 4)
-  Route::middleware('menuAdmin:4')->prefix('infografis')->group(function () {
-      Route::get('/', [InfografisController::class, 'index'])->name('admin-infografis');
+  Route::middleware('menuAdmin:4')->prefix('infografis')->controller(MenuInfografisTableController::class)->group(function () {
+      Route::get('/', 'index')->name('admin-infografis');
+      Route::post('/', 'store')->name('admin-infografis-store');
+      Route::put('/{menuInfografisTable}', 'update')->name('admin-infografis-update');
+      Route::delete('/{menuInfografisTable}', 'destroy')->name('admin-infografis-destroy');
   });
 
   // Publikasi (ID: 5)

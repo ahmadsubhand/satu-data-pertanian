@@ -113,7 +113,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>10 Manfaat Durian Untuk Kesehatan<br></p>',
                 'file_info' => '234057546_3033573723592957_1454413961101838615_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 364,
@@ -122,7 +122,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Petai Si Bau Khas Hasilkan Beragam Manfaat<br></p>',
                 'file_info' => '236058136_3035381776745485_604168728776728590_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 365,
@@ -131,7 +131,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Limbah Tanaman Jagung Bisa Dimanfaatkan Sebagai Pakan Ternak<br></p>',
                 'file_info' => '321961357_532240968659641_507964409248363896_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 366,
@@ -140,7 +140,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Ku Kira Lato-Lato Ternyata Terong Hijau<br></p>',
                 'file_info' => '324252023_572621184709141_4198629166946923612_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 367,
@@ -149,7 +149,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Kenapa Yaa, Kangkung Cocok Ditanam di Musim Hujan?<br></p>',
                 'file_info' => '326946804_881247123122087_205800922647877566_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 368,
@@ -158,7 +158,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Tanaman Hortikultura yang Bisa Ditanam di Rumah<br></p>',
                 'file_info' => '325653701_5985342208195997_8780799252689812469_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 369,
@@ -167,7 +167,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Vertical Garden Solusi Lahan Minimalis<br></p>',
                 'file_info' => '327819092_888608182283670_6005427349396352476_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 370,
@@ -176,7 +176,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Sayur Organik atau Non Organik?<br></p>',
                 'file_info' => '326143996_1383617052468686_5256292380652137375_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 371,
@@ -185,7 +185,7 @@ class MenuInfografisTableSeeder extends Seeder
                 'ket_info' => '<p>Buah Merah (Pandanus Conoideus)<br></p>',
                 'file_info' => '340955797_749460870155226_5485785935012030161_n.jpg',
                 'owner_info' => '0000000000',
-                'status_info' => 1,
+                'status_info' => 0,
             ],
             [
                 'id' => 372,
