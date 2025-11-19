@@ -36,7 +36,7 @@ class MenuHelper
                 // Map menu name to route name based on routes defined in routes/admin/admin.php
                 switch ($menu->menu) {
                     case 'Menu Admin':
-                        return 'admin-user';
+                        return 'admin-manajemen-user';
                     case 'Data':
                         return 'admin-data';
                     case 'Berita':

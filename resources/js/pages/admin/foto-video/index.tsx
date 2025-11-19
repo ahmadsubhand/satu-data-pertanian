@@ -1,11 +1,13 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Card, Table, Button, Space, Input, Modal, Form, Select } from 'antd';
+import { Head, usePage, router } from '@inertiajs/react';
+import { Card, Table, Button, Space, Input, Modal, Form, Select, Upload } from 'antd';
 import type { TableColumnsType } from 'antd';
-import React, { useState } from 'react';
-import { EditOutlined, DeleteOutlined, PlusOutlined, FileImageOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { EditOutlined, DeleteOutlined, PlusOutlined, FileImageOutlined, VideoCameraOutlined, UploadOutlined } from '@ant-design/icons';
 import { toast } from 'sonner';
+import FileUpload from '@/components/file-upload';
+import { adminMediaStore, adminMediaUpdate, adminMediaDestroy } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -27,6 +29,7 @@ interface FotoVideoType {
     kategori: string;
     jenis_media: string; // 'foto' or 'video'
     url_media: string;
+    file_name?: string;
     created_at: string;
     updated_at: string;
 }
@@ -47,6 +50,16 @@ export default function FotoVideoPage({ fotovideo }: Props) {
 
     // Use data from props instead of hardcoded values
     const [fotovideoData, setFotovideoData] = useState<FotoVideoType[]>(fotovideo || []);
+
+    // Handle flash messages
+    useEffect(() => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+    }, [flash]);
 
     // Filter data based on search
     const filteredData = fotovideoData.filter(item =>
@@ -112,16 +125,22 @@ export default function FotoVideoPage({ fotovideo }: Props) {
             width: 100,
         },
         {
-            title: 'URL Media',
-            dataIndex: 'url_media',
-            key: 'url_media',
-            render: (url: string) => (
-                <a href={url} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff' }}>
-                    {url.includes('.mp4') || url.includes('.avi') || url.includes('.mov') ? 
-                        'Tonton Video' : 'Lihat Gambar'}
-                </a>
+            title: 'File Media',
+            dataIndex: 'file_name',
+            key: 'file_name',
+            render: (fileName: string, record: FotoVideoType) => (
+                fileName ? (
+                    <a href={record.url_media} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff' }}>
+                        {fileName}
+                    </a>
+                ) : (
+                    <a href={record.url_media} target="_blank" rel="noopener noreferrer" style={{ color: '#1890ff' }}>
+                        {record.url_media.includes('.mp4') || record.url_media.includes('.avi') || record.url_media.includes('.mov') ?
+                            'Tonton Video' : 'Lihat Gambar'}
+                    </a>
+                )
             ),
-            width: 150,
+            width: 200,
         },
         {
             title: 'Aksi',
@@ -150,31 +169,48 @@ export default function FotoVideoPage({ fotovideo }: Props) {
     const { Search } = Input;
     const { Option } = Select;
 
+    // Normalize file upload for Ant Design Form
+    const normFile = (e: any) => {
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e?.fileList;
+    };
+
     // Function to add or update foto/video
     const handleAddFotoVideo = (values: any) => {
+        // Handle file upload - in a real implementation this would upload to the server
+        // For now, we'll simulate storing the file info
+        let updatedValues = { ...values };
+
+        // Process file media if it exists
+        if (values.file_media && values.file_media.fileList && values.file_media.fileList.length > 0) {
+            // Get the first file from the list
+            const file = values.file_media.fileList[0];
+
+            // In a real implementation, you would upload the file to your server
+            // and get back a URL to store. For now we'll just create a placeholder.
+            updatedValues.url_media = file.originFileObj ? URL.createObjectURL(file.originFileObj) : '';
+            updatedValues.file_name = file.name || 'unnamed_file';
+        } else {
+            // If no file was uploaded, maintain the old URL if we're editing
+            if (isEditing && currentRecord) {
+                updatedValues.url_media = currentRecord.url_media;
+                updatedValues.file_name = currentRecord.judul;
+            }
+        }
+
+        // Remove the file_media field from the values as it's not part of the model
+        delete updatedValues.file_media;
+
         if (isEditing && currentRecord) {
             // Update existing foto/video
-            setFotovideoData(prevData => 
-                prevData.map(item => 
-                    item.id === currentRecord.id 
-                        ? { ...item, ...values, updated_at: new Date().toISOString() } 
-                        : item
-                )
-            );
-            toast.success('Media berhasil diperbarui.');
+            router.put(adminMediaUpdate.url(currentRecord.id), updatedValues);
         } else {
             // Add new foto/video
-            const newId = Math.max(...fotovideoData.map(item => item.id), 0) + 1;
-            const newFotoVideo = {
-                id: newId,
-                ...values,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
-            };
-            setFotovideoData(prevData => [...prevData, newFotoVideo]);
-            toast.success('Media baru berhasil ditambahkan.');
+            router.post(adminMediaStore.url(), updatedValues);
         }
-        
+
         setIsModalVisible(false);
         setIsEditing(false);
         setCurrentRecord(null);
@@ -190,8 +226,7 @@ export default function FotoVideoPage({ fotovideo }: Props) {
     // Function to confirm deletion
     const confirmDelete = () => {
         if (deleteRecordId) {
-            setFotovideoData(prevData => prevData.filter(item => item.id !== deleteRecordId));
-            toast.success('Media berhasil dihapus.');
+            router.delete(adminMediaDestroy.url(deleteRecordId));
         }
         setDeleteModalVisible(false);
         setDeleteRecordId(null);
@@ -212,7 +247,8 @@ export default function FotoVideoPage({ fotovideo }: Props) {
             status: record.status,
             kategori: record.kategori,
             jenis_media: record.jenis_media,
-            url_media: record.url_media,
+            // Don't set url_media directly since we're using file upload instead
+            // If we have file information, we might want to set up a placeholder
         });
 
         setCurrentRecord(record);
@@ -299,7 +335,6 @@ export default function FotoVideoPage({ fotovideo }: Props) {
                             status: 'aktif',
                             kategori: '',
                             jenis_media: 'foto',
-                            url_media: ''
                         }}
                     >
                         <Form.Item 
@@ -350,12 +385,20 @@ export default function FotoVideoPage({ fotovideo }: Props) {
                                 <Option value="video">Video</Option>
                             </Select>
                         </Form.Item>
-                        <Form.Item 
-                            label="URL Media" 
-                            name="url_media"
-                            rules={[{ required: true, message: 'URL media wajib diisi' }]}
+                        <Form.Item
+                            label="File Media"
+                            name="file_media"
+                            valuePropName="fileList"
+                            getValueFromEvent={normFile}
+                            rules={[{ required: true, message: 'File media wajib diunggah' }]}
                         >
-                            <Input placeholder="Masukkan URL media (foto/video)" />
+                            <FileUpload
+                                label="Upload Foto/Video"
+                                maxFileSize={10}
+                                allowedFileTypes={['image/*', 'video/*']}
+                                accept="image/*,video/*"
+                                required
+                            />
                         </Form.Item>
                     </Form>
                 </Modal>

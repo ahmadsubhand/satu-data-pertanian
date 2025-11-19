@@ -11,47 +11,48 @@ import {
 import { resolveUrl } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronRight, Users, Menu as MenuIcon, Settings, UserRoundCog } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import * as React from 'react';
-
-// Define submenu items for User menu
-const userSubmenuItems = [
-    { title: 'Daftar User', href: '/admin/user/daftar-user', icon: Users },
-    { title: 'Manajemen Menu', href: '/admin/user/manajemen-menu', icon: MenuIcon },
-    { title: 'Manajemen Submenu', href: '/admin/user/manajemen-submenu', icon: Settings },
-    { title: 'Manajemen Role', href: '/admin/user/manajemen-role', icon: UserRoundCog },
-];
-
-// Define submenu items for Data menu
-const dataSubmenuItems = [
-    { title: 'Input Data', href: '/admin/data/input-data', icon: MenuIcon },
-    { title: 'Input Daftar Data', href: '/admin/data/input-daftar-data', icon: MenuIcon },
-    { title: 'Input Data Variabel', href: '/admin/data/input-data-variabel', icon: MenuIcon },
-    { title: 'Input Data Indikator', href: '/admin/data/input-data-indikator', icon: MenuIcon },
-    { title: 'Input Link Website', href: '/admin/data/input-link-website', icon: MenuIcon },
-];
 
 export function NavMain({ items = [] }: { items: NavItem[] }) {
     const page = usePage();
 
-    // Memeriksa apakah URL saat ini adalah submenu dari user
-    const isUserSubmenuActive = page.url.startsWith('/admin/user/') && page.url !== '/admin/user';
-    // Memeriksa apakah URL saat ini adalah submenu dari data
-    const isDataSubmenuActive = page.url.startsWith('/admin/data/') && page.url !== '/admin/data';
-
     const [openItems, setOpenItems] = React.useState<Set<string>>(() => {
-        // Jika sedang di halaman submenu user, buka menu User otomatis
-        if (isUserSubmenuActive) {
-            return new Set(['0']); // '0' adalah key untuk menu User
-        }
-        // Jika sedang di halaman submenu data, buka menu Data otomatis
-        if (isDataSubmenuActive) {
-            return new Set(['1']); // '1' adalah key untuk menu Data
-        }
-        return new Set();
+        const activeSet = new Set<string>();
+
+        // Check each item to see if we should open its submenu based on current URL
+        items.forEach((item, index) => {
+            if (item.submenu && item.submenu.some(subItem =>
+                page.url.startsWith(resolveUrl(subItem.href)) && page.url !== resolveUrl(item.href)
+            )) {
+                activeSet.add(String(index));
+            }
+        });
+
+        return activeSet;
     });
 
-    const isActive = (href: string) => {
+    // Update openItems when page URL changes
+    React.useEffect(() => {
+        const newActiveSet = new Set<string>();
+
+        items.forEach((item, index) => {
+            if (item.submenu && item.submenu.some(subItem =>
+                page.url.startsWith(resolveUrl(subItem.href)) && page.url !== resolveUrl(item.href)
+            )) {
+                newActiveSet.add(String(index));
+            }
+        });
+
+        // Only update if the set has changed to prevent unnecessary re-renders
+        if (newActiveSet.size !== openItems.size ||
+            ![...newActiveSet].every(item => openItems.has(item)) ||
+            ![...openItems].every(item => newActiveSet.has(item))) {
+            setOpenItems(newActiveSet);
+        }
+    }, [page.url, items]);
+
+    const isActive = (href: string | any) => {
         return page.url.startsWith(resolveUrl(href));
     };
 
@@ -59,34 +60,32 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
         setOpenItems(prev => {
             const newSet = new Set(prev);
             if (newSet.has(key)) {
-                newSet.delete(key);
+                newSet.delete(key); // Close submenu
             } else {
-                newSet.add(key);
+                newSet.add(key); // Open submenu
             }
             return newSet;
         });
     };
 
     const renderNavItem = (item: NavItem, key: string | number) => {
-        // Check specifically for the User menu by matching its href
-        const isAdminUserMenu = item.href === '/admin/user';
-        // Check specifically for the Data menu by matching its href
-        const isAdminDataMenu = item.href === '/admin/data';
-        // Memeriksa apakah URL saat ini adalah submenu dari data
-        const isDataSubmenuActive = page.url.startsWith('/admin/data/') && page.url !== '/admin/data';
-        
-        const itemKey = String(key);
-        const isOpen = openItems.has(itemKey) || 
-                      (isAdminUserMenu && isUserSubmenuActive) || 
-                      (isAdminDataMenu && isDataSubmenuActive);
+        const hasSubmenu = item.submenu && item.submenu.length > 0;
 
-        if (isAdminUserMenu) {
-            // Render User menu as a collapsible parent with submenu
+        const itemKey = String(key);
+        const isOpen = openItems.has(itemKey);
+
+        if (hasSubmenu) {
+            // Check if any submenu item is active
+            const isSubmenuActive = item.submenu?.some(subItem =>
+                page.url.startsWith(resolveUrl(subItem.href)) && page.url !== resolveUrl(item.href)
+            ) || false;
+
+            // Render menu as a collapsible parent with submenu
             return (
                 <SidebarMenuItem key={key}>
                     <SidebarMenuButton
                         asChild
-                        isActive={isActive(item.href) || isUserSubmenuActive}
+                        isActive={isActive(item.href) || isSubmenuActive}
                         onClick={() => toggleItem(itemKey)}
                         tooltip={{ children: item.title }}
                     >
@@ -104,64 +103,24 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             />
                         </div>
                     </SidebarMenuButton>
-                    <SidebarMenuSub className="ml-0 border-l-0 px-0 py-0">
-                        {userSubmenuItems.map((subItem, subIndex) => (
-                            <SidebarMenuSubItem key={`${key}-sub-${subIndex}`}>
-                                <SidebarMenuSubButton
-                                    asChild
-                                    isActive={page.url === resolveUrl(subItem.href)}
-                                    className="hover:bg-green-100 dark:hover:bg-green-900 data-[active=true]:bg-green-100 data-[active=true]:dark:bg-green-900 transition-colors p-2 rounded-md"
-                                >
-                                    <Link href={subItem.href} prefetch>
-                                        {subItem.icon && <subItem.icon className="h-4 w-4" />}
-                                        <span>{subItem.title}</span>
-                                    </Link>
-                                </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                        ))}
-                    </SidebarMenuSub>
-                </SidebarMenuItem>
-            );
-        } else if (isAdminDataMenu) {
-            // Render Data menu as a collapsible parent with submenu
-            return (
-                <SidebarMenuItem key={key}>
-                    <SidebarMenuButton
-                        asChild
-                        isActive={isActive(item.href) || isDataSubmenuActive}
-                        onClick={() => toggleItem(itemKey)}
-                        tooltip={{ children: item.title }}
-                    >
-                        <div className="flex w-full items-center justify-between hover:bg-green-100 dark:hover:bg-green-900 transition-colors p-2 rounded-md">
-                            <div className="flex items-center gap-2">
-                                {item.icon && typeof item.icon === 'function' && (
-                                    <item.icon className="h-4 w-4" />
-                                )}
-                                <span>{item.title}</span>
-                            </div>
-                            <ChevronRight
-                                className={`ml-auto h-4 w-4 transition-transform duration-200 ${
-                                    isOpen ? 'rotate-90' : ''
-                                }`}
-                            />
-                        </div>
-                    </SidebarMenuButton>
-                    <SidebarMenuSub className="ml-0 border-l-0 px-0 py-0">
-                        {dataSubmenuItems.map((subItem, subIndex) => (
-                            <SidebarMenuSubItem key={`${key}-sub-${subIndex}`}>
-                                <SidebarMenuSubButton
-                                    asChild
-                                    isActive={page.url === resolveUrl(subItem.href)}
-                                    className="hover:bg-green-100 dark:hover:bg-green-900 data-[active=true]:bg-green-100 data-[active=true]:dark:bg-green-900 transition-colors p-2 rounded-md"
-                                >
-                                    <Link href={subItem.href} prefetch>
-                                        {subItem.icon && <subItem.icon className="h-4 w-4" />}
-                                        <span>{subItem.title}</span>
-                                    </Link>
-                                </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                        ))}
-                    </SidebarMenuSub>
+                    {isOpen && (
+                        <SidebarMenuSub className="ml-0 border-l-0 px-0 py-0">
+                            {item.submenu?.map((subItem, subIndex) => (
+                                <SidebarMenuSubItem key={`${key}-sub-${subIndex}`}>
+                                    <SidebarMenuSubButton
+                                        asChild
+                                        isActive={page.url === resolveUrl(subItem.href)}
+                                        className="hover:bg-green-100 dark:hover:bg-green-900 data-[active=true]:bg-green-100 data-[active=true]:dark:bg-green-900 transition-colors p-2 rounded-md"
+                                    >
+                                        <Link href={subItem.href} prefetch>
+                                            {subItem.icon && typeof subItem.icon === 'function' && <subItem.icon className="h-4 w-4" />}
+                                            <span>{subItem.title}</span>
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                            ))}
+                        </SidebarMenuSub>
+                    )}
                 </SidebarMenuItem>
             );
         } else {

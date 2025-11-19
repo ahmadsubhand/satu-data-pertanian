@@ -1,7 +1,7 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Checkbox } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -29,7 +29,7 @@ interface DataItem {
     tgl_rilis: string;
     abstraksi: string;
     produsen_data: string;
-    tagging_data: string[];
+    tagging_data: string;
     data_prioritas: boolean;
     kategori_data: string;
     progres: number;
@@ -247,7 +247,7 @@ const InputDataPage = ({ dataItems }: Props) => {
             tgl_rilis: record.tgl_rilis,
             abstraksi: record.abstraksi,
             produsen_data: record.produsen_data,
-            tagging_data: Array.isArray(record.tagging_data) ? record.tagging_data.join(', ') : record.tagging_data,
+            tagging_data: record.tagging_data,
             data_prioritas: record.data_prioritas,
             kategori_data: record.kategori_data,
             progres: record.progres,
@@ -372,13 +372,16 @@ const InputDataPage = ({ dataItems }: Props) => {
                             <Input placeholder="Misal: produksi, statistik, 2023" />
                         </Form.Item>
                         <Form.Item label="Data Prioritas" name="data_prioritas" valuePropName="checked">
-                            <Select placeholder="Pilih status prioritas">
-                                <Option value={true}>Prioritas</Option>
-                                <Option value={false}>Biasa</Option>
-                            </Select>
+                            <Checkbox>Data Prioritas</Checkbox>
                         </Form.Item>
                         <Form.Item label="Kategori Data" name="kategori_data" rules={[{ required: true, message: 'Kategori data wajib dipilih' }]}>
-                            <Input placeholder="Masukkan kategori data" />
+                            <Select placeholder="Pilih kategori data">
+                                <Option value="Statistik">Statistik</Option>
+                                <Option value="Geospasial">Geospasial</Option>
+                                <Option value="Indikator">Indikator</Option>
+                                <Option value="Variabel">Variabel</Option>
+                                <Option value="Link">Link</Option>
+                            </Select>
                         </Form.Item>
                         <Form.Item label="Progres (%)" name="progres" rules={[{ required: true, message: 'Progres wajib diisi' }]}>
                             <Select placeholder="Pilih progres">

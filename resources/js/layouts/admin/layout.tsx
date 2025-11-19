@@ -36,7 +36,7 @@ export default ({ children, breadcrumbs }: AdminLayoutProps) => {
     return (
         <AppLayoutTemplate breadcrumbs={breadcrumbs}>
             {children}
-            <Toaster richColors closeButton position="top-right" />
+            <Toaster position="top-right" />
         </AppLayoutTemplate>
     );
 };
