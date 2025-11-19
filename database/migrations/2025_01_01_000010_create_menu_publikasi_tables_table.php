@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('judul');
             $table->string('nomor_publikasi')->nullable();
             $table->string('nomor_issn')->nullable();
-            $table->date('tanggal_rilis')->nullable();
+            $table->date('tanggal_rilis');
             $table->integer('ukuran_file');
             $table->integer('jumlah_halaman');
             $table->text('keterangan');
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('produsen_data_table_id')->constrained('produsen_data_tables', 'id');
             $table->text('abstraksi');
             $table->string('cover');
-            $table->string('status', 20)->default('Private');
+            $table->boolean('status')->default(false);
         });
     }
 
