@@ -1,7 +1,7 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Checkbox } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';

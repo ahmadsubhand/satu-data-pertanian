@@ -10,7 +10,6 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import {
-    adminUser,
     adminData,
     adminBerita,
     adminInfografis,
@@ -22,7 +21,7 @@ import {
 } from '@/routes';
 import { User, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { Database, Newspaper, Image, FileText, Video, Eye, User as UserIcon } from 'lucide-react';
+import { Database, Newspaper, Image, FileText, Video, Eye, User as UserIcon, Users, Menu as MenuIcon, Settings, UserRoundCog, Calendar as CalendarOutlined } from 'lucide-react';
 import AppLogo from './app-logo';
 import { usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
@@ -35,41 +34,60 @@ export const getAdminNavItems = (user: User): NavItem[] => {
     // Mapping ID → NavItem (dengan helper URL)
     const menuMap: Record<number, NavItem> = {
         1: {
-            title: 'User',
-            href: adminUser.url(),
+            title: 'User Management',
+            href: '/admin/manajemen-user',
             icon: UserIcon,
+            // This should be a direct link, no submenu
         },
         2: {
+            title: 'User',
+            href: '/admin/user',
+            icon: UserIcon,
+            submenu: [
+                { title: 'Daftar User', href: '/admin/user/daftar-user', icon: Users },
+                { title: 'Manajemen Menu', href: '/admin/user/manajemen-menu', icon: MenuIcon },
+                { title: 'Manajemen Submenu', href: '/admin/user/manajemen-submenu', icon: Settings },
+                { title: 'Manajemen Role', href: '/admin/user/manajemen-role', icon: UserRoundCog },
+            ]
+        },
+        3: {
             title: 'Data',
             href: adminData.url(),
             icon: Database,
+            submenu: [
+                { title: 'Input Data', href: '/admin/data/input-data', icon: MenuIcon },
+                { title: 'Input Daftar Data', href: '/admin/data/input-daftar-data', icon: MenuIcon },
+                { title: 'Input Data Variabel', href: '/admin/data/input-data-variabel', icon: MenuIcon },
+                { title: 'Input Data Indikator', href: '/admin/data/input-data-indikator', icon: MenuIcon },
+                { title: 'Input Link Website', href: '/admin/data/input-link-website', icon: MenuIcon },
+            ]
         },
-        3: {
+        4: {
             title: 'Berita',
             href: adminBerita.url(),
             icon: Newspaper,
         },
-        4: {
+        5: {
             title: 'Infografis',
             href: adminInfografis.url(),
             icon: Image,
         },
-        5: {
+        6: {
             title: 'Publikasi',
             href: adminPublikasi.url(),
             icon: FileText,
         },
-        6: {
+        7: {
             title: 'Verifikasi Data Prioritas',
             href: adminVerifikasiDataPrioritas.url(),
             icon: Eye,
         },
-        7: {
-            title: 'Foto/Video',
+        8: {
+            title: 'Media',
             href: adminFotoVideo.url(),
             icon: Video,
         },
-        8: {
+        9: {
             title: 'Verifikasi All Data',
             href: adminVerifikasiAllData.url(),
             icon: Eye,

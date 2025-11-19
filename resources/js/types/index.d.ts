@@ -20,6 +20,7 @@ export interface NavItem {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    submenu?: NavItem[];
 }
 
 export interface SharedData {
@@ -27,7 +28,19 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    flash?: {
+        success?: string;
+        error?: string;
+    };
     [key: string]: unknown;
+}
+
+export interface UserMenu {
+    id: number;
+    menu: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 export interface User {
@@ -49,6 +62,7 @@ export interface User {
         role: string;
         created_at: string;
         updated_at: string;
+        user_menus: UserMenu[];
     };
     eselon: {
         id: number;
