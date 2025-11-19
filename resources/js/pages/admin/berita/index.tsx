@@ -182,7 +182,7 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
             isi: record.isi,
             file: record.file,
             foto: record.foto,
-            status: (record.status === 1 || record.status === '1' || record.status === true),
+            status: record.status ? 1 : 0,
             produsen_data_table_id: record.produsen_data_table_id,
         });
 
@@ -331,11 +331,11 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                         <Form.Item
                             label="Status"
                             name="status"
-                            valuePropName="checked"
+                            rules={[{ required: true, message: "Status wajib dipilih" }]}
                         >
                             <Select placeholder="Pilih status">
-                                <Option value={true}>Publish</Option>
-                                <Option value={false}>Preview</Option>
+                                <Option value={1}>Publish</Option>
+                                <Option value={0}>Preview</Option>
                             </Select>
                         </Form.Item>
                         <Form.Item

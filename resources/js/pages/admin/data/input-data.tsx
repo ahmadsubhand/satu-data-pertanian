@@ -77,7 +77,9 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
         if (selectedPrioritas === null || selectedPrioritas === undefined) {
             return true; // No filter applied
         }
-        return item.data_prioritas === selectedPrioritas;
+        // Handle both boolean and numeric representations of data_prioritas
+        const itemIsPrioritas = (item.data_prioritas === 1 || item.data_prioritas === '1' || item.data_prioritas === true);
+        return itemIsPrioritas === selectedPrioritas;
     });
 
     const columns: TableColumnsType<DataItem> = [
@@ -127,8 +129,8 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
             dataIndex: 'data_prioritas',
             key: 'data_prioritas',
             render: (prioritas) => (
-                <Tag color={prioritas ? 'red' : 'default'}>
-                    {prioritas ? 'Prioritas' : 'Non Prioritas'}
+                <Tag color={(prioritas === 1 || prioritas === '1' || prioritas === true) ? 'red' : 'default'}>
+                    {(prioritas === 1 || prioritas === '1' || prioritas === true) ? 'Prioritas' : 'Non Prioritas'}
                 </Tag>
             ),
             width: 100,
@@ -168,10 +170,10 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
 
     // Function to handle adding or updating data
     const handleAddData = (values: any) => {
-        // Convert produsen_data_table_id and kategori_data_table_id back to the appropriate format if necessary
+        // Convert boolean values for compatibility between SQLite and MySQL
         const processedValues = {
             ...values,
-            // The form already uses IDs, so we just pass them through
+            is_data_prioritas: values.is_data_prioritas === 'true' || values.is_data_prioritas === true || values.is_data_prioritas === 1 || values.is_data_prioritas === '1'
         };
 
         if (isEditing && currentRecord) {
@@ -212,7 +214,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
             tanggal_rilis: record.tgl_rilis,
             abstraksi: record.abstraksi,
             produsen_data_table_id: record.produsen_data_table_id,
-            is_data_prioritas: record.is_data_prioritas,
+            is_data_prioritas: record.is_data_prioritas ? 1 : 0,
             kategori_data_table_id: record.kategori_data_table_id,
             link_meta: record.link_meta,
             file_meta1: record.file_meta1,
@@ -334,10 +336,14 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                                 ))}
                             </Select>
                         </Form.Item>
-                        <Form.Item label="Tagging Data Prioritas" name="is_data_prioritas" valuePropName="checked">
+                        <Form.Item
+                            label="Tagging Data Prioritas"
+                            name="is_data_prioritas"
+                            rules={[{ required: true, message: "Status prioritas wajib dipilih" }]}
+                        >
                             <Select placeholder="Pilih status prioritas">
-                                <Option value={true}>Prioritas</Option>
-                                <Option value={false}>Non Prioritas</Option>
+                                <Option value={1}>Prioritas</Option>
+                                <Option value={0}>Non Prioritas</Option>
                             </Select>
                         </Form.Item>
                         <Form.Item label="Kategori Data" name="kategori_data_table_id" rules={[{ required: true, message: 'Kategori data wajib dipilih' }]}>
