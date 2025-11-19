@@ -29,22 +29,23 @@ interface DataItem {
     tgl_rilis: string;
     abstraksi: string;
     produsen_data: string;
-    tagging_data: string[];
+    produsen_data_table_id: number;
     data_prioritas: boolean;
     kategori_data: string;
-    progres: number;
-    status: string;
-    catatan: string;
-    file: string;
+    kategori_data_table_id: number;
+    file_statistik: string;
     created_at: string;
     updated_at: string;
 }
 
 interface Props {
     dataItems: DataItem[];
+    produsenData?: Array<{id: number, value: string}>;
+    kategoriData?: Array<{id: number, value: string}>;
+    users?: Array<{id: number, nama_lengkap: string}>;
 }
 
-const InputDataPage = ({ dataItems }: Props) => {
+const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users = [] }: Props) => {
     const { auth, flash } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -52,8 +53,8 @@ const InputDataPage = ({ dataItems }: Props) => {
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [searchText, setSearchText] = useState('');
-    const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
     const [selectedKategori, setSelectedKategori] = useState<string | null>(null);
+    const [selectedPrioritas, setSelectedPrioritas] = useState<boolean | null>(null);
     const [form] = Form.useForm();
 
     // Initialize data from props
@@ -74,13 +75,15 @@ const InputDataPage = ({ dataItems }: Props) => {
         item.judul.toLowerCase().includes(searchText.toLowerCase()) ||
         item.produsen_data.toLowerCase().includes(searchText.toLowerCase()) ||
         item.kategori_data.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.catatan.toLowerCase().includes(searchText.toLowerCase()) ||
-        item.file.toLowerCase().includes(searchText.toLowerCase())
-    ).filter(item =>
-        selectedStatus ? item.status === selectedStatus : true
+        item.file_statistik.toLowerCase().includes(searchText.toLowerCase())
     ).filter(item =>
         selectedKategori ? item.kategori_data === selectedKategori : true
-    );
+    ).filter(item => {
+        if (selectedPrioritas === null || selectedPrioritas === undefined) {
+            return true; // No filter applied
+        }
+        return item.data_prioritas === selectedPrioritas;
+    });
 
     const columns: TableColumnsType<DataItem> = [
         {
@@ -118,61 +121,27 @@ const InputDataPage = ({ dataItems }: Props) => {
             width: 150,
         },
         {
-            title: 'Kategori',
+            title: 'Kategori Data',
             dataIndex: 'kategori_data',
             key: 'kategori_data',
             sorter: (a, b) => a.kategori_data.localeCompare(b.kategori_data),
             width: 120,
         },
         {
-            title: 'Data Prioritas',
+            title: 'Tagging Data Prioritas',
             dataIndex: 'data_prioritas',
             key: 'data_prioritas',
             render: (prioritas) => (
                 <Tag color={prioritas ? 'red' : 'default'}>
-                    {prioritas ? 'Prioritas' : 'Biasa'}
+                    {prioritas ? 'Prioritas' : 'Non Prioritas'}
                 </Tag>
             ),
             width: 100,
         },
         {
-            title: 'Progres',
-            dataIndex: 'progres',
-            key: 'progres',
-            sorter: (a, b) => a.progres - b.progres,
-            render: (progres) => (
-                <div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: `${progres}%` }}
-                        ></div>
-                    </div>
-                    <span className="text-xs">{progres}%</span>
-                </div>
-            ),
-            width: 100,
-        },
-        {
-            title: 'Status',
-            dataIndex: 'status',
-            key: 'status',
-            render: (_, record) => {
-                let color = 'default';
-                if (record.status === 'published') color = 'green';
-                if (record.status === 'review') color = 'orange';
-                if (record.status === 'rejected') color = 'red';
-                if (record.status === 'draft') color = 'blue';
-                
-                return <Tag color={color}>{record.status.charAt(0).toUpperCase() + record.status.slice(1)}</Tag>;
-            },
-            width: 100,
-        },
-        {
             title: 'File',
-            dataIndex: 'file',
-            key: 'file',
-            render: (fileName) => <span>{fileName}</span>,
+            dataIndex: 'file_statistik',
+            key: 'file_statistik',
             width: 120,
         },
         {
@@ -204,18 +173,18 @@ const InputDataPage = ({ dataItems }: Props) => {
 
     // Function to handle adding or updating data
     const handleAddData = (values: any) => {
+        // Convert produsen_data_table_id and kategori_data_table_id back to the appropriate format if necessary
+        const processedValues = {
+            ...values,
+            // The form already uses IDs, so we just pass them through
+        };
+
         if (isEditing && currentRecord) {
             // Update existing data via API
-            router.put(adminDataInputUpdate.url(currentRecord.id), {
-                ...values,
-                tagging_data: values.tagging_data || '' // Handle empty tagging_data
-            });
+            router.put(adminDataInputUpdate.url(currentRecord.id), processedValues);
         } else {
             // Add new data via API
-            router.post(adminDataInputStore.url(), {
-                ...values,
-                tagging_data: values.tagging_data || '' // Handle empty tagging_data
-            });
+            router.post(adminDataInputStore.url(), processedValues);
         }
     };
 
@@ -240,20 +209,22 @@ const InputDataPage = ({ dataItems }: Props) => {
         setDeleteRecordId(null);
     };
 
+    // Function to get ID based on name
+    const getIdByName = (name: string, dataArray: Array<{id: number, value: string}>) => {
+        const item = dataArray.find(item => item.value === name);
+        return item ? item.id : null;
+    };
+
     // Function to handle editing data
     const handleEdit = (record: DataItem) => {
         form.setFieldsValue({
             judul: record.judul,
             tgl_rilis: record.tgl_rilis,
             abstraksi: record.abstraksi,
-            produsen_data: record.produsen_data,
-            tagging_data: Array.isArray(record.tagging_data) ? record.tagging_data.join(', ') : record.tagging_data,
+            produsen_data_table_id: getIdByName(record.produsen_data, produsenData),
             data_prioritas: record.data_prioritas,
-            kategori_data: record.kategori_data,
-            progres: record.progres,
-            status: record.status,
-            catatan: record.catatan,
-            file: record.file
+            kategori_data_table_id: getIdByName(record.kategori_data, kategoriData),
+            file_statistik: record.file_statistik
         });
 
         setCurrentRecord(record);
@@ -284,33 +255,29 @@ const InputDataPage = ({ dataItems }: Props) => {
                 <Card className="mt-4">
                     <div className="flex flex-wrap gap-4 mb-4">
                         <Search
-                            placeholder="Cari data (judul, produsen, kategori, catatan, file)..."
+                            placeholder="Cari data (judul, produsen, kategori, file)..."
                             onSearch={value => setSearchText(value)}
                             style={{ width: 300 }}
                             enterButton
                         />
-                        <Select
-                            placeholder="Filter Status"
-                            style={{ width: 150 }}
-                            allowClear
-                            onChange={(value) => setSelectedStatus(value || null)}
-                        >
-                            <Option value="draft">Draft</Option>
-                            <Option value="review">Review</Option>
-                            <Option value="published">Published</Option>
-                            <Option value="rejected">Rejected</Option>
-                        </Select>
                         <Select
                             placeholder="Filter Kategori"
                             style={{ width: 150 }}
                             allowClear
                             onChange={(value) => setSelectedKategori(value || null)}
                         >
-                            <Option value="Statistik">Statistik</Option>
-                            <Option value="Geospasial">Geospasial</Option>
-                            <Option value="Indikator">Indikator</Option>
-                            <Option value="Variabel">Variabel</Option>
-                            <Option value="Link">Link</Option>
+                            {kategoriData.map((kategori) => (
+                                <Option key={kategori.id} value={kategori.value}>{kategori.value}</Option>
+                            ))}
+                        </Select>
+                        <Select
+                            placeholder="Filter Prioritas"
+                            style={{ width: 150 }}
+                            allowClear
+                            onChange={(value) => setSelectedPrioritas(value === undefined ? null : value)}
+                        >
+                            <Option value={true}>Prioritas</Option>
+                            <Option value={false}>Non Prioritas</Option>
                         </Select>
                     </div>
 
@@ -360,45 +327,32 @@ const InputDataPage = ({ dataItems }: Props) => {
                             <Input placeholder="Masukkan judul data" />
                         </Form.Item>
                         <Form.Item label="Tanggal Rilis" name="tgl_rilis" rules={[{ required: true, message: 'Tanggal rilis wajib diisi' }]}>
-                            <Input placeholder="Masukkan tanggal rilis (YYYY-MM-DD)" />
+                            <Input type="date" placeholder="Masukkan tanggal rilis (YYYY-MM-DD)" />
                         </Form.Item>
                         <Form.Item label="Abstraksi" name="abstraksi" rules={[{ required: true, message: 'Abstraksi wajib diisi' }]}>
                             <Input.TextArea placeholder="Masukkan abstraksi data" rows={3} />
                         </Form.Item>
-                        <Form.Item label="Produsen Data" name="produsen_data" rules={[{ required: true, message: 'Produsen data wajib diisi' }]}>
-                            <Input placeholder="Masukkan nama produsen data" />
+                        <Form.Item label="Produsen Data" name="produsen_data_table_id" rules={[{ required: true, message: 'Produsen data wajib diisi' }]}>
+                            <Select placeholder="Pilih produsen data">
+                                {produsenData.map((produsen) => (
+                                    <Option key={produsen.id} value={produsen.id}>{produsen.value}</Option>
+                                ))}
+                            </Select>
                         </Form.Item>
-                        <Form.Item label="Tagging Data (pisahkan dengan koma)" name="tagging_data">
-                            <Input placeholder="Misal: produksi, statistik, 2023" />
-                        </Form.Item>
-                        <Form.Item label="Data Prioritas" name="data_prioritas" valuePropName="checked">
+                        <Form.Item label="Tagging Data Prioritas" name="data_prioritas" valuePropName="checked">
                             <Select placeholder="Pilih status prioritas">
                                 <Option value={true}>Prioritas</Option>
                                 <Option value={false}>Biasa</Option>
                             </Select>
                         </Form.Item>
-                        <Form.Item label="Kategori Data" name="kategori_data" rules={[{ required: true, message: 'Kategori data wajib dipilih' }]}>
-                            <Input placeholder="Masukkan kategori data" />
-                        </Form.Item>
-                        <Form.Item label="Progres (%)" name="progres" rules={[{ required: true, message: 'Progres wajib diisi' }]}>
-                            <Select placeholder="Pilih progres">
-                                {[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(num => (
-                                    <Option key={num} value={num}>{num}%</Option>
+                        <Form.Item label="Kategori Data" name="kategori_data_table_id" rules={[{ required: true, message: 'Kategori data wajib dipilih' }]}>
+                            <Select placeholder="Pilih kategori data">
+                                {kategoriData.map((kategori) => (
+                                    <Option key={kategori.id} value={kategori.id}>{kategori.value}</Option>
                                 ))}
                             </Select>
                         </Form.Item>
-                        <Form.Item label="Status" name="status" rules={[{ required: true, message: 'Status wajib dipilih' }]}>
-                            <Select placeholder="Pilih status">
-                                <Option value="draft">Draft</Option>
-                                <Option value="review">Review</Option>
-                                <Option value="published">Published</Option>
-                                <Option value="rejected">Rejected</Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item label="Catatan" name="catatan">
-                            <Input.TextArea placeholder="Masukkan catatan tambahan" />
-                        </Form.Item>
-                        <Form.Item label="File" name="file" rules={[{ required: true, message: 'Nama file wajib diisi' }]}>
+                        <Form.Item label="File" name="file_statistik">
                             <Input placeholder="Masukkan nama file" />
                         </Form.Item>
                     </Form>

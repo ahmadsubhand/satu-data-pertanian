@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MenuMetadataTable;
+use App\Models\ProdusenDataTable;
+use App\Models\KategoriDataTable;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -10,137 +14,106 @@ class InputDataController extends Controller
 {
     public function index(): Response
     {
-        // Dummy data for input data management
-        $dataItems = [
-            [
-                'id' => 1,
-                'judul' => 'Statistik Produksi Pertanian 2023',
-                'tgl_rilis' => '2023-12-15',
-                'abstraksi' => 'Data statistik produksi pertanian tahun 2023',
-                'produsen_data' => 'Pusdatin',
-                'tagging_data' => ['produksi', 'statistik', '2023'],
-                'data_prioritas' => true,
-                'kategori_data' => 'Statistik',
-                'progres' => 90,
-                'status' => 'published',
-                'catatan' => 'Sudah diverifikasi',
-                'file' => 'produksi_2023.pdf',
-                'created_at' => '2023-12-10 09:30:00',
-                'updated_at' => '2023-12-15 09:30:00'
-            ],
-            [
-                'id' => 2,
-                'judul' => 'Data Geospasial Irigasi',
-                'tgl_rilis' => '2023-11-20',
-                'abstraksi' => 'Peta geospasial sistem irigasi di Indonesia',
-                'produsen_data' => 'Badan Geospasial',
-                'tagging_data' => ['geospasial', 'irigasi', 'peta'],
-                'data_prioritas' => false,
-                'kategori_data' => 'Geospasial',
-                'progres' => 75,
-                'status' => 'review',
-                'catatan' => 'Butuh revisi',
-                'file' => 'irigasi.geojson',
-                'created_at' => '2023-11-15 14:45:00',
-                'updated_at' => '2023-11-20 14:45:00'
-            ],
-            [
-                'id' => 3,
-                'judul' => 'Indikator Harga Komoditas',
-                'tgl_rilis' => '2023-10-05',
-                'abstraksi' => 'Data indikator harga komoditas pertanian',
-                'produsen_data' => 'Pusdatin',
-                'tagging_data' => ['harga', 'komoditas', 'indikator'],
-                'data_prioritas' => true,
-                'kategori_data' => 'Indikator',
-                'progres' => 100,
-                'status' => 'published',
-                'catatan' => 'Selesai',
-                'file' => 'harga_komoditas.xlsx',
-                'created_at' => '2023-10-01 08:20:00',
-                'updated_at' => '2023-10-05 08:20:00'
-            ],
-            [
-                'id' => 4,
-                'judul' => 'Data Variabel Cuaca',
-                'tgl_rilis' => '2023-09-12',
-                'abstraksi' => 'Data variabel cuaca dan iklim',
-                'produsen_data' => 'BMKG',
-                'tagging_data' => ['cuaca', 'iklim', 'variabel'],
-                'data_prioritas' => false,
-                'kategori_data' => 'Variabel',
-                'progres' => 60,
-                'status' => 'draft',
-                'catatan' => 'Dalam pengumpulan',
-                'file' => 'cuaca.csv',
-                'created_at' => '2023-09-05 11:30:00',
-                'updated_at' => '2023-09-12 11:30:00'
-            ],
-            [
-                'id' => 5,
-                'judul' => 'Dataset Link Terkait',
-                'tgl_rilis' => '2023-08-30',
-                'abstraksi' => 'Kumpulan link website terkait data pertanian',
-                'produsen_data' => 'Pusdatin',
-                'tagging_data' => ['link', 'website', 'referensi'],
-                'data_prioritas' => false,
-                'kategori_data' => 'Link',
-                'progres' => 45,
-                'status' => 'draft',
-                'catatan' => 'Perlu dilengkapi',
-                'file' => 'links.json',
-                'created_at' => '2023-08-25 13:15:00',
-                'updated_at' => '2023-08-30 13:15:00'
-            ]
-        ];
+        $dataItems = MenuMetadataTable::with(['user', 'produsenDataTable', 'kategoriDataTable'])
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'judul' => $item->judul,
+                    'tgl_rilis' => $item->tanggal_rilis,
+                    'abstraksi' => $item->abstraksi,
+                    'produsen_data' => $item->produsenDataTable->value ?? 'Tidak Diketahui',
+                    'produsen_data_table_id' => $item->produsen_data_table_id,
+                    'data_prioritas' => $item->is_data_prioritas,
+                    'kategori_data' => $item->kategoriDataTable->value ?? 'Tidak Diketahui',
+                    'kategori_data_table_id' => $item->kategori_data_table_id,
+                    'link_meta' => $item->link_meta,
+                    'file_meta1' => $item->file_meta1,
+                    'file_meta2' => $item->file_meta2,
+                    'file_meta3' => $item->file_meta3,
+                    'ukuran_file' => $item->ukuran_file,
+                    'file_statistik' => $item->file_statistik,
+                    'created_at' => $item->created_at,
+                    'updated_at' => $item->updated_at
+                ];
+            });
+
+        $produsenData = ProdusenDataTable::get();
+        $kategoriData = KategoriDataTable::get();
+        $users = User::get();
 
         return Inertia::render('admin/data/input-data', [
-            'dataItems' => $dataItems
+            'dataItems' => $dataItems,
+            'produsenData' => $produsenData,
+            'kategoriData' => $kategoriData,
+            'users' => $users
         ]);
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'judul' => 'required|string',
-            'tgl_rilis' => 'required|date',
+            'judul' => 'required|string|max:255',
+            'tanggal_rilis' => 'required|date',
             'abstraksi' => 'required|string',
-            'produsen_data' => 'required|string',
-            'tagging_data' => 'nullable|string',
-            'data_prioritas' => 'boolean',
-            'kategori_data' => 'required|string',
-            'progres' => 'required|integer|min:0|max:100',
-            'status' => 'required|in:draft,review,published,rejected',
-            'catatan' => 'nullable|string',
-            'file' => 'required|string',
+            'produsen_data_table_id' => 'required|integer|exists:produsen_data_tables,id',
+            'is_data_prioritas' => 'boolean',
+            'kategori_data_table_id' => 'required|integer|exists:kategori_data_tables,id',
+            'link_meta' => 'nullable|string|max:255',
+            'file_meta1' => 'nullable|string|max:255',
+            'file_meta2' => 'nullable|string|max:255',
+            'file_meta3' => 'nullable|string|max:255',
+            'ukuran_file' => 'required|integer',
+            'file_statistik' => 'nullable|string|max:255',
+        ]);
+
+        MenuMetadataTable::create([
+            'judul' => $request->judul,
+            'tanggal_rilis' => $request->tanggal_rilis,
+            'abstraksi' => $request->abstraksi,
+            'produsen_data_table_id' => $request->produsen_data_table_id,
+            'is_data_prioritas' => $request->is_data_prioritas ?? false,
+            'kategori_data_table_id' => $request->kategori_data_table_id,
+            'link_meta' => $request->link_meta ?? '',
+            'file_meta1' => $request->file_meta1 ?? '',
+            'file_meta2' => $request->file_meta2 ?? '',
+            'file_meta3' => $request->file_meta3 ?? '',
+            'ukuran_file' => $request->ukuran_file,
+            'file_statistik' => $request->file_statistik ?? '',
+            'user_id' => auth()->id() // Assuming the current user is the creator
         ]);
 
         session()->flash('success', 'Data berhasil ditambahkan.');
         return Inertia::location(route('admin-data-input'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, MenuMetadataTable $menuMetadataTable)
     {
         $request->validate([
-            'judul' => 'sometimes|required|string',
-            'tgl_rilis' => 'sometimes|required|date',
+            'judul' => 'sometimes|required|string|max:255',
+            'tanggal_rilis' => 'sometimes|required|date',
             'abstraksi' => 'sometimes|required|string',
-            'produsen_data' => 'sometimes|required|string',
-            'tagging_data' => 'nullable|string',
-            'data_prioritas' => 'boolean',
-            'kategori_data' => 'sometimes|required|string',
-            'progres' => 'sometimes|required|integer|min:0|max:100',
-            'status' => 'sometimes|required|in:draft,review,published,rejected',
-            'catatan' => 'nullable|string',
-            'file' => 'sometimes|required|string',
+            'produsen_data_table_id' => 'sometimes|required|integer|exists:produsen_data_tables,id',
+            'is_data_prioritas' => 'boolean',
+            'kategori_data_table_id' => 'sometimes|required|integer|exists:kategori_data_tables,id',
+            'link_meta' => 'nullable|string|max:255',
+            'file_meta1' => 'nullable|string|max:255',
+            'file_meta2' => 'nullable|string|max:255',
+            'file_meta3' => 'nullable|string|max:255',
+            'ukuran_file' => 'sometimes|required|integer',
+            'file_statistik' => 'nullable|string|max:255',
         ]);
+
+        $menuMetadataTable->update($request->except(['user_id'])); // Don't allow updating user_id
 
         session()->flash('success', 'Data berhasil diperbarui.');
         return Inertia::location(route('admin-data-input'));
     }
 
-    public function destroy($id)
+    public function destroy(MenuMetadataTable $menuMetadataTable)
     {
+        $menuMetadataTable->delete();
+
         session()->flash('success', 'Data berhasil dihapus.');
         return Inertia::location(route('admin-data-input'));
     }
