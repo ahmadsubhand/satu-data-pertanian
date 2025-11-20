@@ -353,6 +353,9 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                                 ))}
                             </Select>
                         </Form.Item>
+                        <Form.Item label="File" name="file_statistik" rules={[{ required: true, message: 'File wajib diupload' }]}>
+                            <Input placeholder="Masukkan nama file" />
+                        </Form.Item>
                         <Form.Item label="Link Meta" name="link_meta">
                             <Input placeholder="Masukkan link metadata" />
                         </Form.Item>
@@ -365,12 +368,9 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                         <Form.Item label="File Meta 3" name="file_meta3">
                             <Input placeholder="Masukkan nama file meta 3" />
                         </Form.Item>
-                        <Form.Item label="Ukuran File" name="ukuran_file" rules={[{ required: true, message: 'Ukuran file wajib diisi' }]}>
+                        {/* <Form.Item label="Ukuran File" name="ukuran_file" rules={[{ required: true, message: 'Ukuran file wajib diisi' }]}>
                             <Input type="number" placeholder="Masukkan ukuran file dalam bytes" />
-                        </Form.Item>
-                        <Form.Item label="File" name="file_statistik">
-                            <Input placeholder="Masukkan nama file" />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Form>
                 </Modal>
 

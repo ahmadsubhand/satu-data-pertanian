@@ -42,7 +42,7 @@ class MenuInfografisTableController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'tanggal_rilis' => 'required|date',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'required|string',
             'file' => 'required|string|max:255',
             'produsen_data_table_id' => 'required|integer|exists:produsen_data_tables,id',
             'status' => 'required|boolean',
@@ -67,7 +67,7 @@ class MenuInfografisTableController extends Controller
         $request->validate([
             'judul' => 'sometimes|required|string|max:255',
             'tanggal_rilis' => 'sometimes|required|date',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'required|string',
             'file' => 'required|string|max:255',
             'produsen_data_table_id' => 'sometimes|required|integer|exists:produsen_data_tables,id',
             'status' => 'required|boolean',

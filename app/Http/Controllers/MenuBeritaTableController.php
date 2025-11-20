@@ -47,8 +47,8 @@ class MenuBeritaTableController extends Controller
             'tanggal_rilis' => 'required|date',
             'isi_singkat' => 'nullable|string',
             'isi' => 'required|string',
-            'file' => 'nullable|string|max:255',
-            'foto' => 'nullable|string|max:255',
+            'file' => 'required|string|max:255',
+            'foto' => 'required|string|max:255',
             'status' => 'required|boolean',
             'produsen_data_table_id' => 'required|integer|exists:produsen_data_tables,id',
         ]);

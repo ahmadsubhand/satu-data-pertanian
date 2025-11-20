@@ -324,6 +324,7 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                         <Form.Item
                             label="Keterangan"
                             name="keterangan"
+                            rules={[{ required: true, message: 'Keterangan wajib diisi' }]}
                         >
                             <Input.TextArea
                                 rows={4}

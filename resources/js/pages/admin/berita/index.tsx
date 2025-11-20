@@ -319,12 +319,14 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                         <Form.Item
                             label="File"
                             name="file"
+                            rules={[{ required: true, message: 'File wajib diupload' }]}
                         >
                             <Input placeholder="Masukkan nama file" />
                         </Form.Item>
                         <Form.Item
                             label="Foto"
                             name="foto"
+                            rules={[{ required: true, message: 'Foto wajib diupload' }]}
                         >
                             <Input placeholder="Masukkan nama foto" />
                         </Form.Item>

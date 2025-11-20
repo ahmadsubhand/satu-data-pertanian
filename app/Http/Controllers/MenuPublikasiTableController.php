@@ -49,7 +49,7 @@ class MenuPublikasiTableController extends Controller
         $request->validate([
             'judul' => 'required|string|max:255',
             'tanggal_rilis' => 'required|date',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'required|string',
             'nomor_publikasi' => 'nullable|string|max:255',
             'nomor_issn' => 'nullable|string|max:255',
             'file' => 'required|string|max:255',
@@ -86,7 +86,7 @@ class MenuPublikasiTableController extends Controller
         $request->validate([
             'judul' => 'sometimes|required|string|max:255',
             'tanggal_rilis' => 'sometimes|required|date',
-            'keterangan' => 'nullable|string',
+            'keterangan' => 'required|string',
             'nomor_publikasi' => 'nullable|string|max:255',
             'nomor_issn' => 'nullable|string|max:255',
             'file' => 'required|string|max:255',

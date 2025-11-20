@@ -64,8 +64,8 @@ class InputDataController extends Controller
             'file_meta1' => 'nullable|string|max:255',
             'file_meta2' => 'nullable|string|max:255',
             'file_meta3' => 'nullable|string|max:255',
-            'ukuran_file' => 'required|integer',
-            'file_statistik' => 'nullable|string|max:255',
+            'ukuran_file' => 'nullable|integer',
+            'file_statistik' => 'required|string|max:255',
         ]);
 
         MenuMetadataTable::create([
@@ -101,8 +101,8 @@ class InputDataController extends Controller
             'file_meta1' => 'nullable|string|max:255',
             'file_meta2' => 'nullable|string|max:255',
             'file_meta3' => 'nullable|string|max:255',
-            'ukuran_file' => 'sometimes|required|integer',
-            'file_statistik' => 'nullable|string|max:255',
+            'ukuran_file' => 'nullable|integer',
+            'file_statistik' => 'required|string|max:255',
         ]);
 
         $menuMetadataTable->update($request->except(['user_id'])); // Don't allow updating user_id
