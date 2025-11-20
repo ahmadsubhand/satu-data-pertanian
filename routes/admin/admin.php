@@ -31,14 +31,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
   // User (ID: 1)
   Route::middleware('menuAdmin:1')->prefix('user')->group(function () {
     // Submenu routes for user management
-    Route::prefix('daftar-user')
-      ->controller(UserController::class)
-      ->group(function () {
-        Route::get('/', 'index')->name('admin-user-list');
-        Route::post('/', 'store')->name('admin-user-store');
-        Route::put('/{user}', 'update')->name('admin-user-update');
-        Route::delete('/{user}', 'destroy')->name('admin-user-destroy');
-      });
+    Route::prefix('daftar-user')->group(function () {
+        Route::get('/', [UserController::class, 'index'])->name('admin-user-list');
+        Route::post('/', [UserController::class, 'store'])->name('admin-user-store');
+        Route::put('/{user}', [UserController::class, 'update'])->name('admin-user-update');
+        Route::delete('/{user}', [UserController::class, 'destroy'])->name('admin-user-destroy');
+    });
 
     Route::get('/manajemen-menu', function () {
       return Inertia::render('admin/user/manajemen-menu');
@@ -58,14 +56,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
       Route::get('/', [DataController::class, 'index'])->name('admin-data');
 
       // Submenu routes for data management
-      Route::prefix('input-data')
-        ->controller(InputDataController::class)
-        ->group(function () {
-            Route::get('/', 'index')->name('admin-data-input');
-            Route::post('/', 'store')->name('admin-data-input-store');
-            Route::put('/{menuMetadataTable}', 'update')->name('admin-data-input-update');
-            Route::delete('/{menuMetadataTable}', 'destroy')->name('admin-data-input-destroy');
-        });
+      Route::prefix('input-data')->group(function () {
+          Route::get('/', [InputDataController::class, 'index'])->name('admin-data-input');
+          Route::post('/', [InputDataController::class, 'store'])->name('admin-data-input-store');
+          Route::put('/{menuMetadataTable}', [InputDataController::class, 'update'])->name('admin-data-input-update');
+          Route::delete('/{menuMetadataTable}', [InputDataController::class, 'destroy'])->name('admin-data-input-destroy');
+      });
 
       Route::prefix('input-daftar-data')->group(function () {
           Route::get('/', [InputDaftarDataController::class, 'index'])->name('admin-data-input-daftar');
@@ -97,27 +93,27 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
   });
   
   // Berita (ID: 3)
-  Route::middleware('menuAdmin:3')->prefix('berita')->controller(MenuBeritaTableController::class)->group(function () {
-      Route::get('/', 'index')->name('admin-berita');
-      Route::post('/', 'store')->name('admin-berita-store');
-      Route::put('/{menuBeritaTable}', 'update')->name('admin-berita-update');
-      Route::delete('/{menuBeritaTable}', 'destroy')->name('admin-berita-destroy');
+  Route::middleware('menuAdmin:3')->prefix('berita')->group(function () {
+      Route::get('/', [MenuBeritaTableController::class, 'index'])->name('admin-berita');
+      Route::post('/', [MenuBeritaTableController::class, 'store'])->name('admin-berita-store');
+      Route::put('/{menuBeritaTable}', [MenuBeritaTableController::class, 'update'])->name('admin-berita-update');
+      Route::delete('/{menuBeritaTable}', [MenuBeritaTableController::class, 'destroy'])->name('admin-berita-destroy');
   });
 
   // Infografis (ID: 4)
-  Route::middleware('menuAdmin:4')->prefix('infografis')->controller(MenuInfografisTableController::class)->group(function () {
-      Route::get('/', 'index')->name('admin-infografis');
-      Route::post('/', 'store')->name('admin-infografis-store');
-      Route::put('/{menuInfografisTable}', 'update')->name('admin-infografis-update');
-      Route::delete('/{menuInfografisTable}', 'destroy')->name('admin-infografis-destroy');
+  Route::middleware('menuAdmin:4')->prefix('infografis')->group(function () {
+      Route::get('/', [MenuInfografisTableController::class, 'index'])->name('admin-infografis');
+      Route::post('/', [MenuInfografisTableController::class, 'store'])->name('admin-infografis-store');
+      Route::put('/{menuInfografisTable}', [MenuInfografisTableController::class, 'update'])->name('admin-infografis-update');
+      Route::delete('/{menuInfografisTable}', [MenuInfografisTableController::class, 'destroy'])->name('admin-infografis-destroy');
   });
 
   // Publikasi (ID: 5)
-  Route::middleware('menuAdmin:5')->prefix('publikasi')->controller(MenuPublikasiTableController::class)->group(function () {
-      Route::get('/', 'index')->name('admin-publikasi');
-      Route::post('/', 'store')->name('admin-publikasi-store');
-      Route::put('/{menuPublikasiTable}', 'update')->name('admin-publikasi-update');
-      Route::delete('/{menuPublikasiTable}', 'destroy')->name('admin-publikasi-destroy');
+  Route::middleware('menuAdmin:5')->prefix('publikasi')->group(function () {
+      Route::get('/', [MenuPublikasiTableController::class, 'index'])->name('admin-publikasi');
+      Route::post('/', [MenuPublikasiTableController::class, 'store'])->name('admin-publikasi-store');
+      Route::put('/{menuPublikasiTable}', [MenuPublikasiTableController::class, 'update'])->name('admin-publikasi-update');
+      Route::delete('/{menuPublikasiTable}', [MenuPublikasiTableController::class, 'destroy'])->name('admin-publikasi-destroy');
   });
 
   // Verifikasi Data Prioritas (ID: 6)
