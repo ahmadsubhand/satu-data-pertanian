@@ -1,13 +1,13 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Input, Modal, Form, Select, Upload } from 'antd';
+import { Head, Link, usePage, router } from '@inertiajs/react';
+import { Card, Table, Button, Space, Input, Modal, Form, Select, Upload, Result } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { EditOutlined, DeleteOutlined, PlusOutlined, FileImageOutlined, VideoCameraOutlined, UploadOutlined } from '@ant-design/icons';
 import { toast } from 'sonner';
 import FileUpload from '@/components/file-upload';
-import { adminMediaStore, adminMediaUpdate, adminMediaDestroy } from '@/routes';
+import { adminMediaStore, adminMediaUpdate, adminMediaDestroy, dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,7 +39,7 @@ interface Props {
 }
 
 export default function FotoVideoPage({ fotovideo }: Props) {
-    const { auth, flash } = usePage<SharedData>().props;
+    const { auth, flash, ziggy } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [form] = Form.useForm();
@@ -47,6 +47,7 @@ export default function FotoVideoPage({ fotovideo }: Props) {
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<FotoVideoType | null>(null);
+    const [maintenanceModalVisible, setMaintenanceModalVisible] = useState(true); // Show maintenance modal by default
 
     // Use data from props instead of hardcoded values
     const [fotovideoData, setFotovideoData] = useState<FotoVideoType[]>(fotovideo || []);
@@ -414,6 +415,31 @@ export default function FotoVideoPage({ fotovideo }: Props) {
                     okType="danger"
                 >
                     <p>Apakah Anda yakin ingin menghapus media ini?</p>
+                </Modal>
+
+                {/* Maintenance Overlay Modal */}
+                <Modal
+                    open={maintenanceModalVisible}
+                    footer={null}
+                    closable={false}
+                    centered
+                    width={600}
+                >
+                    <Result
+                        status="warning"
+                        title="Fitur Sedang Dalam Pengembangan"
+                        subTitle="Halaman Foto/Video saat ini sedang dalam pengembangan. Mohon maaf atas ketidaknyamanannya."
+                        extra={[
+                            <Link as={'button'} href={dashboard.url()}>
+                                <Button
+                                    type="primary"
+                                    key="dashboard"
+                                >
+                                    Kembali ke Dashboard
+                                </Button>
+                            </Link>
+                        ]}
+                    />
                 </Modal>
             </div>
         </AdminLayout>

@@ -1,7 +1,7 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Card, Table, Button, Space, Input, Modal, Form, Select, Tag } from 'antd';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { Card, Table, Button, Space, Input, Modal, Form, Select, Tag, Result } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
@@ -38,7 +38,7 @@ interface Props {
 }
 
 export default function VerifikasiDataPrioritasPage({ verifikasidataprioritas }: Props) {
-    const { auth, flash } = usePage<SharedData>().props;
+    const { auth, flash, ziggy } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [form] = Form.useForm();
@@ -46,6 +46,7 @@ export default function VerifikasiDataPrioritasPage({ verifikasidataprioritas }:
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<VerifikasiDataPrioritasType | null>(null);
+    const [maintenanceModalVisible, setMaintenanceModalVisible] = useState(true); // Show maintenance modal by default
 
     // Use data from props instead of hardcoded values
     const [verifikasiData, setVerifikasiData] = useState<VerifikasiDataPrioritasType[]>(verifikasidataprioritas || []);
@@ -408,6 +409,31 @@ export default function VerifikasiDataPrioritasPage({ verifikasidataprioritas }:
                     okType="danger"
                 >
                     <p>Apakah Anda yakin ingin menghapus data verifikasi ini?</p>
+                </Modal>
+
+                {/* Maintenance Overlay Modal */}
+                <Modal
+                    open={maintenanceModalVisible}
+                    footer={null}
+                    closable={false}
+                    centered
+                    width={600}
+                >
+                    <Result
+                        status="warning"
+                        title="Fitur Sedang Dalam Pengembangan"
+                        subTitle="Halaman Verifikasi Data Prioritas saat ini sedang dalam pengembangan. Mohon maaf atas ketidaknyamanannya."
+                        extra={[
+                            <Link as={'button'} href={dashboard.url()}>
+                                <Button
+                                    type="primary"
+                                    key="dashboard"
+                                >
+                                    Kembali ke Dashboard
+                                </Button>
+                            </Link>
+                        ]}
+                    />
                 </Modal>
             </div>
         </AdminLayout>

@@ -14,10 +14,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard.url(),
     },
     {
-        title: 'User Management',
-        href: '/admin/user',
-    },
-    {
         title: 'Daftar User',
         href: '#'
     },

@@ -91,9 +91,10 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                     >
                         <div className="flex w-full items-center justify-between hover:bg-green-100 dark:hover:bg-green-900 transition-colors p-2 rounded-md">
                             <div className="flex items-center gap-2">
-                                {item.icon && typeof item.icon === 'function' && (
+                                {item.icon && (
                                     <item.icon className="h-4 w-4" />
                                 )}
+                                
                                 <span>{item.title}</span>
                             </div>
                             <ChevronRight
@@ -113,7 +114,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                                         className="hover:bg-green-100 dark:hover:bg-green-900 data-[active=true]:bg-green-100 data-[active=true]:dark:bg-green-900 transition-colors p-2 rounded-md"
                                     >
                                         <Link href={subItem.href} prefetch>
-                                            {subItem.icon && typeof subItem.icon === 'function' && <subItem.icon className="h-4 w-4" />}
+                                            {subItem.icon && <subItem.icon className="h-4 w-4" />}
                                             <span>{subItem.title}</span>
                                         </Link>
                                     </SidebarMenuSubButton>
@@ -133,7 +134,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                         tooltip={{ children: item.title }}
                     >
                         <Link href={item.href} prefetch className="flex items-center gap-2 hover:bg-green-100 dark:hover:bg-green-900 transition-colors p-2 rounded-md">
-                            {item.icon && typeof item.icon === 'function' && (
+                            {item.icon && (
                                 <item.icon className="h-4 w-4" />
                             )}
                             <span>{item.title}</span>

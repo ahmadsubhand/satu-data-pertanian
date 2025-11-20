@@ -53,7 +53,7 @@ export const getAdminNavItems = (user: User): NavItem[] => {
         1: {
             id: 1,
             title: 'User',
-            href: adminUserList.url(),
+            href: dashboard.url(),
             icon: UserIcon,
             submenu: [
                 { title: 'Daftar User', href: adminUserList.url(), icon: Users },
@@ -65,7 +65,7 @@ export const getAdminNavItems = (user: User): NavItem[] => {
         2: {
             id: 2,
             title: 'Data',
-            href: adminDataInput.url(),
+            href: dashboard.url(),
             icon: Database,
             submenu: [
                 { title: 'Input Data', href: adminDataInput.url(), icon: MenuIcon },

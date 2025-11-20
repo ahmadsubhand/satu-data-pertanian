@@ -1,19 +1,16 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
+import { Head, Link, usePage } from '@inertiajs/react';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Result } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
         href: '#',
-    },
-    {
-        title: 'User Management',
-        href: '/admin/user',
     },
     {
         title: 'Manajemen Menu',
@@ -30,12 +27,13 @@ interface MenuItem {
 }
 
 const ManajemenMenuPage = () => {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, ziggy } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<MenuItem | null>(null);
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
+    const [maintenanceModalVisible, setMaintenanceModalVisible] = useState(true); // Show maintenance modal by default
     const [form] = Form.useForm();
     const [menuData, setMenuData] = useState<MenuItem[]>([
         {
@@ -378,6 +376,31 @@ const ManajemenMenuPage = () => {
                     okType="danger"
                 >
                     <p>Apakah Anda yakin ingin menghapus menu ini?</p>
+                </Modal>
+
+                {/* Maintenance Overlay Modal */}
+                <Modal
+                    open={maintenanceModalVisible}
+                    footer={null}
+                    closable={false}
+                    centered
+                    width={600}
+                >
+                    <Result
+                        status="warning"
+                        title="Fitur Sedang Dalam Pengembangan"
+                        subTitle="Halaman Manajemen Menu saat ini sedang dalam pengembangan. Mohon maaf atas ketidaknyamanannya."
+                        extra={[
+                            <Link as={'button'} href={dashboard.url()}>
+                                <Button
+                                    type="primary"
+                                    key="dashboard"
+                                >
+                                    Kembali ke Dashboard
+                                </Button>
+                            </Link>
+                        ]}
+                    />
                 </Modal>
             </div>
         </AdminLayout>

@@ -1,11 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
+import { Head, Link, usePage, router } from '@inertiajs/react';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Result } from 'antd';
 import type { TableColumnsType } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { adminDataInputLinkStore, adminDataInputLinkUpdate, adminDataInputLinkDestroy } from '@/routes';
+import { adminDataInputLinkStore, adminDataInputLinkUpdate, adminDataInputLinkDestroy, dashboard } from '@/routes';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -39,7 +39,7 @@ interface Props {
 }
 
 const InputLinkWebsitePage = ({ linkWebsites }: Props) => {
-    const { auth, flash } = usePage<SharedData>().props;
+    const { auth, flash, ziggy } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<LinkWebsiteItem | null>(null);
@@ -48,6 +48,7 @@ const InputLinkWebsitePage = ({ linkWebsites }: Props) => {
     const [searchText, setSearchText] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
     const [selectedKategori, setSelectedKategori] = useState<string | null>(null);
+    const [maintenanceModalVisible, setMaintenanceModalVisible] = useState(true); // Show maintenance modal by default
     const [form] = Form.useForm();
 
     // Initialize data from props
@@ -337,6 +338,31 @@ const InputLinkWebsitePage = ({ linkWebsites }: Props) => {
                     okType="danger"
                 >
                     <p>Apakah Anda yakin ingin menghapus link website ini?</p>
+                </Modal>
+
+                {/* Maintenance Overlay Modal */}
+                <Modal
+                    open={maintenanceModalVisible}
+                    footer={null}
+                    closable={false}
+                    centered
+                    width={600}
+                >
+                    <Result
+                        status="warning"
+                        title="Fitur Sedang Dalam Pengembangan"
+                        subTitle="Halaman Input Link Website saat ini sedang dalam pengembangan. Mohon maaf atas ketidaknyamanannya."
+                        extra={[
+                            <Link as={'button'} href={dashboard.url()}>
+                                <Button
+                                    type="primary"
+                                    key="dashboard"
+                                >
+                                    Kembali ke Dashboard
+                                </Button>
+                            </Link>
+                        ]}
+                    />
                 </Modal>
             </div>
         </AdminLayout>
