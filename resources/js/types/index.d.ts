@@ -1,5 +1,6 @@
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
+import { ReactNode } from 'react';
 
 export interface Auth {
     user: User;
@@ -16,11 +17,24 @@ export interface NavGroup {
 }
 
 export interface NavItem {
+    id: number;
     title: string;
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: LucideIcon | null;
     isActive?: boolean;
-    submenu?: NavItem[];
+    submenu?: {
+        title: string;
+        href: NonNullable<InertiaLinkProps['href']>;
+        icon?: LucideIcon | null;
+    }[];
+}
+
+export interface MenuItem {
+    id: number;
+    title: string;
+    description: string;
+    icon: ReactNode;
+    link: string;
 }
 
 export interface SharedData {

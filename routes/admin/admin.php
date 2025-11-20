@@ -22,10 +22,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Menu Admin (ID: 1)
-Route::middleware(['auth', 'verified'])->prefix('dashboard')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
   // Default admin page
   Route::get('/', function() {
-    return Inertia::render('admin/user/index');
+    return Inertia::render('admin/index');
   })->name('dashboard');
 
   // User (ID: 1)

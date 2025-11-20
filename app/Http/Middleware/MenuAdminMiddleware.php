@@ -29,7 +29,6 @@ class MenuAdminMiddleware
             return $next($request);
         }
         
-        return redirect()->route('home')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
-
+        return redirect()->back()->with('error', 'Anda tidak memiliki akses ke halaman ini.');
     }
 }

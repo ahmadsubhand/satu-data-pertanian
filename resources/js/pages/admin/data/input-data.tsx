@@ -5,17 +5,17 @@ import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Checkbox }
 import type { TableColumnsType } from 'antd';
 import { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy } from '@/routes';
+import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy, dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
-        href: '#',
+        href: dashboard.url(),
     },
-    {
-        title: 'Data',
-        href: '/admin/data',
-    },
+    // {
+    //     title: 'Data',
+    //     href: '/admin/data',
+    // },
     {
         title: 'Input Data',
         href: '#'

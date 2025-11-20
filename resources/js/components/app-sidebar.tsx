@@ -35,6 +35,7 @@ import { Database, Newspaper, Image, FileText, Video, Eye, User as UserIcon, Use
 import AppLogo from './app-logo';
 import { usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
+import { useEffect } from 'react';
 
 // Admin navigation items that will be shown based on user permissions
 export const getAdminNavItems = (user: User): NavItem[] => {
@@ -43,13 +44,14 @@ export const getAdminNavItems = (user: User): NavItem[] => {
 
     // Mapping ID → NavItem (dengan helper URL)
     const menuMap: Record<number, NavItem> = {
+        // 1: {
+        //     title: 'User Management',
+        //     href: dashboard.url(),
+        //     icon: UserIcon,
+        //     // This should be a direct link, no submenu
+        // },
         1: {
-            title: 'User Management',
-            href: dashboard.url(),
-            icon: UserIcon,
-            // This should be a direct link, no submenu
-        },
-        2: {
+            id: 1,
             title: 'User',
             href: adminUserList.url(),
             icon: UserIcon,
@@ -60,9 +62,10 @@ export const getAdminNavItems = (user: User): NavItem[] => {
                 { title: 'Manajemen Role', href: adminRoleManagement.url(), icon: UserRoundCog },
             ]
         },
-        3: {
+        2: {
+            id: 2,
             title: 'Data',
-            href: adminData.url(),
+            href: adminDataInput.url(),
             icon: Database,
             submenu: [
                 { title: 'Input Data', href: adminDataInput.url(), icon: MenuIcon },
@@ -72,32 +75,38 @@ export const getAdminNavItems = (user: User): NavItem[] => {
                 { title: 'Input Link Website', href: adminDataInputLink.url(), icon: MenuIcon },
             ]
         },
-        4: {
+        3: {
+            id: 3,
             title: 'Berita',
             href: adminBerita.url(),
             icon: Newspaper,
         },
-        5: {
+        4: {
+            id: 4,
             title: 'Infografis',
             href: adminInfografis.url(),
             icon: Image,
         },
-        6: {
+        5: {
+            id: 5,
             title: 'Publikasi',
             href: adminPublikasi.url(),
             icon: FileText,
         },
-        7: {
+        6: {
+            id: 6,
             title: 'Verifikasi Data Prioritas',
             href: adminVerifikasiDataPrioritas.url(),
             icon: Eye,
         },
-        8: {
+        7: {
+            id: 7,
             title: 'Media',
             href: adminFotoVideo.url(),
             icon: Video,
         },
-        9: {
+        8: {
+            id: 8,
             title: 'Verifikasi All Data',
             href: adminVerifikasiAllData.url(),
             icon: Eye,
@@ -115,7 +124,7 @@ export const getAdminNavItems = (user: User): NavItem[] => {
 
 export function AppSidebar() {
     const { auth } = usePage<SharedData>().props;
-    const adminNavItems = getAdminNavItems(auth.user);
+    const adminNavItems = getAdminNavItems(auth.user).sort((a, b) => a.id - b.id);
 
     return (
         <Sidebar collapsible="icon" variant="inset">

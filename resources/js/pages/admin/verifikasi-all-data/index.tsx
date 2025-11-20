@@ -1,11 +1,12 @@
 import AdminLayout from '@/layouts/admin/layout';
+import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
-        href: '#',
+        href: dashboard.url(),
     },
     {
         title: 'Verifikasi All Data',

@@ -3,11 +3,12 @@ import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { Users, Menu as MenuIcon, Settings, UserRoundCog, BarChart3, FileText, Newspaper, ImageIcon, Video } from 'lucide-react';
+import { dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
-        href: '#',
+        href: dashboard.url(),
     },
     {
         title: 'Manajemen User',

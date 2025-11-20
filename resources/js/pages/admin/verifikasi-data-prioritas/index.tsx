@@ -6,11 +6,12 @@ import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined, PlusOutlined, CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { toast } from 'sonner';
+import { dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
-        href: '#',
+        href: dashboard.url(),
     },
     {
         title: 'Verifikasi Data Prioritas',

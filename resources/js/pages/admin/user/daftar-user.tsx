@@ -5,13 +5,13 @@ import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'ant
 import type { TableColumnsType } from 'antd';
 import React, { useState } from 'react';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { adminUserDestroy, adminUserStore, adminUserUpdate } from '@/routes';
+import { adminUserDestroy, adminUserStore, adminUserUpdate, dashboard } from '@/routes';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
-        href: '#',
+        href: dashboard.url(),
     },
     {
         title: 'User Management',

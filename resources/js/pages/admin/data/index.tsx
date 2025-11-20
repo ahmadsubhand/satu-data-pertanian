@@ -3,11 +3,12 @@ import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { BarChart3, FileText, Database, Link as LinkIcon, Calendar, FolderOpen, FileSearch } from 'lucide-react';
+import { dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
-        href: '#',
+        href: dashboard.url(),
     },
     {
         title: 'Data Management',
@@ -16,10 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function DataManagementDashboard() {
-    const { auth } = usePage<SharedData>().props;
-    useEffect(() => {
-        console.log(auth);
-    }, [auth])
+    // const { auth } = usePage<SharedData>().props;
 
     return (
         <AdminLayout breadcrumbs={breadcrumbs}>

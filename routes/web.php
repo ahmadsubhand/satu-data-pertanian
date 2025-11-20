@@ -236,6 +236,11 @@ Route::get('/statistical-data/prices', function () {
     return Inertia::render('StatisticalIndexPage');
 })->name('statistical-data.prices');
 
+Route::get('dashboard', function() {
+    return redirect()->route('dashboard');
+});
+
+// Route::redirect('/dashboard', 'dashboard');
 // Route::get('test', function () {
 //     return 'Test Page';
 // })->name('test.page');

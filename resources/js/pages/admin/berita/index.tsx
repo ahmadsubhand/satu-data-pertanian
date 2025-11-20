@@ -5,12 +5,12 @@ import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'ant
 import type { TableColumnsType } from 'antd';
 import { useState } from 'react';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { adminBeritaStore, adminBeritaUpdate, adminBeritaDestroy } from '@/routes';
+import { adminBeritaStore, adminBeritaUpdate, adminBeritaDestroy, dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Admin',
-        href: '#',
+        href: dashboard.url(),
     },
     {
         title: 'Berita',
