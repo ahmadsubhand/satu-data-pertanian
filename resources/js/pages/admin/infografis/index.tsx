@@ -1,11 +1,12 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
-import type { TableColumnsType } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Upload } from 'antd';
+import type { TableColumnsType, UploadFile } from 'antd';
 import { useState } from 'react';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { adminInfografisStore, adminInfografisUpdate, adminInfografisDestroy, dashboard } from '@/routes';
+import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { adminInfografisStore, adminInfografisUpdate, adminInfografisDestroy, dashboard, adminInfografisDownload } from '@/routes';
+import { P } from 'node_modules/framer-motion/dist/types.d-BJcRxCew';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,6 +51,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<InfografisType | null>(null);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
 
     // Use data from props instead of hardcoded values
     // No local state needed anymore since we'll use API calls
@@ -160,18 +162,22 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
 
     // Function to add or update infografis
     const handleAddInfografis = (values: any) => {
+        // Process file for uploading
+        const processedValues = {
+            ...values,
+            status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1',
+            file: values.file.fileList ? values.file.fileList[0].originFileObj : null
+        };
+
         if (isEditing && currentRecord) {
             // Update existing infografis via API
-            router.put(adminInfografisUpdate.url(currentRecord.id), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            router.post(adminInfografisUpdate.url(currentRecord.id), {
+                _method: 'put',
+                ...processedValues
             });
         } else {
             // Add new infografis via API
-            router.post(adminInfografisStore.url(), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
-            });
+            router.post(adminInfografisStore.url(), processedValues);
         }
     };
 
@@ -198,13 +204,27 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
 
     // Function to handle editing infografis
     const handleEdit = (record: InfografisType) => {
+        // Set up file list for existing file
+        if (record.file) {
+            setFileList([
+                {
+                    uid: '1',
+                    name: record.file,
+                    status: 'done',
+                    url: adminInfografisDownload.url({
+                        query: { link: record.file }
+                    }),
+                }
+            ]);
+        }
+
         form.setFieldsValue({
             judul: record.judul,
             tanggal_rilis: record.tanggal_rilis,
             keterangan: record.keterangan,
-            file: record.file,
             status: record.status ? 1 : 0,
             produsen_data_table_id: record.produsen_data_table_id,
+            file: record.file,
         });
 
         setCurrentRecord(record);
@@ -223,6 +243,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                         icon={<PlusOutlined />}
                         onClick={() => {
                             form.resetFields();
+                            setFileList([]);
                             setIsEditing(false);
                             setCurrentRecord(null);
                             setIsModalVisible(true);
@@ -297,7 +318,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                             judul: '',
                             tanggal_rilis: new Date().toISOString().split('T')[0],
                             keterangan: '',
-                            file: '',
+                            file: [],
                             status: 0,
                             produsen_data_table_id: undefined
                         }}
@@ -329,9 +350,27 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                         <Form.Item
                             label="File"
                             name="file"
-                            rules={[{ required: true, message: 'Nama file wajib diisi' }]}
+                            rules={[{ required: true, message: 'File wajib diupload' }]}
                         >
-                            <Input placeholder="Masukkan nama file" />
+                            <Upload
+                                beforeUpload={
+                                    (file) => {
+                                        setFileList(
+                                            [
+                                                {
+                                                    uid: '1',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ file: file }); return false; // mencegah upload otomatis
+                                    }
+                                }
+                                fileList={fileList}
+                                maxCount={1} >
+                                <Button icon={<UploadOutlined />}>Pilih File</Button>
+                            </Upload>
                         </Form.Item>
                         <Form.Item
                             label="Status"

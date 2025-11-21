@@ -236,6 +236,8 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                         icon={<PlusOutlined />}
                         onClick={() => {
                             form.resetFields();
+                            setFileList([]);
+                            setImageList([]);
                             setIsEditing(false);
                             setCurrentRecord(null);
                             setIsModalVisible(true);

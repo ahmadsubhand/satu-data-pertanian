@@ -267,6 +267,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
                         type="primary"
                         onClick={() => {
                             form.resetFields();
+                            setFileList([]);
                             setIsEditing(false);
                             setCurrentRecord(null);
                             setIsModalVisible(true);

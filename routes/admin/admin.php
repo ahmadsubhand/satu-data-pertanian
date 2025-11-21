@@ -104,6 +104,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
   // Infografis (ID: 4)
   Route::middleware('menuAdmin:4')->prefix('infografis')->group(function () {
+      Route::get('/download', [MenuInfografisTableController::class, 'download'])->name('admin-infografis-download');
       Route::get('/', [MenuInfografisTableController::class, 'index'])->name('admin-infografis');
       Route::post('/', [MenuInfografisTableController::class, 'store'])->name('admin-infografis-store');
       Route::put('/{menuInfografisTable}', [MenuInfografisTableController::class, 'update'])->name('admin-infografis-update');
