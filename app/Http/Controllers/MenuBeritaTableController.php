@@ -6,11 +6,13 @@ use App\Models\MenuBeritaTable;
 use App\Models\ProdusenDataTable;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MenuBeritaTableController extends Controller
 {
+    protected $rootPathFile = 'berita';
     public function index(): Response
     {
         $berita = MenuBeritaTable::with(['user', 'produsenDataTable'])
@@ -47,19 +49,50 @@ class MenuBeritaTableController extends Controller
             'tanggal_rilis' => 'required|date',
             'isi_singkat' => 'nullable|string',
             'isi' => 'required|string',
-            'file' => 'required|string|max:255',
-            'foto' => 'required|string|max:255',
+            'file' => 'required|file',
+            'foto' => 'required|file',
             'status' => 'required|boolean',
             'produsen_data_table_id' => 'required|integer|exists:produsen_data_tables,id',
         ]);
+
+        $file_path = '';
+        $foto_path = '';
+        // $file_size = null;
+
+        // Jika ada file → upload
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+
+            $file->storePubliclyAs(
+                $this->rootPathFile,
+                $file->getClientOriginalName(),
+                'public'
+            );
+
+            $file_path = $file->getClientOriginalName();
+            // $file_size = $file->getSize();
+        }
+
+        // Jika ada foto → upload
+        if ($request->hasFile('foto')) {
+            $foto = $request->file('foto');
+
+            $foto->storePubliclyAs(
+                $this->rootPathFile,
+                $foto->getClientOriginalName(),
+                'public'
+            );
+
+            $foto_path = $foto->getClientOriginalName();
+        }
 
         MenuBeritaTable::create([
             'judul' => $request->judul,
             'tanggal_rilis' => $request->tanggal_rilis,
             'isi_singkat' => $request->isi_singkat,
             'isi' => $request->isi,
-            'file' => $request->file ?? '',
-            'foto' => $request->foto ?? '',
+            'file' => $file_path,
+            'foto' => $foto_path,
             'status' => $request->status,
             'produsen_data_table_id' => $request->produsen_data_table_id,
             'user_id' => auth()->id() // Assuming the current user is the creator
@@ -76,13 +109,39 @@ class MenuBeritaTableController extends Controller
             'tanggal_rilis' => 'sometimes|required|date',
             'isi_singkat' => 'nullable|string',
             'isi' => 'sometimes|required|string',
-            'file' => 'nullable|string|max:255',
-            'foto' => 'nullable|string|max:255',
+            'file' => 'nullable|file',
+            'foto' => 'nullable|file',
             'status' => 'required|boolean',
             'produsen_data_table_id' => 'sometimes|required|integer|exists:produsen_data_tables,id',
         ]);
 
-        $menuBeritaTable->update($request->except(['user_id'])); // Don't allow updating user_id
+        $data = $request->except(['file', 'foto', 'user_id']);
+
+        // Jika ada file baru → upload, hapus file lama
+        if ($request->hasFile('file')) {
+            if ($menuBeritaTable->file) {
+                Storage::disk('public')->delete($this->rootPathFile . '/' . $menuBeritaTable->file);
+            }
+
+            $file = $request->file('file');
+            $file->storePubliclyAs($this->rootPathFile, $file->getClientOriginalName(), 'public');
+
+            $data['file'] = $file->getClientOriginalName();
+        }
+
+        // Jika ada foto baru → upload, hapus foto lama
+        if ($request->hasFile('foto')) {
+            if ($menuBeritaTable->foto) {
+                Storage::disk('public')->delete($this->rootPathFile . '/' . $menuBeritaTable->foto);
+            }
+
+            $foto = $request->file('foto');
+            $foto->storePubliclyAs($this->rootPathFile, $foto->getClientOriginalName(), 'public');
+
+            $data['foto'] = $foto->getClientOriginalName();
+        }
+
+        $menuBeritaTable->update($data);
 
         session()->flash('success', 'Berita berhasil diperbarui.');
         return Inertia::location(route('admin-berita'));
@@ -90,9 +149,27 @@ class MenuBeritaTableController extends Controller
 
     public function destroy(MenuBeritaTable $menuBeritaTable)
     {
+        // Hapus file dan foto jika ada
+        if ($menuBeritaTable->file) {
+            Storage::disk('public')->delete($this->rootPathFile . '/' . $menuBeritaTable->file);
+        }
+
+        if ($menuBeritaTable->foto) {
+            Storage::disk('public')->delete($this->rootPathFile . '/' . $menuBeritaTable->foto);
+        }
+
         $menuBeritaTable->delete();
 
         session()->flash('success', 'Berita berhasil dihapus.');
         return Inertia::location(route('admin-berita'));
+    }
+
+    public function download(Request $request)
+    {
+        $request->validate([
+            'link' => 'required|string',
+        ]);
+
+        return Storage::disk('public')->download($this->rootPathFile . '/' . $request['link']);
     }
 }

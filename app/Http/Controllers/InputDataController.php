@@ -68,7 +68,7 @@ class InputDataController extends Controller
             'file_meta2' => 'nullable|string|max:255',
             'file_meta3' => 'nullable|string|max:255',
             'ukuran_file' => 'nullable|integer',
-            'file_statistik' => 'nullable|file|max:10240', // max 10MB
+            'file_statistik' => 'nullable|file'
         ]);
 
         $filePath = '';

@@ -95,6 +95,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
   
   // Berita (ID: 3)
   Route::middleware('menuAdmin:3')->prefix('berita')->group(function () {
+      Route::get('/download', [MenuBeritaTableController::class, 'download'])->name('admin-berita-download');
       Route::get('/', [MenuBeritaTableController::class, 'index'])->name('admin-berita');
       Route::post('/', [MenuBeritaTableController::class, 'store'])->name('admin-berita-store');
       Route::put('/{menuBeritaTable}', [MenuBeritaTableController::class, 'update'])->name('admin-berita-update');

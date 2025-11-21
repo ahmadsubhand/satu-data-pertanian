@@ -381,7 +381,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
                                 ))}
                             </Select>
                         </Form.Item>
-                        <Form.Item label="File" name="file_statistik"> 
+                        <Form.Item label="File" name="file_statistik" rules={[{ required: true, message: 'File wajib diupload' }]}> 
                             <Upload
                                 beforeUpload={
                                     (file) => { 
@@ -405,7 +405,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
                         <Form.Item label="Link Meta" name="link_meta">
                             <Input placeholder="Masukkan link metadata" />
                         </Form.Item>
-                        <Form.Item label="File Meta 1" name="file_meta1">
+                        {/* <Form.Item label="File Meta 1" name="file_meta1">
                             <Input placeholder="Masukkan nama file meta 1" />
                         </Form.Item>
                         <Form.Item label="File Meta 2" name="file_meta2">
@@ -413,7 +413,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
                         </Form.Item>
                         <Form.Item label="File Meta 3" name="file_meta3">
                             <Input placeholder="Masukkan nama file meta 3" />
-                        </Form.Item>
+                        </Form.Item> */}
                         {/* <Form.Item label="Ukuran File" name="ukuran_file" rules={[{ required: true, message: 'Ukuran file wajib diisi' }]}>
                             <Input type="number" placeholder="Masukkan ukuran file dalam bytes" />
                         </Form.Item> */}
