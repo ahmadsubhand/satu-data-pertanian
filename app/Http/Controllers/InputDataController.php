@@ -7,11 +7,14 @@ use App\Models\ProdusenDataTable;
 use App\Models\KategoriDataTable;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class InputDataController extends Controller
 {
+    protected $rootPathFile = 'metadata';
+
     public function index(): Response
     {
         $dataItems = MenuMetadataTable::with(['user', 'produsenDataTable', 'kategoriDataTable'])
@@ -65,8 +68,25 @@ class InputDataController extends Controller
             'file_meta2' => 'nullable|string|max:255',
             'file_meta3' => 'nullable|string|max:255',
             'ukuran_file' => 'nullable|integer',
-            'file_statistik' => 'required|string|max:255',
+            'file_statistik' => 'nullable|file|max:10240', // max 10MB
         ]);
+
+        $filePath = '';
+        $fileSize = null;
+
+        // Jika ada file → upload sama seperti di update()
+        if ($request->hasFile('file_statistik')) {
+            $file = $request->file('file_statistik');
+
+            $file->storePubliclyAs(
+                $this->rootPathFile, 
+                $file->getClientOriginalName(),
+                'public'
+            );
+
+            $filePath = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+        }
 
         MenuMetadataTable::create([
             'judul' => $request->judul,
@@ -79,14 +99,15 @@ class InputDataController extends Controller
             'file_meta1' => $request->file_meta1 ?? '',
             'file_meta2' => $request->file_meta2 ?? '',
             'file_meta3' => $request->file_meta3 ?? '',
-            'ukuran_file' => $request->ukuran_file,
-            'file_statistik' => $request->file_statistik ?? '',
-            'user_id' => auth()->id() // Assuming the current user is the creator
+            'file_statistik' => $filePath,     // ← hasil upload
+            'ukuran_file' => $fileSize,        // ← otomatis terisi
+            'user_id' => auth()->id(),
         ]);
 
         session()->flash('success', 'Data berhasil ditambahkan.');
         return Inertia::location(route('admin-data-input'));
     }
+
 
     public function update(Request $request, MenuMetadataTable $menuMetadataTable)
     {
@@ -102,10 +123,25 @@ class InputDataController extends Controller
             'file_meta2' => 'nullable|string|max:255',
             'file_meta3' => 'nullable|string|max:255',
             'ukuran_file' => 'nullable|integer',
-            'file_statistik' => 'required|string|max:255',
+            'file_statistik' => 'nullable|file'
         ]);
 
-        $menuMetadataTable->update($request->except(['user_id'])); // Don't allow updating user_id
+        $data = $request->except(['file_statistik', 'user_id']);
+        
+        // Jika ada file baru → upload, hapus file lama
+        if ($request->hasFile('file_statistik')) {
+            if ($menuMetadataTable->file_statistik) {
+                Storage::disk('public')->delete($this->rootPathFile . '/' . $menuMetadataTable->file_statistik);
+            }
+
+            $file = $request->file('file_statistik');
+            $file->storePubliclyAs($this->rootPathFile, $file->getClientOriginalName(), 'public');
+
+            $data['file_statistik'] = $file->getClientOriginalName();
+            $data['ukuran_file'] = $request->file('file_statistik')->getSize();
+        }
+
+        $menuMetadataTable->update($data);
 
         session()->flash('success', 'Data berhasil diperbarui.');
         return Inertia::location(route('admin-data-input'));
@@ -117,5 +153,14 @@ class InputDataController extends Controller
 
         session()->flash('success', 'Data berhasil dihapus.');
         return Inertia::location(route('admin-data-input'));
+    }
+
+    public function download(Request $request)
+    {
+        $request->validate([
+            'link' => 'required|string',
+        ]);
+        // dd($request['link']);
+        return Storage::disk('public')->download($this->rootPathFile . '/' . $request['link']);
     }
 }

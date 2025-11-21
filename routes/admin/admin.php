@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
       // Submenu routes for data management
       Route::prefix('input-data')->group(function () {
+          Route::get('/download', [InputDataController::class, 'download'])->name('admin-data-input-download');
           Route::get('/', [InputDataController::class, 'index'])->name('admin-data-input');
           Route::post('/', [InputDataController::class, 'store'])->name('admin-data-input-store');
           Route::put('/{menuMetadataTable}', [InputDataController::class, 'update'])->name('admin-data-input-update');

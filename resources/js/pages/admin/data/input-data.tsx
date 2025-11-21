@@ -1,11 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Checkbox } from 'antd';
-import type { TableColumnsType } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Upload } from 'antd';
+import type { TableColumnsType, UploadFile } from 'antd';
 import { useState } from 'react';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy, dashboard } from '@/routes';
+import { EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy, dashboard, adminDataInputDownload } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,8 +50,7 @@ interface Props {
     users?: Array<{id: number, nama_lengkap: string}>;
 }
 
-const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users = [] }: Props) => {
-    const { auth, flash } = usePage<SharedData>().props;
+const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Props) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<DataItem | null>(null);
@@ -63,7 +62,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
     const [form] = Form.useForm();
 
     // Initialize data from props
-    const [dataItemsState, setDataItemsState] = useState<DataItem[]>(dataItems || []);
+    const [dataItemsState] = useState<DataItem[]>(dataItems || []);
 
     // Filter data based on search and filters
     const filteredData = dataItemsState.filter(item =>
@@ -140,6 +139,18 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
             dataIndex: 'file_statistik',
             key: 'file_statistik',
             width: 120,
+            render: (file) => (
+                <a
+                    href={adminDataInputDownload.url({
+                        query: { link: file }
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#1677ff' }}
+                >
+                    {file || 'Tidak ada file'}
+                </a>
+            ),
         },
         {
             title: 'Aksi',
@@ -173,12 +184,16 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
         // Convert boolean values for compatibility between SQLite and MySQL
         const processedValues = {
             ...values,
-            is_data_prioritas: values.is_data_prioritas === 'true' || values.is_data_prioritas === true || values.is_data_prioritas === 1 || values.is_data_prioritas === '1'
+            is_data_prioritas: values.is_data_prioritas === 'true' || values.is_data_prioritas === true || values.is_data_prioritas === 1 || values.is_data_prioritas === '1',
+            file_statistik: values.file_statistik.fileList ? values.file_statistik.fileList[0].originFileObj : null
         };
 
         if (isEditing && currentRecord) {
             // Update existing data via API
-            router.put(adminDataInputUpdate.url(currentRecord.id), processedValues);
+            router.post(adminDataInputUpdate.url(currentRecord.id), {
+                _method: 'put',
+                ...processedValues
+            });
         } else {
             // Add new data via API
             router.post(adminDataInputStore.url(), processedValues);
@@ -208,7 +223,20 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
 
 
     // Function to handle editing data
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
     const handleEdit = (record: DataItem) => {
+        setFileList([
+            {
+                uid: '1',
+                name: record.file_statistik,
+                status: 'done',
+                url: adminDataInputDownload.url({
+                    query: { link: record.file_statistik }
+                }),
+            }
+        ])
+
         form.setFieldsValue({
             judul: record.judul,
             tanggal_rilis: record.tgl_rilis,
@@ -353,8 +381,26 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                                 ))}
                             </Select>
                         </Form.Item>
-                        <Form.Item label="File" name="file_statistik" rules={[{ required: true, message: 'File wajib diupload' }]}>
-                            <Input placeholder="Masukkan nama file" />
+                        <Form.Item label="File" name="file_statistik"> 
+                            <Upload
+                                beforeUpload={
+                                    (file) => { 
+                                        setFileList(
+                                            [
+                                                {
+                                                    uid: '1',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ file_statistik: file }); return false; // mencegah upload otomatis 
+                                    }
+                                } 
+                                fileList={fileList}
+                                maxCount={1} > 
+                                <Button icon={<UploadOutlined />}>Pilih File</Button> 
+                            </Upload>
                         </Form.Item>
                         <Form.Item label="Link Meta" name="link_meta">
                             <Input placeholder="Masukkan link metadata" />
