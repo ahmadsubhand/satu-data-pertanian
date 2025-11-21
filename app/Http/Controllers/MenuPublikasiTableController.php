@@ -6,11 +6,14 @@ use App\Models\MenuPublikasiTable;
 use App\Models\ProdusenDataTable;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class MenuPublikasiTableController extends Controller
 {
+    protected $rootPathFile = 'publikasi';
+
     public function index(): Response
     {
         $publikasi = MenuPublikasiTable::with(['user', 'produsenDataTable'])
@@ -52,14 +55,44 @@ class MenuPublikasiTableController extends Controller
             'keterangan' => 'required|string',
             'nomor_publikasi' => 'nullable|string|max:255',
             'nomor_issn' => 'nullable|string|max:255',
-            'file' => 'required|string|max:255',
-            'cover' => 'required|string|max:255',
+            'file' => 'required|file',
+            'cover' => 'required|file',
             'status' => 'required|boolean',
             'produsen_data_table_id' => 'required|integer|exists:produsen_data_tables,id',
-            'ukuran_file' => 'required|integer',
             'jumlah_halaman' => 'required|integer',
             'abstraksi' => 'required|string',
         ]);
+
+        $file_path = '';
+        $cover_path = '';
+        $fileSize = null;
+
+        // Jika ada file → upload
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+
+            $file->storePubliclyAs(
+                $this->rootPathFile,
+                $file->getClientOriginalName(),
+                'public'
+            );
+
+            $file_path = $file->getClientOriginalName();
+            $fileSize = $file->getSize();
+        }
+
+        // Jika ada cover → upload
+        if ($request->hasFile('cover')) {
+            $cover = $request->file('cover');
+
+            $cover->storePubliclyAs(
+                $this->rootPathFile,
+                $cover->getClientOriginalName(),
+                'public'
+            );
+
+            $cover_path = $cover->getClientOriginalName();
+        }
 
         MenuPublikasiTable::create([
             'judul' => $request->judul,
@@ -67,11 +100,11 @@ class MenuPublikasiTableController extends Controller
             'keterangan' => $request->keterangan,
             'nomor_publikasi' => $request->nomor_publikasi ?? '',
             'nomor_issn' => $request->nomor_issn ?? '',
-            'file' => $request->file,
-            'cover' => $request->cover,
+            'file' => $file_path,
+            'cover' => $cover_path,
             'status' => $request->status,
             'produsen_data_table_id' => $request->produsen_data_table_id,
-            'ukuran_file' => $request->ukuran_file,
+            'ukuran_file' => $fileSize,
             'jumlah_halaman' => $request->jumlah_halaman,
             'abstraksi' => $request->abstraksi,
             'user_id' => auth()->id() // Assuming the current user is the creator
@@ -89,16 +122,42 @@ class MenuPublikasiTableController extends Controller
             'keterangan' => 'required|string',
             'nomor_publikasi' => 'nullable|string|max:255',
             'nomor_issn' => 'nullable|string|max:255',
-            'file' => 'required|string|max:255',
-            'cover' => 'required|string|max:255',
+            'file' => 'nullable|file',
+            'cover' => 'nullable|file',
             'status' => 'required|boolean',
             'produsen_data_table_id' => 'sometimes|required|integer|exists:produsen_data_tables,id',
-            'ukuran_file' => 'required|integer',
             'jumlah_halaman' => 'required|integer',
             'abstraksi' => 'required|string',
         ]);
 
-        $menuPublikasiTable->update($request->except(['user_id'])); // Don't allow updating user_id
+        $data = $request->except(['file', 'cover', 'user_id']);
+
+        // Jika ada file baru → upload, hapus file lama
+        if ($request->hasFile('file')) {
+            if ($menuPublikasiTable->file) {
+                Storage::disk('public')->delete($this->rootPathFile . '/' . $menuPublikasiTable->file);
+            }
+
+            $file = $request->file('file');
+            $file->storePubliclyAs($this->rootPathFile, $file->getClientOriginalName(), 'public');
+
+            $data['file'] = $file->getClientOriginalName();
+            $data['ukuran_file'] = $file->getSize();
+        }
+
+        // Jika ada cover baru → upload, hapus cover lama
+        if ($request->hasFile('cover')) {
+            if ($menuPublikasiTable->cover) {
+                Storage::disk('public')->delete($this->rootPathFile . '/' . $menuPublikasiTable->cover);
+            }
+
+            $cover = $request->file('cover');
+            $cover->storePubliclyAs($this->rootPathFile, $cover->getClientOriginalName(), 'public');
+
+            $data['cover'] = $cover->getClientOriginalName();
+        }
+
+        $menuPublikasiTable->update($data);
 
         session()->flash('success', 'Publikasi berhasil diperbarui.');
         return Inertia::location(route('admin-publikasi'));
@@ -106,9 +165,27 @@ class MenuPublikasiTableController extends Controller
 
     public function destroy(MenuPublikasiTable $menuPublikasiTable)
     {
+        // Hapus file dan cover jika ada
+        if ($menuPublikasiTable->file) {
+            Storage::disk('public')->delete($this->rootPathFile . '/' . $menuPublikasiTable->file);
+        }
+
+        if ($menuPublikasiTable->cover) {
+            Storage::disk('public')->delete($this->rootPathFile . '/' . $menuPublikasiTable->cover);
+        }
+
         $menuPublikasiTable->delete();
 
         session()->flash('success', 'Publikasi berhasil dihapus.');
         return Inertia::location(route('admin-publikasi'));
+    }
+
+    public function download(Request $request)
+    {
+        $request->validate([
+            'link' => 'required|string',
+        ]);
+
+        return Storage::disk('public')->download($this->rootPathFile . '/' . $request['link']);
     }
 }

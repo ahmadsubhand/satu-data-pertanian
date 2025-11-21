@@ -138,7 +138,7 @@ class InputDataController extends Controller
             $file->storePubliclyAs($this->rootPathFile, $file->getClientOriginalName(), 'public');
 
             $data['file_statistik'] = $file->getClientOriginalName();
-            $data['ukuran_file'] = $request->file('file_statistik')->getSize();
+            $data['ukuran_file'] = $file->getSize();
         }
 
         $menuMetadataTable->update($data);
@@ -149,6 +149,11 @@ class InputDataController extends Controller
 
     public function destroy(MenuMetadataTable $menuMetadataTable)
     {
+        // Hapus file
+        if ($menuMetadataTable->file) {
+            Storage::disk('public')->delete($this->rootPathFile . '/' . $menuMetadataTable->file);
+        }
+
         $menuMetadataTable->delete();
 
         session()->flash('success', 'Data berhasil dihapus.');

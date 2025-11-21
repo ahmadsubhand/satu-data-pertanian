@@ -113,6 +113,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
   // Publikasi (ID: 5)
   Route::middleware('menuAdmin:5')->prefix('publikasi')->group(function () {
+      Route::get('/download', [MenuPublikasiTableController::class, 'download'])->name('admin-publikasi-download');
       Route::get('/', [MenuPublikasiTableController::class, 'index'])->name('admin-publikasi');
       Route::post('/', [MenuPublikasiTableController::class, 'store'])->name('admin-publikasi-store');
       Route::put('/{menuPublikasiTable}', [MenuPublikasiTableController::class, 'update'])->name('admin-publikasi-update');

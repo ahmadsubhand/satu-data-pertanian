@@ -1,11 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
-import type { TableColumnsType } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Upload } from 'antd';
+import type { TableColumnsType, UploadFile } from 'antd';
 import { useState } from 'react';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { adminPublikasiStore, adminPublikasiUpdate, adminPublikasiDestroy, dashboard } from '@/routes';
+import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { adminPublikasiStore, adminPublikasiUpdate, adminPublikasiDestroy, dashboard, adminPublikasiDownload } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -30,7 +30,6 @@ interface PublikasiType {
     status: boolean;
     produsen_data_table_id: number;
     produsen_data?: string; // Nama produsen
-    ukuran_file: number;
     jumlah_halaman: number;
     abstraksi: string;
     created_at: string;
@@ -125,6 +124,24 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
             width: 100,
         },
         {
+            title: 'File',
+            dataIndex: 'file',
+            key: 'file',
+            width: 120,
+            render: (file) => (
+                <a
+                    href={adminPublikasiDownload.url({
+                        query: { link: file }
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#1677ff' }}
+                >
+                    {file || 'Tidak ada file'}
+                </a>
+            ),
+        },
+        {
             title: 'Aksi',
             key: 'action',
             render: (_, record) => (
@@ -151,20 +168,29 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
     const { Search } = Input;
     const { Option } = Select;
 
+    // State for file uploads
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [coverFileList, setCoverFileList] = useState<UploadFile[]>([]);
+
     // Function to add or update publikasi
     const handleAddPublikasi = (values: any) => {
+        // Process file uploads
+        const processedValues = {
+            ...values,
+            status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1',
+            file: values.file.fileList ? values.file.fileList[0].originFileObj : null,
+            cover: values.cover.fileList ? values.cover.fileList[0].originFileObj : null
+        };
+
         if (isEditing && currentRecord) {
             // Update existing publikasi via API
-            router.put(adminPublikasiUpdate.url(currentRecord.id), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            router.post(adminPublikasiUpdate.url(currentRecord.id), {
+                _method: 'put',
+                ...processedValues
             });
         } else {
             // Add new publikasi via API
-            router.post(adminPublikasiStore.url(), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
-            });
+            router.post(adminPublikasiStore.url(), processedValues);
         }
     };
 
@@ -191,6 +217,29 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
 
     // Function to handle editing publikasi
     const handleEdit = (record: PublikasiType) => {
+        // Set file lists for editing
+        setFileList([
+            {
+                uid: '1',
+                name: record.file,
+                status: 'done',
+                url: adminPublikasiDownload.url({
+                    query: { link: record.file }
+                }),
+            }
+        ]);
+
+        setCoverFileList([
+            {
+                uid: '2',
+                name: record.cover,
+                status: 'done',
+                url: adminPublikasiDownload.url({
+                    query: { link: record.cover }
+                }),
+            }
+        ]);
+
         form.setFieldsValue({
             judul: record.judul,
             tanggal_rilis: record.tanggal_rilis,
@@ -201,7 +250,6 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
             cover: record.cover,
             status: record.status ? 1 : 0,
             produsen_data_table_id: record.produsen_data_table_id,
-            ukuran_file: record.ukuran_file,
             jumlah_halaman: record.jumlah_halaman,
             abstraksi: record.abstraksi,
         });
@@ -222,6 +270,8 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                         icon={<PlusOutlined />}
                         onClick={() => {
                             form.resetFields();
+                            setFileList([]);
+                            setCoverFileList([]);
                             setIsEditing(false);
                             setCurrentRecord(null);
                             setIsModalVisible(true);
@@ -272,6 +322,8 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                         setIsModalVisible(false);
                         setIsEditing(false);
                         setCurrentRecord(null);
+                        setFileList([]);
+                        setCoverFileList([]);
                         form.resetFields();
                     }}
                     footer={[
@@ -279,6 +331,8 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                             setIsModalVisible(false);
                             setIsEditing(false);
                             setCurrentRecord(null);
+                            setFileList([]);
+                            setCoverFileList([]);
                             form.resetFields();
                         }}>
                             Batal
@@ -302,7 +356,6 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                             cover: '',
                             status: 0,
                             produsen_data_table_id: undefined,
-                            ukuran_file: 1,
                             jumlah_halaman: 1,
                             abstraksi: ''
                         }}
@@ -346,23 +399,52 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                         <Form.Item
                             label="File"
                             name="file"
-                            rules={[{ required: true, message: 'File wajib diisi' }]}
+                            rules={[{ required: true, message: 'File wajib diupload' }]}
                         >
-                            <Input placeholder="Nama file publikasi" />
+                            <Upload
+                                beforeUpload={
+                                    (file) => {
+                                        setFileList(
+                                            [
+                                                {
+                                                    uid: '1',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ file: file }); return false; // mencegah upload otomatis
+                                    }
+                                }
+                                fileList={fileList}
+                                maxCount={1} >
+                                <Button icon={<UploadOutlined />}>Pilih File Publikasi</Button>
+                            </Upload>
                         </Form.Item>
                         <Form.Item
                             label="Cover"
                             name="cover"
-                            rules={[{ required: true, message: 'Cover wajib diisi' }]}
+                            rules={[{ required: true, message: 'Cover wajib diupload' }]}
                         >
-                            <Input placeholder="Nama file cover" />
-                        </Form.Item>
-                        <Form.Item
-                            label="Ukuran File (KB)"
-                            name="ukuran_file"
-                            rules={[{ required: true, message: 'Ukuran file wajib diisi' }]}
-                        >
-                            <Input type="number" placeholder="Ukuran file dalam KB" />
+                            <Upload
+                                beforeUpload={
+                                    (file) => {
+                                        setCoverFileList(
+                                            [
+                                                {
+                                                    uid: '2',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ cover: file }); return false; // mencegah upload otomatis
+                                    }
+                                }
+                                fileList={coverFileList}
+                                maxCount={1} >
+                                <Button icon={<UploadOutlined />}>Pilih File Cover</Button>
+                            </Upload>
                         </Form.Item>
                         <Form.Item
                             label="Jumlah Halaman"
