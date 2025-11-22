@@ -130,8 +130,8 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
       Route::get('/download', [FotoVideoController::class, 'download'])->name('admin-foto-video-download');
       Route::get('/', [FotoVideoController::class, 'index'])->name('admin-foto-video');
       Route::post('/', [FotoVideoController::class, 'store'])->name('admin-foto-video-store');
-      Route::put('/{menuInfografisTable}', [FotoVideoController::class, 'update'])->name('admin-foto-video-update');
-      Route::delete('/{menuInfografisTable}', [FotoVideoController::class, 'destroy'])->name('admin-foto-video-destroy');
+      Route::put('/{fotovideo}', [FotoVideoController::class, 'update'])->name('admin-foto-video-update');
+      Route::delete('/{fotovideo}', [FotoVideoController::class, 'destroy'])->name('admin-foto-video-destroy');
   });
 
   // Verifikasi All Data (ID: 8)
