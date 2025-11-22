@@ -10,7 +10,6 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import {
-    adminData,
     adminBerita,
     adminInfografis,
     adminPublikasi,
@@ -35,7 +34,6 @@ import { Database, Newspaper, Image, FileText, Video, Eye, User as UserIcon, Use
 import AppLogo from './app-logo';
 import { usePage } from '@inertiajs/react';
 import { type SharedData } from '@/types';
-import { useEffect } from 'react';
 
 // Admin navigation items that will be shown based on user permissions
 export const getAdminNavItems = (user: User): NavItem[] => {

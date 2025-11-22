@@ -18,10 +18,10 @@ return new class extends Migration
             
             $table->string('judul');
             $table->text('keterangan');
-            $table->string('link_video');
+            $table->string('link_video')->nullable();
             $table->date('tanggal_rilis');
             $table->string('file');
-            $table->string('status', 20)->default('Private');
+            $table->boolean('status')->default(false);
         });
     }
 

@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\MenuInfografisTableSeeder;
 use Database\Seeders\MenuPublikasiTableSeeder;
+use Database\Seeders\MenuMultimediaTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,7 +26,8 @@ class DatabaseSeeder extends Seeder
             MenuMetadataTableSeeder::class,
             MenuBeritaTableSeeder::class,
             MenuInfografisTableSeeder::class,
-            MenuPublikasiTableSeeder::class
+            MenuPublikasiTableSeeder::class,
+            MenuMultimediaTableSeeder::class
         ]);
 
         // User::factory(10)->create();

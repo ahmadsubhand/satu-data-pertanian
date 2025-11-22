@@ -1,8 +1,7 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { MenuItem, SharedData, User, type BreadcrumbItem } from '@/types';
 import { Head, usePage, Link } from '@inertiajs/react';
-import { useEffect } from 'react';
-import { Users, Menu as MenuIcon, Settings, UserRoundCog, BarChart3, FileText, Newspaper, ImageIcon, VideoIcon } from 'lucide-react';
+import { Users, BarChart3, FileText, Newspaper, ImageIcon, VideoIcon } from 'lucide-react';
 import { adminBerita, adminDataInput, adminFotoVideo, adminInfografis, adminPublikasi, adminUserList, dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
