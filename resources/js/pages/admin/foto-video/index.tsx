@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { EditOutlined, DeleteOutlined, PlusOutlined, FileImageOutlined, VideoCameraOutlined, UploadOutlined } from '@ant-design/icons';
 import { toast } from 'sonner';
 import FileUpload from '@/components/file-upload';
-import { adminMediaStore, adminMediaUpdate, adminMediaDestroy, dashboard } from '@/routes';
+import { adminFotoVideoDestroy, adminFotoVideoStore, adminFotoVideoUpdate, dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -206,10 +206,10 @@ export default function FotoVideoPage({ fotovideo }: Props) {
 
         if (isEditing && currentRecord) {
             // Update existing foto/video
-            router.put(adminMediaUpdate.url(currentRecord.id), updatedValues);
+            router.put(adminFotoVideoUpdate.url(currentRecord.id), updatedValues);
         } else {
             // Add new foto/video
-            router.post(adminMediaStore.url(), updatedValues);
+            router.post(adminFotoVideoStore.url(), updatedValues);
         }
 
         setIsModalVisible(false);
@@ -227,7 +227,7 @@ export default function FotoVideoPage({ fotovideo }: Props) {
     // Function to confirm deletion
     const confirmDelete = () => {
         if (deleteRecordId) {
-            router.delete(adminMediaDestroy.url(deleteRecordId));
+            router.delete(adminFotoVideoDestroy.url(deleteRecordId));
         }
         setDeleteModalVisible(false);
         setDeleteRecordId(null);

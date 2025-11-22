@@ -2,8 +2,8 @@ import AdminLayout from '@/layouts/admin/layout';
 import { MenuItem, SharedData, User, type BreadcrumbItem } from '@/types';
 import { Head, usePage, Link } from '@inertiajs/react';
 import { useEffect } from 'react';
-import { Users, Menu as MenuIcon, Settings, UserRoundCog, BarChart3, FileText, Newspaper, ImageIcon } from 'lucide-react';
-import { adminBerita, adminDataInput, adminInfografis, adminPublikasi, adminUserList, dashboard } from '@/routes';
+import { Users, Menu as MenuIcon, Settings, UserRoundCog, BarChart3, FileText, Newspaper, ImageIcon, VideoIcon } from 'lucide-react';
+import { adminBerita, adminDataInput, adminFotoVideo, adminInfografis, adminPublikasi, adminUserList, dashboard } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -52,6 +52,13 @@ export const getAdminNavItems = (user: User): MenuItem[] => {
             description: 'Kelola publikasi dan laporan',
             icon: <FileText className="h-10 w-10 text-amber-500 mb-3" />,
             link: adminPublikasi.url()
+        },
+        7 : {
+            id: 7,
+            title: 'Manajemen Foto & Video',
+            description: 'Kelola dokumentasi foto dan video kegiatan',
+            icon: <VideoIcon className="h-10 w-10 text-purple-500 mb-3" />,
+            link: adminFotoVideo.url(),
         },
         
     }

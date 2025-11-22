@@ -125,21 +125,26 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
       Route::get('/', [VerifikasiDataPrioritasController::class, 'index'])->name('admin-verifikasi-data-prioritas');
   });
 
-  // Verifikasi All Data (ID: 9)
-  Route::middleware('menuAdmin:9')->prefix('verifikasi-all-data')->group(function () {
+  // Foto/Video (ID: 7)
+  Route::middleware('menuAdmin:7')->prefix('foto-video')->group(function () {
+      Route::get('/download', [FotoVideoController::class, 'download'])->name('admin-foto-video-download');
+      Route::get('/', [FotoVideoController::class, 'index'])->name('admin-foto-video');
+      Route::post('/', [FotoVideoController::class, 'store'])->name('admin-foto-video-store');
+      Route::put('/{menuInfografisTable}', [FotoVideoController::class, 'update'])->name('admin-foto-video-update');
+      Route::delete('/{menuInfografisTable}', [FotoVideoController::class, 'destroy'])->name('admin-foto-video-destroy');
+  });
+
+  // Verifikasi All Data (ID: 8)
+  Route::middleware('menuAdmin:8')->prefix('verifikasi-all-data')->group(function () {
       Route::get('/', [VerifikasiAllDataController::class, 'index'])->name('admin-verifikasi-all-data');
   });
 
-  // Foto/Video (ID: 7)
-  Route::middleware('menuAdmin:7')->prefix('foto-video')->group(function () {
-      Route::get('/', [FotoVideoController::class, 'index'])->name('admin-foto-video');
-  });
 
   // Media (ID: 8)
-  Route::middleware('menuAdmin:8')->prefix('media')->group(function () {
-      Route::get('/', [FotoVideoController::class, 'index'])->name('admin-media');
-      Route::post('/', [FotoVideoController::class, 'store'])->name('admin-media-store');
-      Route::put('/{id}', [FotoVideoController::class, 'update'])->name('admin-media-update');
-      Route::delete('/{id}', [FotoVideoController::class, 'destroy'])->name('admin-media-destroy');
-  });
+//   Route::middleware('menuAdmin:9')->prefix('media')->group(function () {
+//       Route::get('/', [FotoVideoController::class, 'index'])->name('admin-media');
+//       Route::post('/', [FotoVideoController::class, 'store'])->name('admin-media-store');
+//       Route::put('/{id}', [FotoVideoController::class, 'update'])->name('admin-media-update');
+//       Route::delete('/{id}', [FotoVideoController::class, 'destroy'])->name('admin-media-destroy');
+//   });
 });

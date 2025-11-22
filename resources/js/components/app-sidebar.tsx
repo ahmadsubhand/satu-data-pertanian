@@ -101,7 +101,7 @@ export const getAdminNavItems = (user: User): NavItem[] => {
         },
         7: {
             id: 7,
-            title: 'Media',
+            title: 'Foto/Video',
             href: adminFotoVideo.url(),
             icon: Video,
         },
