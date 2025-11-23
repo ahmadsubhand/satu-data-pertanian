@@ -52,6 +52,10 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<InfografisType | null>(null);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Use data from props instead of hardcoded values
     // No local state needed anymore since we'll use API calls
@@ -73,49 +77,60 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
 
     const columns: TableColumnsType<InfografisType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
             title: 'Tanggal Rilis',
             dataIndex: 'tanggal_rilis',
             key: 'tanggal_rilis',
             sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
-            width: 120,
+            minWidth: 120,
         },
-        {
-            title: 'Keterangan',
-            dataIndex: 'keterangan',
-            key: 'keterangan',
-            render: (keterangan: string) => (
-                <div style={{ maxWidth: '200px', whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                    {keterangan.length > 50 ? `${keterangan.substring(0, 50)}...` : keterangan}
-                </div>
-            ),
-            width: 250,
-        },
-        {
-            title: 'File',
-            dataIndex: 'file',
-            key: 'file',
-            width: 150,
-        },
+        // {
+        //     title: 'Keterangan',
+        //     dataIndex: 'keterangan',
+        //     key: 'keterangan',
+        //     render: (keterangan: string) => (
+        //         <div style={{ maxWidth: '200px', whiteSpace: 'normal', wordWrap: 'break-word' }}>
+        //             {keterangan.length > 50 ? `${keterangan.substring(0, 50)}...` : keterangan}
+        //         </div>
+        //     ),
+        //     width: 250,
+        // },
         {
             title: 'Owner',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => (a.produsen_data || '').localeCompare(b.produsen_data || ''),
-            width: 150,
+            minWidth: 200
+        },
+        {
+            title: 'File',
+            dataIndex: 'file',
+            key: 'file',
+            minWidth: 200,
+            render: (file) => (
+                <a
+                    href={adminInfografisDownload.url({
+                        query: { link: file }
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#1677ff' }}
+                >
+                    {file || 'Tidak ada file'}
+                </a>
+            ),
         },
         {
             title: 'Status',
@@ -131,7 +146,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                 const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
                 return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
             },
-            width: 100,
+            minWidth: 100,
         },
         {
             title: 'Aksi',
@@ -153,7 +168,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -284,6 +299,12 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} infografis`
                         }}
                         scroll={{ x: 800 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 

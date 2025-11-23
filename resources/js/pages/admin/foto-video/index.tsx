@@ -48,6 +48,10 @@ export default function FotoVideoPage({ fotovideo, users = [] }: Props) {
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<FotoVideoType | null>(null);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Filter data based on search and status
     const filteredData = fotovideo.filter(item =>
@@ -71,25 +75,24 @@ export default function FotoVideoPage({ fotovideo, users = [] }: Props) {
 
     const columns: TableColumnsType<FotoVideoType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
             title: 'Tanggal Rilis',
             dataIndex: 'tanggal_rilis',
             key: 'tanggal_rilis',
             sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
-            width: 150,
+            minWidth: 120,
         },
         {
             title: 'Status',
@@ -105,13 +108,13 @@ export default function FotoVideoPage({ fotovideo, users = [] }: Props) {
                 const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
                 return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
             },
-            width: 100,
+            minWidth: 100,
         },
         {
             title: 'File',
             dataIndex: 'file',
             key: 'file',
-            width: 120,
+            minWidth: 200,
             render: (file) => (
                 <a
                     href={adminFotoVideoDownload.url({
@@ -129,7 +132,7 @@ export default function FotoVideoPage({ fotovideo, users = [] }: Props) {
             title: 'Link Video',
             dataIndex: 'link_video',
             key: 'link_video',
-            width: 120,
+            minWidth: 140,
             render: (link_video) => 
                 link_video ? (
                     <Button href={link_video} target={'_blank'}>
@@ -160,7 +163,7 @@ export default function FotoVideoPage({ fotovideo, users = [] }: Props) {
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -305,6 +308,12 @@ export default function FotoVideoPage({ fotovideo, users = [] }: Props) {
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} media`
                         }}
                         scroll={{ x: 1200 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 

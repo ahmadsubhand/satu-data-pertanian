@@ -56,6 +56,10 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<PublikasiType | null>(null);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Filter data based on search and status
     const filteredData = publikasi.filter(pub =>
@@ -73,39 +77,38 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
 
     const columns: TableColumnsType<PublikasiType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
             title: 'Tanggal Rilis',
             dataIndex: 'tanggal_rilis',
             key: 'tanggal_rilis',
             sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
-            width: 120,
+            minWidth: 120,
         },
         {
             title: 'Nomor Publikasi',
             dataIndex: 'nomor_publikasi',
             key: 'nomor_publikasi',
             sorter: (a, b) => (a.nomor_publikasi || '').localeCompare(b.nomor_publikasi || ''),
-            width: 150,
+            minWidth: 180,
         },
         {
             title: 'Owner',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => (a.produsen_data || '').localeCompare(b.produsen_data || ''),
-            width: 150,
+            minWidth: 200,
         },
         {
             title: 'Status',
@@ -121,13 +124,13 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                 const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
                 return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
             },
-            width: 100,
+            minWidth: 100,
         },
         {
             title: 'File',
             dataIndex: 'file',
             key: 'file',
-            width: 120,
+            minWidth: 200,
             render: (file) => (
                 <a
                     href={adminPublikasiDownload.url({
@@ -161,7 +164,7 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -312,6 +315,12 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} publikasi`
                         }}
                         scroll={{ x: 1200 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 

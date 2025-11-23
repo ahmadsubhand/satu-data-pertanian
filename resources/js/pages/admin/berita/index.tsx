@@ -39,7 +39,6 @@ interface Props {
 }
 
 export default function BeritaPage({ berita, produsenData = [] }: Props) {
-    const { auth, flash } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<boolean | null>(null);
@@ -50,6 +49,10 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
     const [currentRecord, setCurrentRecord] = useState<NewsType | null>(null);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [imageList, setImageList] = useState<UploadFile[]>([]);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Filter data based on search and status
     const filteredData = berita.filter(news =>
@@ -67,32 +70,31 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
 
     const columns: TableColumnsType<NewsType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
-            title: 'Tanggal Berita',
+            title: 'Tanggal Rilis',
             dataIndex: 'tanggal_rilis',
             key: 'tanggal_rilis',
             sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
-            width: 120,
+            minWidth: 120,
         },
         {
             title: 'Owner',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => (a.produsen_data || '').localeCompare(b.produsen_data || ''),
-            width: 150,
+            minWidth: 200
         },
         {
             title: 'Status',
@@ -108,7 +110,7 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                 const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
                 return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
             },
-            width: 100,
+            minWidth: 100,
         },
         {
             title: 'Aksi',
@@ -130,7 +132,7 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -278,6 +280,12 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} berita`
                         }}
                         scroll={{ x: 800 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 

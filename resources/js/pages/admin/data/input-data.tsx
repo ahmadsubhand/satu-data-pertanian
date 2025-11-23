@@ -60,6 +60,10 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
     const [selectedKategori, setSelectedKategori] = useState<string | null>(null);
     const [selectedPrioritas, setSelectedPrioritas] = useState<boolean | null>(null);
     const [form] = Form.useForm();
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Initialize data from props
     const [dataItemsState] = useState<DataItem[]>(dataItems || []);
@@ -83,45 +87,44 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
 
     const columns: TableColumnsType<DataItem> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
             title: 'Tanggal Rilis',
             dataIndex: 'tgl_rilis',
             key: 'tgl_rilis',
             sorter: (a, b) => a.tgl_rilis.localeCompare(b.tgl_rilis),
-            width: 120,
+            minWidth: 120
         },
-        {
-            title: 'Abstraksi',
-            dataIndex: 'abstraksi',
-            key: 'abstraksi',
-            width: 250,
-        },
+        // {
+        //     title: 'Abstraksi',
+        //     dataIndex: 'abstraksi',
+        //     key: 'abstraksi',
+        //     width: 250,
+        // },
         {
             title: 'Produsen Data',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => a.produsen_data.localeCompare(b.produsen_data),
-            width: 150,
+            minWidth: 200
         },
         {
             title: 'Kategori Data',
             dataIndex: 'kategori_data',
             key: 'kategori_data',
             sorter: (a, b) => a.kategori_data.localeCompare(b.kategori_data),
-            width: 120,
+            minWidth: 120,
         },
         {
             title: 'Tagging Data Prioritas',
@@ -132,13 +135,13 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
                     {(prioritas === 1 || prioritas === '1' || prioritas === true) ? 'Prioritas' : 'Non Prioritas'}
                 </Tag>
             ),
-            width: 100,
+            minWidth: 120
         },
         {
             title: 'File',
             dataIndex: 'file_statistik',
             key: 'file_statistik',
-            width: 120,
+            minWidth: 200,
             render: (file) => (
                 <a
                     href={adminDataInputDownload.url({
@@ -172,7 +175,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -318,6 +321,12 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} data`
                         }}
                         scroll={{ x: 1200 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 
