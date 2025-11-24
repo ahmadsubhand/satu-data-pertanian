@@ -93,6 +93,7 @@ export default function PublikasiPage({ publikasi, produsenData = [] }: Props) {
             title: 'Tanggal Rilis',
             dataIndex: 'tanggal_rilis',
             key: 'tanggal_rilis',
+            render: (value) => new Date(value).toISOString().split('T')[0],
             sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
             minWidth: 120,
         },
