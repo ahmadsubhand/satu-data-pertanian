@@ -1,12 +1,48 @@
 <?php
 
+use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\PublikasiController;
 use App\Helpers\MenuHelper;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
+use App\Models\MenuMetadataTable;
+use App\Models\MenuPublikasiTable;
+use Illuminate\Support\Facades\DB;
+
 Route::get('/', function () {
-    return Inertia::render('Home');
+    // Ambil semua publikasi untuk ditampilkan di beranda (akan diambil sebagian di frontend)
+    $publikasi = MenuPublikasiTable::where('status', true)
+        ->select([
+            'id',
+            'judul as judul_pub',
+            'keterangan as ket_pub',
+            'tanggal_rilis as tgl_pub',
+            'created_at',
+            'updated_at'
+        ])
+        ->orderBy('tanggal_rilis', 'desc')
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'judul_pub' => $item->judul_pub ?? 'Tanpa Judul',
+                'ket_pub' => $item->ket_pub ?? 'Deskripsi tidak tersedia',
+                'tgl_pub' => $item->tgl_pub ? \Carbon\Carbon::parse($item->tgl_pub)->format('Y-m-d') : null,
+                'kategori' => 'Publikasi',
+                'status_pub' => 'aktif'
+            ];
+        })
+        ->toArray();
+
+    // Hitung jumlah dataset
+    $datasetsCount = DB::table('menu_metadata_tables')->count();
+
+    return Inertia::render('Home', [
+        'satudataPublications' => $publikasi,
+        'datasetsCount' => $datasetsCount
+    ]);
 })->name('home');
 
 // Main page routes that use the navbar with animations
@@ -68,9 +104,31 @@ Route::get('/auth/login', function () {
     return Inertia::render('auth/Login');
 })->name('auth.login');
 
-Route::get('/publikasi', function () {
-    return Inertia::render('PublikasiPage');
-})->name('publikasi.index');
+Route::get('/publikasi', [PublikasiController::class, 'publicIndex'])->name('publikasi.index');
+
+// Additional route for the sample publication page
+Route::get('/samples/publication', [PublikasiController::class, 'publicIndex'])->name('samples.publication');
+
+// Routes for variables and indicators pages that show development message
+Route::get('/variables', function () {
+    return Inertia::render('VariablesPage');
+})->name('variables.index');
+
+Route::get('/indicators', function () {
+    return Inertia::render('IndicatorsPage');
+})->name('indicators.index');
+
+// Route for dataset page
+Route::get('/dataset', [DatasetController::class, 'index'])->name('dataset.index');
+
+// Routes for dataset variables and indicators pages that show development message
+Route::get('/dataset/variables', function () {
+    return Inertia::render('VariablesPage');
+})->name('dataset.variables.index');
+
+Route::get('/dataset/indicators', function () {
+    return Inertia::render('IndicatorsPage');
+})->name('dataset.indicators.index');
 
 Route::get('/data/statistical', function () {
     return Inertia::render('StatisticalPage');

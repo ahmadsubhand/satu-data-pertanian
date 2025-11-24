@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MenuMetadataTable extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'menu_metadata_tables';
+
     protected $fillable = [
         'user_id',
         'judul',
@@ -27,29 +25,26 @@ class MenuMetadataTable extends Model
         'file_meta2',
         'file_meta3',
         'ukuran_file',
-        'file_statistik',
+        'file_statistik'
     ];
 
-    /**
-     * Get the user that owns the metadata.
-     */
-    public function user()
+    protected $casts = [
+        'tanggal_rilis' => 'date',
+        'is_data_prioritas' => 'boolean',
+        'ukuran_file' => 'integer'
+    ];
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Get the produsen data for this metadata.
-     */
-    public function produsenDataTable()
+    public function produsenDataTable(): BelongsTo
     {
         return $this->belongsTo(ProdusenDataTable::class, 'produsen_data_table_id');
     }
 
-    /**
-     * Get the category for this metadata.
-     */
-    public function kategoriDataTable()
+    public function kategoriDataTable(): BelongsTo
     {
         return $this->belongsTo(KategoriDataTable::class, 'kategori_data_table_id');
     }

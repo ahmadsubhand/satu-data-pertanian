@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MenuPublikasiTable extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'menu_publikasi_tables';
+
     protected $fillable = [
         'user_id',
         'judul',
@@ -27,21 +25,22 @@ class MenuPublikasiTable extends Model
         'produsen_data_table_id',
         'abstraksi',
         'cover',
-        'status',
+        'status'
     ];
 
-    /**
-     * Get the user that owns the publikasi.
-     */
-    public function user()
+    protected $casts = [
+        'tanggal_rilis' => 'date',
+        'ukuran_file' => 'integer',
+        'jumlah_halaman' => 'integer',
+        'status' => 'boolean'
+    ];
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    /**
-     * Get the produsen data for this publikasi.
-     */
-    public function produsenDataTable()
+    public function produsenDataTable(): BelongsTo
     {
         return $this->belongsTo(ProdusenDataTable::class, 'produsen_data_table_id');
     }

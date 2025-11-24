@@ -1,189 +1,88 @@
 import { PageProps } from '@/types';
 import { Head } from '@inertiajs/react';
-import { Card, Table, Tag, Typography, Row, Col, Input, Select, Button, Divider } from 'antd';
+import { Card, Table, Tag, Typography, Row, Col, Input } from 'antd';
 import React, { useState } from 'react';
 import PublicLayout from '@/layouts/PublicLayout';
 
 const { Title, Text, Paragraph } = Typography;
 const { Search } = Input;
 
-// Sama seperti Index.tsx tapi tanpa data yang diperlukan
-interface PublikasiPageProps extends PageProps {
-  // Tidak perlu props dari backend karena ini hanya tampilan
+// Interface untuk publikasi berdasarkan struktur dari tabel menu_publikasi_tables
+interface Publication {
+  id: number;
+  judul: string;
+  tanggal_rilis: string;
+  keterangan: string | null;
+  nomor_publikasi: string | null;
+  nomor_issn: string | null;
+  file: string;
+  cover: string;
+  ukuran_file: number;
+  jumlah_halaman: number;
+  abstraksi: string;
+  created_at: string;
+  updated_at: string;
 }
 
-const PublikasiPage: React.FC<PublikasiPageProps> = () => {
-  const [searchKeyword, setSearchKeyword] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  
-  // Dummy data categories
-  const categoryLabels: Record<string, string> = {
-    'journal': 'Jurnal',
-    'report': 'Laporan',
-    'study': 'Kajian',
-    'policy': 'Kebijakan',
-    'research': 'Penelitian',
-    'news': 'Berita',
-    'article': 'Artikel',
-    'bulletin': 'Buletin',
-  };
+interface PublikasiPageProps extends PageProps {
+  publikasi: Publication[];
+}
 
-  // Dummy data update frequencies
-  const frequencyLabels: Record<string, string> = {
-    'realtime': 'Real-time',
-    'daily': 'Harian',
-    'weekly': 'Mingguan',
-    'monthly': 'Bulanan',
-    'quarterly': 'Triwulanan',
-    'yearly': 'Tahunan',
-    'as_needed': 'Sesuai Kebutuhan',
-    'unknown': 'Tidak Diketahui'
-  };
+const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
+  const [searchText, setSearchText] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6; // Jumlah item per halaman
 
-  // Dummy publications data
-  const dummyPublications = [
-    {
-      id: 1,
-      title: 'Laporan Tahunan Pembangunan Pertanian 2023',
-      description: 'Ringkasan capaian dan strategi pembangunan pertanian tahun 2023',
-      source_url: '#',
-      api_endpoint: '#',
-      category: 'report',
-      tags: ['laporan', 'tahunan', 'pembangunan'],
-      update_frequency: 'yearly',
-      last_synced_at: '2024-01-15',
-      metadata: {},
-      is_active: true
-    },
-    {
-      id: 2,
-      title: 'Kajian Dampak Iklim Terhadap Produksi Pangan',
-      description: 'Analisis terhadap dampak perubahan iklim terhadap produksi pangan di Indonesia',
-      source_url: '#',
-      api_endpoint: '#',
-      category: 'study',
-      tags: ['iklim', 'pangan', 'analisis'],
-      update_frequency: 'monthly',
-      last_synced_at: '2024-02-20',
-      metadata: {},
-      is_active: true
-    },
-    {
-      id: 3,
-      title: 'Kebijakan Subsidi Pupuk Tahun 2024',
-      description: 'Rincian kebijakan terbaru mengenai subsidi pupuk untuk petani',
-      source_url: '#',
-      api_endpoint: '#',
-      category: 'policy',
-      tags: ['subsidi', 'pupuk', 'kebijakan'],
-      update_frequency: 'as_needed',
-      last_synced_at: '2024-03-10',
-      metadata: {},
-      is_active: true
-    }
-  ];
-
-  // Columns for the table
-  const columns = [
-    {
-      title: 'Judul',
-      dataIndex: 'title',
-      key: 'title',
-      render: (title: string, record: any) => (
-        <a href={`/publikasi/${record.id}`} style={{ fontWeight: 500 }}>
-          {title}
-        </a>
-      ),
-    },
-    {
-      title: 'Kategori',
-      dataIndex: 'category',
-      key: 'category',
-      render: (category: string) => {
-        return <Tag color="#a8d5ba" style={{ color: '#2d5036' }}>
-          {categoryLabels[category] || category}
-        </Tag>;
-      },
-    },
-    {
-      title: 'Frekuensi Pembaruan',
-      dataIndex: 'update_frequency',
-      key: 'update_frequency',
-      render: (frequency: string) => {
-        return <Tag color="#d4edda" style={{ color: '#2d5036' }}>
-          {frequencyLabels[frequency] || frequency}
-        </Tag>;
-      },
-    },
-    {
-      title: 'Terakhir Disinkronkan',
-      dataIndex: 'last_synced_at',
-      key: 'last_synced_at',
-      render: (date: string) => new Date(date).toLocaleDateString('id-ID'),
-    },
-    {
-      title: 'Status',
-      key: 'is_active',
-      render: (record: any) => {
-        return record.is_active ? 
-          <Tag color="green">Aktif</Tag> : 
-          <Tag color="red">Tidak Aktif</Tag>;
-      },
-    },
-  ];
-
-  // Handle search
-  const handleSearch = (value: string) => {
-    setSearchKeyword(value);
-    // Simulating an API call
-    console.log('Searching for:', value);
-  };
-
-  // Handle category filter change
-  const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value);
-    // Simulating an API call
-    console.log('Filtering by category:', value);
-  };
-
-  // Get unique categories for filter
-  const uniqueCategories = Array.from(
-    new Set(dummyPublications.map(item => item.category))
+  // Filter data based on search
+  const allFilteredData = publikasi.filter(pub =>
+    pub.judul.toLowerCase().includes(searchText.toLowerCase()) ||
+    (pub.keterangan && pub.keterangan.toLowerCase().includes(searchText.toLowerCase())) ||
+    (pub.nomor_publikasi && pub.nomor_publikasi.toLowerCase().includes(searchText.toLowerCase()))
   );
+
+  // Hitung total halaman berdasarkan data yang difilter
+  const totalPages = Math.ceil(allFilteredData.length / itemsPerPage);
+
+  // Ambil data untuk halaman saat ini
+  const filteredData = allFilteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
 
   return (
     <PublicLayout title="Publikasi - Satudata Pertanian">
       <Head title="Publikasi - Satudata Pertanian" />
-      
-      <div>
+
+      <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Hero Section */}
-        <div style={{ 
-          background: 'linear-gradient(135deg, #a8d5ba 0%, #d0f0e0 100%)', 
-          borderRadius: '12px', 
-          padding: '30px 20px', 
+        <div style={{
+          background: 'linear-gradient(135deg, #a8d5ba 0%, #d0f0e0 100%)',
+          borderRadius: '12px',
+          padding: '30px 20px',
           marginBottom: '30px',
           textAlign: 'center'
         }}>
-          <Title 
-            level={1} 
-            style={{ 
-              color: '#2d5036', 
+          <Title
+            level={1}
+            style={{
+              color: '#2d5036',
               marginBottom: '12px',
               fontSize: '28px'
             }}
           >
             Publikasi Satudata Pertanian
           </Title>
-          <Paragraph 
-            style={{ 
-              fontSize: '16px', 
-              color: '#495057', 
-              maxWidth: '800px', 
+          <Paragraph
+            style={{
+              fontSize: '16px',
+              color: '#495057',
+              maxWidth: '800px',
               margin: '0 auto 16px',
               lineHeight: '1.6'
             }}
           >
-            Temukan berbagai publikasi resmi dari Kementerian Pertanian yang menyajikan 
+            Temukan berbagai publikasi resmi dari Kementerian Pertanian yang menyajikan
             informasi dan analisis terkini tentang sektor pertanian di Indonesia.
           </Paragraph>
         </div>
@@ -191,37 +90,19 @@ const PublikasiPage: React.FC<PublikasiPageProps> = () => {
         {/* Search and Filters Section */}
         <div style={{ marginBottom: '24px', padding: '20px', background: '#f8f9fa', borderRadius: '8px' }}>
           <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} sm={12} md={14}>
-              <Search 
-                placeholder="Cari publikasi berdasarkan judul atau deskripsi..." 
-                onSearch={handleSearch}
+            <Col xs={24} md={16}>
+              <Search
+                placeholder="Cari publikasi (judul, deskripsi, nomor publikasi)..."
+                onSearch={value => setSearchText(value)}
                 enterButton
                 size="large"
+                style={{ width: '100%' }}
               />
             </Col>
-            <Col xs={24} sm={6} md={5}>
-              <Select
-                placeholder="Semua Kategori"
-                style={{ width: '100%' }}
-                size="large"
-                onChange={handleCategoryChange}
-                allowClear
-              >
-                {uniqueCategories.map(category => (
-                  <Select.Option key={category} value={category}>
-                    {categoryLabels[category] || category}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Col>
-            <Col xs={24} sm={6} md={5}>
-              <Button 
-                type="primary" 
-                style={{ background: '#2d5036', borderColor: '#2d5036', width: '100%', height: '40px' }}
-                size="large"
-              >
-                Terapkan Filter
-              </Button>
+            <Col xs={24} md={8}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '40px', backgroundColor: '#f0f0f0', borderRadius: '6px' }}>
+                <span style={{ color: '#6c757d' }}>Jumlah: {filteredData.length} publikasi</span>
+              </div>
             </Col>
           </Row>
         </div>
@@ -229,41 +110,11 @@ const PublikasiPage: React.FC<PublikasiPageProps> = () => {
         {/* Stats Section */}
         <div style={{ marginBottom: '30px' }}>
           <Row gutter={[16, 16]}>
-            <Col xs={24} sm={12} md={6}>
+            <Col xs={24}>
               <Card>
                 <div style={{ textAlign: 'center' }}>
-                  <Title level={3} style={{ color: '#2d5036' }}>{dummyPublications.length}</Title>
+                  <Title level={3} style={{ color: '#2d5036' }}>{publikasi.length}</Title>
                   <Text>Total Publikasi</Text>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card>
-                <div style={{ textAlign: 'center' }}>
-                  <Title level={3} style={{ color: '#2d5036' }}>
-                    {dummyPublications.filter(item => item.is_active).length}
-                  </Title>
-                  <Text>Publikasi Aktif</Text>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card>
-                <div style={{ textAlign: 'center' }}>
-                  <Title level={3} style={{ color: '#2d5036' }}>
-                    {uniqueCategories.length}
-                  </Title>
-                  <Text>Kategori</Text>
-                </div>
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card>
-                <div style={{ textAlign: 'center' }}>
-                  <Title level={3} style={{ color: '#2d5036' }}>
-                    {new Set(dummyPublications.map(item => item.update_frequency)).size}
-                  </Title>
-                  <Text>Frekuensi Pembaruan</Text>
                 </div>
               </Card>
             </Col>
@@ -274,101 +125,245 @@ const PublikasiPage: React.FC<PublikasiPageProps> = () => {
         <div style={{ marginBottom: '30px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <Title level={2} style={{ color: '#2d5036', fontSize: '24px' }}>
-              Publikasi Tersedia
+              Daftar Publikasi
             </Title>
             <Text type="secondary">
-              Menampilkan {dummyPublications.length} dari {dummyPublications.length} publikasi
+              Menampilkan {filteredData.length} dari {publikasi.length} publikasi
             </Text>
           </div>
 
-          {/* Table View */}
-          <Card>
-            <Table 
-              columns={columns} 
-              dataSource={dummyPublications} 
-              rowKey="id"
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} publikasi`
-              }}
-            />
-          </Card>
-        </div>
-
-        {/* Categories Overview Section */}
-        <div>
-          <Title level={2} style={{ color: '#2d5036', fontSize: '24px', marginBottom: '16px' }}>
-            Kategori Publikasi
-          </Title>
-          <Row gutter={[16, 16]}>
-            {uniqueCategories.map(category => {
-              const categoryData = dummyPublications.filter(item => item.category === category);
-              return (
-                <Col xs={24} sm={12} md={8} lg={6} key={category}>
-                  <Card 
-                    hoverable
-                    style={{ textAlign: 'center', height: '100%' }}
-                    onClick={() => handleCategoryChange(category)}
-                  >
-                    <div style={{ fontSize: '24px', marginBottom: '12px' }}>
-                      {category === 'journal' && '📚'}
-                      {category === 'report' && '📊'}
-                      {category === 'study' && '🔍'}
-                      {category === 'policy' && '🏛️'}
-                      {category === 'research' && '🔬'}
-                      {category === 'news' && '📰'}
-                      {category === 'article' && '📝'}
-                      {category === 'bulletin' && '📖'}
+          {/* Flex View for publications - 2 cards per row on desktop, 1 on mobile */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '24px'
+            }}
+          >
+            {filteredData.map((pub) => (
+              <Card
+                key={pub.id}
+                hoverable
+                style={{
+                  borderRadius: '8px',
+                  border: '1px solid #e9ecef',
+                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                  flex: '1 1 calc(50% - 12px)', // 2 cards per row on desktop
+                  maxWidth: 'calc(50% - 12px)', // 2 cards per row
+                  minWidth: '300px', // Minimum width for mobile
+                }}
+                bodyStyle={{ padding: '16px' }}
+              >
+                <div style={{ display: 'flex', gap: '16px' }}>
+                  {/* Cover Image - Poster Portrait */}
+                  <div style={{
+                    width: '115px',
+                    overflow: 'hidden',
+                    borderRadius: '6px',
+                    flexShrink: 0
+                  }}>
+                    <div style={{
+                      height: '180px', /* Rasio potrait 115x180 */
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: '#f0f0f0'
+                    }}>
+                      <img
+                        src={pub.cover ? `/storage/${pub.cover}` : '/images/default-cover.png'}
+                        alt={pub.judul}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain',
+                          width: 'auto',
+                          height: 'auto',
+                          display: 'block'
+                        }}
+                      />
                     </div>
-                    <Title level={4} style={{ color: '#2d5036', marginBottom: '8px' }}>
-                      {categoryLabels[category] || category}
-                    </Title>
-                    <Text type="secondary">{categoryData.length} publikasi</Text>
-                  </Card>
-                </Col>
-              );
-            })}
-          </Row>
-        </div>
+                  </div>
 
-        <Divider style={{ margin: '30px 0' }} />
+                  {/* Content */}
+                  <div style={{ flex: 1 }}>
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      marginBottom: '8px'
+                    }}>
+                      <Title
+                        level={4}
+                        style={{
+                          margin: 0,
+                          fontSize: '16px',
+                          color: '#2d5036',
+                          lineHeight: '1.3',
+                        }}
+                      >
+                        {pub.judul}
+                      </Title>
+
+                      <a
+                        href={`/storage/${pub.file}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          padding: '6px',
+                          backgroundColor: '#2d5036',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          fontSize: '14px',
+                          textDecoration: 'none',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-download">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7,10 12,15 17,10"/>
+                          <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                      </a>
+                    </div>
+
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '12px',
+                      flexWrap: 'wrap',
+                      gap: '10px'
+                    }}>
+                      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>
+                          <strong>Tgl:</strong> {pub.tanggal_rilis}
+                        </Text>
+                        {pub.nomor_publikasi && (
+                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                            <strong>No:</strong> {pub.nomor_publikasi}
+                          </Text>
+                        )}
+                        {pub.nomor_issn && (
+                          <Text type="secondary" style={{ fontSize: '12px' }}>
+                            <strong>ISSN:</strong> {pub.nomor_issn}
+                          </Text>
+                        )}
+                      </div>
+                    </div>
+
+                    {pub.abstraksi && (
+                      <Text
+                        style={{
+                          fontSize: '12px',
+                          color: '#6c757d',
+                          lineHeight: '1.4',
+                          maxHeight: '2.8em',
+                          overflow: 'hidden',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          marginBottom: '8px',
+                          fontStyle: 'italic'
+                        }}
+                      >
+                        <strong>Abstrak:</strong> {pub.abstraksi}
+                      </Text>
+                    )}
+
+                    {pub.keterangan && (
+                      <Text
+                        style={{
+                          fontSize: '13px',
+                          color: '#495057',
+                          lineHeight: '1.5',
+                          maxHeight: '3em',
+                          overflow: 'hidden',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          marginBottom: '8px'
+                        }}
+                      >
+                        {pub.keterangan}
+                      </Text>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Pagination Controls */}
+          <div style={{
+            marginTop: '20px',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <button
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#2d5036',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+            >
+              Sebelumnya
+            </button>
+
+            <span style={{ margin: '0 10px', fontSize: '14px' }}>
+              Hal {currentPage} dari {totalPages}
+            </span>
+
+            <button
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#2d5036',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+            >
+              Berikutnya
+            </button>
+          </div>
+        </div>
 
         {/* Information Section */}
-        <div style={{ textAlign: 'center', padding: '20px' }}>
-          <Title 
-            level={3} 
-            style={{ 
-              color: '#2d5036', 
+        <div style={{ textAlign: 'center', padding: '20px', backgroundColor: '#e9ecef', borderRadius: '8px' }}>
+          <Title
+            level={3}
+            style={{
+              color: '#2d5036',
               marginBottom: '16px',
               fontSize: '20px'
             }}
           >
             Manfaatkan Publikasi untuk Pengembangan Pertanian
           </Title>
-          <Paragraph 
-            style={{ 
-              color: '#495057', 
-              maxWidth: '600px', 
+          <Paragraph
+            style={{
+              color: '#495057',
+              maxWidth: '600px',
               margin: '0 auto 16px',
               fontSize: '16px'
             }}
           >
-            Publikasi ini menyediakan informasi dan analisis terkini yang dikumpulkan dan dikelola 
+            Publikasi ini menyediakan informasi dan analisis terkini yang dikumpulkan dan dikelola
             oleh Kementerian Pertanian untuk mendukung penelitian, inovasi, dan kebijakan pertanian yang berbasis data.
           </Paragraph>
-          <Button 
-            type="primary" 
-            size="large" 
-            style={{ 
-              background: '#2d5036', 
-              borderColor: '#2d5036',
-              fontSize: '16px'
-            }}
-          >
-            Pelajari Lebih Lanjut
-          </Button>
         </div>
       </div>
     </PublicLayout>

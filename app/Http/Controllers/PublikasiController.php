@@ -2,53 +2,176 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MenuPublikasiTable;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Log;
 
 class PublikasiController extends Controller
 {
     public function index(): Response
     {
-        // Dummy data for publikasi
-        $publikasi = [
-            [
-                'id' => 1,
-                'judul' => 'Laporan Tahunan Pembangunan 2023',
-                'deskripsi' => 'Laporan lengkap mengenai proyek pembangunan yang telah selesai dan sedang berlangsung sepanjang tahun 2023',
-                'tanggal_publikasi' => '2023-12-15',
-                'status' => 'aktif',
-                'kategori' => 'Laporan Tahunan',
-                'url_file' => '/files/laporan-tahunan-2023.pdf',
-                'created_at' => '2023-12-15 10:30:00',
-                'updated_at' => '2023-12-15 10:30:00'
-            ],
-            [
-                'id' => 2,
-                'judul' => 'Kajian Dampak Lingkungan Proyek Jalan Tol',
-                'deskripsi' => 'Analisis mendalam mengenai dampak lingkungan dari proyek pembangunan jalan tol tahap 2',
-                'tanggal_publikasi' => '2023-11-20',
-                'status' => 'aktif',
-                'kategori' => 'Kajian Lingkungan',
-                'url_file' => '/files/kajian-lingkungan-jalan-tol.pdf',
-                'created_at' => '2023-11-20 14:45:00',
-                'updated_at' => '2023-11-20 14:45:00'
-            ],
-            [
-                'id' => 3,
-                'judul' => 'Pedoman Implementasi Smart City',
-                'deskripsi' => 'Dokumen pedoman untuk implementasi konsep smart city di wilayah perkotaan',
-                'tanggal_publikasi' => '2023-10-05',
-                'status' => 'aktif',
-                'kategori' => 'Pedoman',
-                'url_file' => '/files/pedoman-smart-city.pdf',
-                'created_at' => '2023-10-05 09:15:00',
-                'updated_at' => '2023-10-05 09:15:00'
-            ]
-        ];
+        try {
+            $rawData = MenuPublikasiTable::select([
+                'id',
+                'judul',
+                'nomor_publikasi',
+                'nomor_issn',
+                'tanggal_rilis',
+                'ukuran_file',
+                'jumlah_halaman',
+                'keterangan',
+                'file',
+                'abstraksi',
+                'cover',
+                'status',
+                'created_at',
+                'updated_at'
+            ])
+            ->get();
 
-        return Inertia::render('admin/publikasi/index', [
-            'publikasi' => $publikasi
-        ]);
+            $publikasi = [];
+            foreach ($rawData as $item) {
+                // Format dates safely
+                $tanggalRilisFormatted = null;
+                if ($item->tanggal_rilis) {
+                    try {
+                        $tanggalRilisFormatted = $item->tanggal_rilis->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $tanggalRilisFormatted = $item->tanggal_rilis;
+                    }
+                }
+
+                $createdAtFormatted = null;
+                if ($item->created_at) {
+                    try {
+                        $createdAtFormatted = $item->created_at->format('Y-m-d H:i:s');
+                    } catch (\Exception $e) {
+                        $createdAtFormatted = $item->created_at;
+                    }
+                }
+
+                $updatedAtFormatted = null;
+                if ($item->updated_at) {
+                    try {
+                        $updatedAtFormatted = $item->updated_at->format('Y-m-d H:i:s');
+                    } catch (\Exception $e) {
+                        $updatedAtFormatted = $item->updated_at;
+                    }
+                }
+
+                $publikasi[] = [
+                    'id' => $item->id,
+                    'judul' => $item->judul ?? 'Tanpa Judul',
+                    'nomor_publikasi' => $item->nomor_publikasi ?? null,
+                    'nomor_issn' => $item->nomor_issn ?? null,
+                    'tanggal_rilis' => $tanggalRilisFormatted,
+                    'ukuran_file' => $item->ukuran_file,
+                    'jumlah_halaman' => $item->jumlah_halaman,
+                    'keterangan' => $item->keterangan ?? 'Tanpa Keterangan',
+                    'deskripsi' => $item->keterangan ?? 'Tanpa Deskripsi', // Keeping the old name for compatibility
+                    'tanggal_publikasi' => $tanggalRilisFormatted,
+                    'status' => $item->status ? 'aktif' : 'tidak_aktif',
+                    'kategori' => 'Publikasi', // Using a default category since it's not in the table
+                    'url_file' => $item->file ?? '#',
+                    'abstraksi' => $item->abstraksi ?? '',
+                    'cover' => $item->cover ?? null,
+                    'created_at' => $createdAtFormatted,
+                    'updated_at' => $updatedAtFormatted
+                ];
+            }
+
+            Log::info('Admin publication data retrieved successfully', ['count' => count($publikasi)]);
+
+            return Inertia::render('admin/publikasi/index', [
+                'publikasi' => $publikasi
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in admin index: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return Inertia::render('admin/publikasi/index', [
+                'publikasi' => []
+            ]);
+        }
+    }
+
+    public function publicIndex(): Response
+    {
+        try {
+            $rawData = MenuPublikasiTable::where('status', true)
+                ->select([
+                    'id',
+                    'judul',
+                    'keterangan',
+                    'tanggal_rilis',
+                    'file',
+                    'cover',
+                    'created_at',
+                    'updated_at',
+                    'ukuran_file',
+                    'jumlah_halaman',
+                    'abstraksi',
+                    'nomor_publikasi',
+                    'nomor_issn'
+                ])
+                ->orderBy('tanggal_rilis', 'desc')
+                ->get();
+
+            $publikasi = [];
+            foreach ($rawData as $item) {
+                // Format dates safely
+                $tanggalRilisFormatted = 'N/A';
+                if ($item->tanggal_rilis) {
+                    try {
+                        $tanggalRilisFormatted = $item->tanggal_rilis->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $tanggalRilisFormatted = $item->tanggal_rilis ?? 'N/A'; // Use raw value if formatting fails
+                    }
+                }
+
+                $createdAtFormatted = 'N/A';
+                if ($item->created_at) {
+                    try {
+                        $createdAtFormatted = $item->created_at->format('Y-m-d H:i:s');
+                    } catch (\Exception $e) {
+                        $createdAtFormatted = $item->created_at ?? 'N/A'; // Use raw value if formatting fails
+                    }
+                }
+
+                $updatedAtFormatted = 'N/A';
+                if ($item->updated_at) {
+                    try {
+                        $updatedAtFormatted = $item->updated_at->format('Y-m-d H:i:s');
+                    } catch (\Exception $e) {
+                        $updatedAtFormatted = $item->updated_at ?? 'N/A'; // Use raw value if formatting fails
+                    }
+                }
+
+                $publikasi[] = [
+                    'id' => $item->id,
+                    'judul' => $item->judul ?? 'Tanpa Judul',
+                    'tanggal_rilis' => $tanggalRilisFormatted,
+                    'keterangan' => $item->keterangan ?? null,
+                    'nomor_publikasi' => $item->nomor_publikasi ?? null,
+                    'nomor_issn' => $item->nomor_issn ?? null,
+                    'file' => $item->file ?? '#',
+                    'cover' => $item->cover ?? 'default-cover.png',
+                    'ukuran_file' => $item->ukuran_file ?? 0,
+                    'jumlah_halaman' => $item->jumlah_halaman ?? 0,
+                    'abstraksi' => $item->abstraksi ?? '',
+                    'created_at' => $createdAtFormatted,
+                    'updated_at' => $updatedAtFormatted,
+                ];
+            }
+
+            return Inertia::render('PublikasiPage', [
+                'publikasi' => $publikasi
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in publicIndex: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return Inertia::render('PublikasiPage', [
+                'publikasi' => []
+            ]);
+        }
     }
 }

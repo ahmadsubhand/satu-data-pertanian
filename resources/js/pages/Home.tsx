@@ -14,6 +14,7 @@ import {
     Tag,
     Typography,
 } from 'antd';
+import { Link } from '@inertiajs/react';
 import React from 'react';
 
 const { Title, Paragraph } = Typography;
@@ -69,6 +70,7 @@ interface CommodityItem {
 
 interface HomePageProps extends PageProps {
     datasets?: DatasetItem[];
+    datasetsCount?: number;
     satudataPublications?: PublicationItem[];
     indicators?: IndicatorItem[];
     commodities?: CommodityItem[];
@@ -83,6 +85,7 @@ interface HomePageProps extends PageProps {
 
 const HomePage: React.FC<HomePageProps> = ({
     datasets = [],
+    datasetsCount = 0,
     satudataPublications = [],
     indicators = [],
     commodities = [],
@@ -319,7 +322,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
             </AnimatedSection>
 
-            {/* Publications Section from Satudata */}
+            {/* Dataset and Publications Section from Satudata */}
             <AnimatedSection delay={0.5}>
                 <div style={{ marginBottom: '30px' }}>
                     <Title
@@ -330,58 +333,252 @@ const HomePage: React.FC<HomePageProps> = ({
                             fontSize: '24px',
                         }}
                     >
-                        Publikasi dari Satudata
+                        Dataset dan Publikasi dari Satudata
                     </Title>
-                    <Row gutter={[12, 12]}>
-                        {satudataPublications.slice(0, 3).map((pub, index) => (
-                            <Col xs={24} sm={12} md={8} key={`pub-${index}`}>
-                                {' '}
-                                {/* Added sm={12} for tablet */}
-                                <AnimatedCard delay={0.1} index={index}>
-                                    <Card
-                                        title={pub.judul_pub}
-                                        style={{ height: '100%' }}
+                    <Row gutter={[24, 24]}>
+                        {/* Dataset Section - Left Side with Smooth Animation */}
+                        <Col xs={24} sm={24} md={12}>
+                            <div
+                                style={{
+                                    padding: '24px',
+                                    border: '1px solid #e9ecef',
+                                    borderRadius: '12px',
+                                    backgroundColor: 'white',
+                                    height: '100%',
+                                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
+                                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+                                }}
+                            >
+                                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                                    <h3 style={{
+                                        color: '#2d5036',
+                                        fontSize: '20px',
+                                        marginBottom: '10px',
+                                        fontWeight: '600'
+                                    }}>
+                                        Dataset Tersedia
+                                    </h3>
+                                    <div style={{
+                                        fontSize: '36px',
+                                        color: '#2d5036',
+                                        fontWeight: 'bold',
+                                        marginTop: '10px',
+                                        marginBottom: '8px',
+                                        transition: 'color 0.3s ease'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.color = '#1e3a25'}
+                                    onMouseLeave={(e) => e.currentTarget.style.color = '#2d5036'}
                                     >
-                                        <Paragraph ellipsis={{ rows: 2 }}>
-                                            {pub.ket_pub ||
-                                                'Deskripsi publikasi tidak tersedia'}
-                                        </Paragraph>
-                                        <div
-                                            style={{
-                                                marginTop: '12px',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                flexWrap: 'wrap',
-                                                gap: '8px',
-                                            }}
-                                        >
-                                            <Tag
-                                                color="#1890ff"
-                                                style={{ color: 'white' }}
-                                            >
-                                                {pub.kategori ||
-                                                    'Kategori Tidak Diketahui'}
-                                            </Tag>
-                                            <span
-                                                style={{
-                                                    fontSize: '12px',
-                                                    color: '#666',
-                                                }}
-                                            >
-                                                {pub.tgl_pub
-                                                    ? new Date(
-                                                          pub.tgl_pub,
-                                                      ).toLocaleDateString(
-                                                          'id-ID',
-                                                      )
-                                                    : 'Tanggal Tidak Tersedia'}
-                                            </span>
+                                        {datasetsCount || 0}
+                                    </div>
+                                    <p style={{
+                                        fontSize: '14px',
+                                        color: '#6c757d',
+                                        lineHeight: '1.5'
+                                    }}>
+                                        Dataset yang tersedia dari Kementerian Pertanian
+                                    </p>
+                                </div>
+
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    marginBottom: '20px',
+                                    minHeight: '120px'
+                                }}>
+                                    <div style={{
+                                        width: '100px',
+                                        height: '100px',
+                                        background: 'linear-gradient(135deg, #2d5036 0%, #a8d5ba 100%)',
+                                        borderRadius: '16px',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        color: 'white',
+                                        fontSize: '32px',
+                                        transition: 'transform 0.3s ease'
+                                    }}
+                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                    >
+                                        📊
+                                    </div>
+                                </div>
+
+                                <div style={{ textAlign: 'center' }}>
+                                    <Link
+                                        href="/dataset"
+                                        style={{
+                                            padding: '10px 20px',
+                                            backgroundColor: '#2d5036',
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                            borderRadius: '6px',
+                                            fontSize: '14px',
+                                            fontWeight: '500',
+                                            display: 'inline-block',
+                                            transition: 'background-color 0.3s ease, transform 0.2s ease',
+                                            border: 'none'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor = '#1e3a25';
+                                            e.currentTarget.style.transform = 'scale(1.02)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = '#2d5036';
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                        }}
+                                    >
+                                        Lihat Semua Dataset
+                                    </Link>
+                                </div>
+                            </div>
+                        </Col>
+
+                        {/* Publication Section - Right Side with Smooth Auto Scrolling Animation */}
+                        <Col xs={24} sm={24} md={12}>
+                            <div
+                                style={{
+                                    padding: '24px',
+                                    border: '1px solid #e9ecef',
+                                    borderRadius: '12px',
+                                    backgroundColor: 'white',
+                                    height: '100%',
+                                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-5px)';
+                                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+                                }}
+                            >
+                                <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                                    <h3 style={{
+                                        color: '#2d5036',
+                                        fontSize: '20px',
+                                        marginBottom: '10px',
+                                        fontWeight: '600'
+                                    }}>
+                                        Publikasi Terbaru
+                                    </h3>
+                                </div>
+
+                                {/* Auto Scrolling Publications Container */}
+                                <div
+                                    style={{
+                                        height: '200px',
+                                        overflow: 'hidden',
+                                        position: 'relative',
+                                        marginBottom: '20px'
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            height: '100%',
+                                            overflowY: 'auto',
+                                            scrollbarWidth: 'none',
+                                            msOverflowStyle: 'none',
+                                            position: 'relative'
+                                        }}
+                                        className="publication-scroller"
+                                    >
+                                        <style>{`
+                                            .publication-scroller::-webkit-scrollbar {
+                                                display: none;
+                                            }
+
+                                            @keyframes smoothScroll {
+                                                0% {
+                                                    transform: translateY(0);
+                                                }
+                                                100% {
+                                                    transform: translateY(-100%);
+                                                }
+                                            }
+
+                                            .publication-container {
+                                                animation: smoothScroll 20s linear infinite;
+                                            }
+                                        `}</style>
+                                        <div className="publication-container">
+                                            {[...satudataPublications, ...satudataPublications].slice(0, 12).map((pub, index) => (
+                                                <div
+                                                    key={`pub-${index}`}
+                                                    style={{
+                                                        padding: '8px 0',
+                                                        borderBottom: index < 11 ? '1px solid #f0f0f0' : 'none',
+                                                        fontSize: '14px'
+                                                    }}
+                                                >
+                                                    <div
+                                                        style={{
+                                                            fontWeight: '500',
+                                                            color: '#2d5036',
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis'
+                                                        }}
+                                                        title={pub.judul_pub}
+                                                    >
+                                                        {pub.judul_pub}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '12px',
+                                                            color: '#6c757d',
+                                                            marginTop: '4px'
+                                                        }}
+                                                    >
+                                                        {pub.ket_pub ? pub.ket_pub.substring(0, 50) + '...' : 'Deskripsi tidak tersedia'}
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
-                                    </Card>
-                                </AnimatedCard>
-                            </Col>
-                        ))}
+                                    </div>
+                                </div>
+
+                                <div style={{ textAlign: 'center' }}>
+                                    <Link
+                                        href="/publikasi"
+                                        style={{
+                                            padding: '10px 20px',
+                                            backgroundColor: '#2d5036',
+                                            color: 'white',
+                                            textDecoration: 'none',
+                                            borderRadius: '6px',
+                                            fontSize: '14px',
+                                            fontWeight: '500',
+                                            display: 'inline-block',
+                                            transition: 'background-color 0.3s ease, transform 0.2s ease',
+                                            border: 'none'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor = '#1e3a25';
+                                            e.currentTarget.style.transform = 'scale(1.02)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = '#2d5036';
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                        }}
+                                    >
+                                        Lihat Semua Publikasi
+                                    </Link>
+                                </div>
+                            </div>
+                        </Col>
                     </Row>
                 </div>
             </AnimatedSection>
@@ -778,6 +975,18 @@ const HomePage: React.FC<HomePageProps> = ({
   100% {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
   }
 }
 `}
