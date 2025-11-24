@@ -103,6 +103,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Prop
             title: 'Tanggal Rilis',
             dataIndex: 'tgl_rilis',
             key: 'tgl_rilis',
+            render: (value) => new Date(value).toISOString().split('T')[0],
             sorter: (a, b) => a.tgl_rilis.localeCompare(b.tgl_rilis),
             minWidth: 120
         },
