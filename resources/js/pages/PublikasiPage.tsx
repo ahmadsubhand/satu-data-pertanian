@@ -265,7 +265,7 @@ const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
                                             </Title>
 
                                             <a
-                                                href={`/storage/${pub.file}`}
+                                                href={pub.file}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 style={{
