@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Layout, Menu } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FiChevronDown, FiMenu, FiUser, FiX } from 'react-icons/fi';
+import { Instagram } from 'lucide-react';
 
 // Define Ant Design menu item types
 interface AntMenuItemType {
@@ -202,14 +203,6 @@ const PublicLayout = ({
                     ),
                     children: [
                         {
-                            key: 'statistik-main',
-                            label: (
-                                <Link href="/statistical-data">
-                                    Data Statistik Utama
-                                </Link>
-                            ),
-                        },
-                        {
                             key: 'basis-data-statistik',
                             label: (
                                 <Link href="/statistical-data/basis-data">
@@ -309,7 +302,7 @@ const PublicLayout = ({
                             onMouseEnter={() => setOpenDropdown('satudata')}
                             onMouseLeave={() => setOpenDropdown(null)}
                         >
-                            Satudata
+                            Satu Data
                         </div>
                     ),
                     children: [
@@ -401,11 +394,11 @@ const PublicLayout = ({
                     key: 'satu-peta',
                     label: (
                         <a
-                            href="https://tanahair.indonesia.go.id/portal-web/"
+                            href="https://onemap.big.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            Satu Peta
+                            Kebijakan Satu Peta
                         </a>
                     ),
                 },
@@ -479,46 +472,6 @@ const PublicLayout = ({
                 {
                     key: 'm-multimedia',
                     label: <Link href="/products/multimedia">Media</Link>,
-                },
-            ],
-        },
-        {
-            key: 'data',
-            label: 'Data',
-            children: [
-                {
-                    key: 'statistik',
-                    label: <Link href="/data/statistical">Statistik</Link>,
-                },
-                {
-                    key: 'geospasial',
-                    label: <Link href="/data/geospatial">Geospasial</Link>,
-                    children: [
-                        {
-                            key: 'simotandi',
-                            label: (
-                                <a
-                                    href="https://simotandi.pertanian.go.id"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    SIMOTANDI
-                                </a>
-                            ),
-                        },
-                        {
-                            key: 'siperditan',
-                            label: (
-                                <a
-                                    href="https://siperditan.pertanian.go.id"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    SIPERDITAN
-                                </a>
-                            ),
-                        },
-                    ],
                 },
             ],
         },
@@ -602,11 +555,11 @@ const PublicLayout = ({
                     key: 'satu-peta',
                     label: (
                         <a
-                            href="https://tanahair.indonesia.go.id/portal-web/"
+                            href="https://onemap.big.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            Satu Peta
+                            Kebijakan Satu Peta
                         </a>
                     ),
                 },
@@ -702,7 +655,10 @@ const PublicLayout = ({
                         flex: 1,
                     }}
                 >
-                    <Link href="/" style={{ display: 'flex', alignItems: 'center' }}>
+                    <Link
+                        href="/"
+                        style={{ display: 'flex', alignItems: 'center' }}
+                    >
                         <img
                             src="/images/logos/logo-satudata.png"
                             alt="Logo Satudata Pertanian"
@@ -922,13 +878,12 @@ const PublicLayout = ({
                                     fontWeight: '600',
                                 }}
                             >
-                                Satudata Pertanian
+                                Satu Data Pertanian
                             </h4>
                             <p style={{ color: '#6c757d', lineHeight: '1.6' }}>
-                                Portal satu data untuk sektor pertanian yang
-                                menyediakan data statistik, geospasial, dan
-                                informasi seputar kebijakan pertanian di
-                                Indonesia.
+                                Portal Satu Data Pertanian menyediakan data
+                                statistik, geospasial, dan informasi seputar
+                                kebijakan pertanian di Indonesia.
                             </p>
                         </div>
 
@@ -1066,10 +1021,34 @@ const PublicLayout = ({
                                     style={{
                                         color: '#495057',
                                         marginBottom: '8px',
+                                        marginTop: '5px',
                                     }}
                                 >
-                                    Pusat Data dan Informasi Kementerian
-                                    Pertanian
+                                    <a
+                                        href="https://www.instagram.com/pusdatin_kementan?igsh=bmM0cjVicG1vOHk3"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            display: 'inline-block',
+                                            transition: 'transform 0.3s ease, color 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1.2)';
+                                            e.currentTarget.style.color = '#E4405F';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.color = '';
+                                        }}
+                                    >
+                                        <Instagram
+                                            size={20}
+                                            style={{
+                                                verticalAlign: 'middle',
+                                                color: '#333'
+                                            }}
+                                        />
+                                    </a>
                                 </li>
                                 <li
                                     style={{
@@ -1077,9 +1056,8 @@ const PublicLayout = ({
                                         marginBottom: '8px',
                                     }}
                                 >
-                                    Gedung D Jl. Harsono Rm No.3, Ragunan, Ps.
-                                    Minggu, Kota Jakarta Selatan, Daerah Khusus
-                                    Ibukota Jakarta 12550
+                                    Kementerian Pertanian <br />
+                                    Pusat Data dan Sistem Informasi Pertanian
                                 </li>
                                 <li
                                     style={{
@@ -1087,7 +1065,9 @@ const PublicLayout = ({
                                         marginBottom: '8px',
                                     }}
                                 >
-                                    Telp: (021) 7806131
+                                    Kantor Pusat Kementerian Pertanian <br />
+                                    Gedung D Lantai 4 Jl. Harsono RM No.3,
+                                    Ragunan, Kota Jakarta Selatan, 12550
                                 </li>
                                 <li
                                     style={{
@@ -1095,7 +1075,15 @@ const PublicLayout = ({
                                         marginBottom: '8px',
                                     }}
                                 >
-                                    Email: info@pertanian.go.id
+                                    Telp: (021) 7822638
+                                </li>
+                                <li
+                                    style={{
+                                        color: '#495057',
+                                        marginBottom: '8px',
+                                    }}
+                                >
+                                    Email: pusdatin@pertanian.go.id
                                 </li>
                             </ul>
                         </div>
@@ -1128,7 +1116,7 @@ const PublicLayout = ({
                                 </li>
                                 <li>
                                     <a
-                                        href="https://tanahair.indonesia.go.id/portal-web/"
+                                        href="https://onemap.big.go.id"
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         style={{
@@ -1138,7 +1126,7 @@ const PublicLayout = ({
                                             marginBottom: '8px',
                                         }}
                                     >
-                                        Satu Peta
+                                        Kebijakan Satu Peta
                                     </a>
                                 </li>
                             </ul>
@@ -1155,8 +1143,9 @@ const PublicLayout = ({
                             fontSize: '14px',
                         }}
                     >
-                        &copy; {new Date().getFullYear()} Satudata Pertanian.
-                        Hak Cipta Dilindungi.
+                        Portal Satu Data Pertanian V2.0. <br />
+                        Kementerian Pertanian - Pusat Data dan Sistem Informasi Pertanian &copy;
+                        {new Date().getFullYear()}{' '}
                     </div>
                 </div>
             </Footer>

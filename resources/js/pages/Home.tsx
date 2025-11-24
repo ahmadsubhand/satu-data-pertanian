@@ -2,7 +2,7 @@ import AnimatedCard from '@/components/AnimatedCard';
 import AnimatedSection from '@/components/AnimatedSection';
 import PublicLayout from '@/layouts/PublicLayout';
 import { PageProps } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import {
     Button,
     Card,
@@ -14,7 +14,6 @@ import {
     Tag,
     Typography,
 } from 'antd';
-import { Link } from '@inertiajs/react';
 import React from 'react';
 
 const { Title, Paragraph } = Typography;
@@ -113,7 +112,13 @@ const HomePage: React.FC<HomePageProps> = ({
                         textAlign: 'center',
                     }}
                 >
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
                         <img
                             src="/images/logos/logo-satudata.png"
                             alt="Logo Satudata Pertanian"
@@ -131,10 +136,12 @@ const HomePage: React.FC<HomePageProps> = ({
                                 target.style.display = 'none';
                             }}
                         />
-                        <div style={{ 
-                            opacity: 0, 
-                            animation: 'floatUp 1.8s 1.2s both',
-                        }}>
+                        <div
+                            style={{
+                                opacity: 0,
+                                animation: 'floatUp 1.8s 1.2s both',
+                            }}
+                        >
                             <Title
                                 level={1}
                                 style={{
@@ -143,10 +150,11 @@ const HomePage: React.FC<HomePageProps> = ({
                                     fontSize: '28px',
                                     fontFamily: 'inherit',
                                     fontWeight: '700',
-                                    textShadow: '2px 2px 8px rgba(45,80,54,0.3)',
+                                    textShadow:
+                                        '2px 2px 8px rgba(45,80,54,0.3)',
                                 }}
                             >
-                                Selamat Datang di Satudata Pertanian
+                                Selamat Datang di Satu Data Pertanian
                             </Title>
                         </div>
                     </div>
@@ -159,37 +167,50 @@ const HomePage: React.FC<HomePageProps> = ({
                             lineHeight: '1.6',
                         }}
                     >
-                        <div style={{
-                            position: 'relative',
-                            display: 'inline-block'
-                        }}>
-                            <div style={{
-                                position: 'absolute',
-                                top: '-5px',
-                                left: '-5px',
-                                right: '-5px',
-                                bottom: '-5px',
-                                background: 'linear-gradient(45deg, #2d5036, #4CAF50, #8BC34A, #FFC107, #FF9800, #2d5036)',
-                                backgroundSize: '300% 300%',
-                                borderRadius: '8px',
-                                zIndex: -1,
-                                animation: 'gradientBorder 3s ease infinite'
-                            }}></div>
-                            <div style={{
-                                position: 'absolute',
-                                top: '-3px',
-                                left: '-3px',
-                                right: '-3px',
-                                bottom: '-3px',
-                                borderRadius: '6px',
-                                background: 'white',
-                                zIndex: -1
-                            }}></div>
-                            <div style={{
-                                opacity: 0,
-                                animation: 'floatIn 2s 1.8s both',
-                            }}>
-                                Portal satu data untuk sektor pertanian yang menyediakan informasi data statistik, geospasial, dan publikasi terkait pembangunan pertanian di Indonesia.
+                        <div
+                            style={{
+                                position: 'relative',
+                                display: 'inline-block',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '-5px',
+                                    left: '-5px',
+                                    right: '-5px',
+                                    bottom: '-5px',
+                                    background:
+                                        'linear-gradient(45deg, #2d5036, #4CAF50, #8BC34A, #FFC107, #FF9800, #2d5036)',
+                                    backgroundSize: '300% 300%',
+                                    borderRadius: '8px',
+                                    zIndex: -1,
+                                    animation:
+                                        'gradientBorder 3s ease infinite',
+                                }}
+                            ></div>
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '-3px',
+                                    left: '-3px',
+                                    right: '-3px',
+                                    bottom: '-3px',
+                                    borderRadius: '6px',
+                                    background: 'white',
+                                    zIndex: -1,
+                                }}
+                            ></div>
+                            <div
+                                style={{
+                                    opacity: 0,
+                                    animation: 'floatIn 2s 1.8s both',
+                                }}
+                            >
+                                Portal satu data untuk sektor pertanian yang
+                                menyediakan informasi data statistik,
+                                geospasial, dan publikasi terkait pembangunan
+                                pertanian di Indonesia.
                             </div>
                         </div>
                     </Paragraph>
@@ -200,7 +221,7 @@ const HomePage: React.FC<HomePageProps> = ({
                             // Scroll ke bagian bawah halaman
                             window.scrollTo({
                                 top: document.body.scrollHeight,
-                                behavior: 'smooth'
+                                behavior: 'smooth',
                             });
                         }}
                         style={{
@@ -225,7 +246,7 @@ const HomePage: React.FC<HomePageProps> = ({
                             fontSize: '24px',
                         }}
                     >
-                        Data Satudata Terbaru
+                        Data Satu Data Terbaru
                     </Title>
                     <Row gutter={[12, 12]}>
                         {' '}
@@ -333,7 +354,7 @@ const HomePage: React.FC<HomePageProps> = ({
                             fontSize: '24px',
                         }}
                     >
-                        Dataset dan Publikasi dari Satudata
+                        Dataset dan Publikasi dari Satu Data
                     </Title>
                     <Row gutter={[24, 24]}>
                         {/* Dataset Section - Left Side with Smooth Animation */}
@@ -345,70 +366,102 @@ const HomePage: React.FC<HomePageProps> = ({
                                     borderRadius: '12px',
                                     backgroundColor: 'white',
                                     height: '100%',
-                                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                                    transition:
+                                        'transform 0.3s ease, box-shadow 0.3s ease',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)';
+                                    e.currentTarget.style.transform =
+                                        'translateY(-5px)';
+                                    e.currentTarget.style.boxShadow =
+                                        '0 8px 24px rgba(0,0,0,0.1)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+                                    e.currentTarget.style.transform =
+                                        'translateY(0)';
+                                    e.currentTarget.style.boxShadow =
+                                        '0 4px 12px rgba(0,0,0,0.05)';
                                 }}
                             >
-                                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                                    <h3 style={{
-                                        color: '#2d5036',
-                                        fontSize: '20px',
-                                        marginBottom: '10px',
-                                        fontWeight: '600'
-                                    }}>
+                                <div
+                                    style={{
+                                        textAlign: 'center',
+                                        marginBottom: '20px',
+                                    }}
+                                >
+                                    <h3
+                                        style={{
+                                            color: '#2d5036',
+                                            fontSize: '20px',
+                                            marginBottom: '10px',
+                                            fontWeight: '600',
+                                        }}
+                                    >
                                         Dataset Tersedia
                                     </h3>
-                                    <div style={{
-                                        fontSize: '36px',
-                                        color: '#2d5036',
-                                        fontWeight: 'bold',
-                                        marginTop: '10px',
-                                        marginBottom: '8px',
-                                        transition: 'color 0.3s ease'
-                                    }}
-                                    onMouseEnter={(e) => e.currentTarget.style.color = '#1e3a25'}
-                                    onMouseLeave={(e) => e.currentTarget.style.color = '#2d5036'}
+                                    <div
+                                        style={{
+                                            fontSize: '36px',
+                                            color: '#2d5036',
+                                            fontWeight: 'bold',
+                                            marginTop: '10px',
+                                            marginBottom: '8px',
+                                            transition: 'color 0.3s ease',
+                                        }}
+                                        onMouseEnter={(e) =>
+                                            (e.currentTarget.style.color =
+                                                '#1e3a25')
+                                        }
+                                        onMouseLeave={(e) =>
+                                            (e.currentTarget.style.color =
+                                                '#2d5036')
+                                        }
                                     >
                                         {datasetsCount || 0}
                                     </div>
-                                    <p style={{
-                                        fontSize: '14px',
-                                        color: '#6c757d',
-                                        lineHeight: '1.5'
-                                    }}>
-                                        Dataset yang tersedia dari Kementerian Pertanian
+                                    <p
+                                        style={{
+                                            fontSize: '14px',
+                                            color: '#6c757d',
+                                            lineHeight: '1.5',
+                                        }}
+                                    >
+                                        Dataset yang tersedia dari Kementerian
+                                        Pertanian
                                     </p>
                                 </div>
 
-                                <div style={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginBottom: '20px',
-                                    minHeight: '120px'
-                                }}>
-                                    <div style={{
-                                        width: '100px',
-                                        height: '100px',
-                                        background: 'linear-gradient(135deg, #2d5036 0%, #a8d5ba 100%)',
-                                        borderRadius: '16px',
+                                <div
+                                    style={{
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        color: 'white',
-                                        fontSize: '32px',
-                                        transition: 'transform 0.3s ease'
+                                        marginBottom: '20px',
+                                        minHeight: '120px',
                                     }}
-                                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                >
+                                    <div
+                                        style={{
+                                            width: '100px',
+                                            height: '100px',
+                                            background:
+                                                'linear-gradient(135deg, #2d5036 0%, #a8d5ba 100%)',
+                                            borderRadius: '16px',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            color: 'white',
+                                            fontSize: '32px',
+                                            transition: 'transform 0.3s ease',
+                                        }}
+                                        onMouseEnter={(e) =>
+                                            (e.currentTarget.style.transform =
+                                                'scale(1.05)')
+                                        }
+                                        onMouseLeave={(e) =>
+                                            (e.currentTarget.style.transform =
+                                                'scale(1)')
+                                        }
                                     >
                                         📊
                                     </div>
@@ -426,16 +479,21 @@ const HomePage: React.FC<HomePageProps> = ({
                                             fontSize: '14px',
                                             fontWeight: '500',
                                             display: 'inline-block',
-                                            transition: 'background-color 0.3s ease, transform 0.2s ease',
-                                            border: 'none'
+                                            transition:
+                                                'background-color 0.3s ease, transform 0.2s ease',
+                                            border: 'none',
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#1e3a25';
-                                            e.currentTarget.style.transform = 'scale(1.02)';
+                                            e.currentTarget.style.backgroundColor =
+                                                '#1e3a25';
+                                            e.currentTarget.style.transform =
+                                                'scale(1.02)';
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#2d5036';
-                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.backgroundColor =
+                                                '#2d5036';
+                                            e.currentTarget.style.transform =
+                                                'scale(1)';
                                         }}
                                     >
                                         Lihat Semua Dataset
@@ -453,25 +511,37 @@ const HomePage: React.FC<HomePageProps> = ({
                                     borderRadius: '12px',
                                     backgroundColor: 'white',
                                     height: '100%',
-                                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                                    transition:
+                                        'transform 0.3s ease, box-shadow 0.3s ease',
                                     boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                                 }}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.1)';
+                                    e.currentTarget.style.transform =
+                                        'translateY(-5px)';
+                                    e.currentTarget.style.boxShadow =
+                                        '0 8px 24px rgba(0,0,0,0.1)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+                                    e.currentTarget.style.transform =
+                                        'translateY(0)';
+                                    e.currentTarget.style.boxShadow =
+                                        '0 4px 12px rgba(0,0,0,0.05)';
                                 }}
                             >
-                                <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                                    <h3 style={{
-                                        color: '#2d5036',
-                                        fontSize: '20px',
-                                        marginBottom: '10px',
-                                        fontWeight: '600'
-                                    }}>
+                                <div
+                                    style={{
+                                        textAlign: 'center',
+                                        marginBottom: '16px',
+                                    }}
+                                >
+                                    <h3
+                                        style={{
+                                            color: '#2d5036',
+                                            fontSize: '20px',
+                                            marginBottom: '10px',
+                                            fontWeight: '600',
+                                        }}
+                                    >
                                         Publikasi Terbaru
                                     </h3>
                                 </div>
@@ -482,7 +552,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                         height: '200px',
                                         overflow: 'hidden',
                                         position: 'relative',
-                                        marginBottom: '20px'
+                                        marginBottom: '20px',
                                     }}
                                 >
                                     <div
@@ -491,7 +561,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                             overflowY: 'auto',
                                             scrollbarWidth: 'none',
                                             msOverflowStyle: 'none',
-                                            position: 'relative'
+                                            position: 'relative',
                                         }}
                                         className="publication-scroller"
                                     >
@@ -514,38 +584,59 @@ const HomePage: React.FC<HomePageProps> = ({
                                             }
                                         `}</style>
                                         <div className="publication-container">
-                                            {[...satudataPublications, ...satudataPublications].slice(0, 12).map((pub, index) => (
-                                                <div
-                                                    key={`pub-${index}`}
-                                                    style={{
-                                                        padding: '8px 0',
-                                                        borderBottom: index < 11 ? '1px solid #f0f0f0' : 'none',
-                                                        fontSize: '14px'
-                                                    }}
-                                                >
+                                            {[
+                                                ...satudataPublications,
+                                                ...satudataPublications,
+                                            ]
+                                                .slice(0, 12)
+                                                .map((pub, index) => (
                                                     <div
+                                                        key={`pub-${index}`}
                                                         style={{
-                                                            fontWeight: '500',
-                                                            color: '#2d5036',
-                                                            whiteSpace: 'nowrap',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis'
-                                                        }}
-                                                        title={pub.judul_pub}
-                                                    >
-                                                        {pub.judul_pub}
-                                                    </div>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '12px',
-                                                            color: '#6c757d',
-                                                            marginTop: '4px'
+                                                            padding: '8px 0',
+                                                            borderBottom:
+                                                                index < 11
+                                                                    ? '1px solid #f0f0f0'
+                                                                    : 'none',
+                                                            fontSize: '14px',
                                                         }}
                                                     >
-                                                        {pub.ket_pub ? pub.ket_pub.substring(0, 50) + '...' : 'Deskripsi tidak tersedia'}
+                                                        <div
+                                                            style={{
+                                                                fontWeight:
+                                                                    '500',
+                                                                color: '#2d5036',
+                                                                whiteSpace:
+                                                                    'nowrap',
+                                                                overflow:
+                                                                    'hidden',
+                                                                textOverflow:
+                                                                    'ellipsis',
+                                                            }}
+                                                            title={
+                                                                pub.judul_pub
+                                                            }
+                                                        >
+                                                            {pub.judul_pub}
+                                                        </div>
+                                                        <div
+                                                            style={{
+                                                                fontSize:
+                                                                    '12px',
+                                                                color: '#6c757d',
+                                                                marginTop:
+                                                                    '4px',
+                                                            }}
+                                                        >
+                                                            {pub.ket_pub
+                                                                ? pub.ket_pub.substring(
+                                                                      0,
+                                                                      50,
+                                                                  ) + '...'
+                                                                : 'Deskripsi tidak tersedia'}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                ))}
                                         </div>
                                     </div>
                                 </div>
@@ -562,16 +653,21 @@ const HomePage: React.FC<HomePageProps> = ({
                                             fontSize: '14px',
                                             fontWeight: '500',
                                             display: 'inline-block',
-                                            transition: 'background-color 0.3s ease, transform 0.2s ease',
-                                            border: 'none'
+                                            transition:
+                                                'background-color 0.3s ease, transform 0.2s ease',
+                                            border: 'none',
                                         }}
                                         onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#1e3a25';
-                                            e.currentTarget.style.transform = 'scale(1.02)';
+                                            e.currentTarget.style.backgroundColor =
+                                                '#1e3a25';
+                                            e.currentTarget.style.transform =
+                                                'scale(1.02)';
                                         }}
                                         onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#2d5036';
-                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.backgroundColor =
+                                                '#2d5036';
+                                            e.currentTarget.style.transform =
+                                                'scale(1)';
                                         }}
                                     >
                                         Lihat Semua Publikasi
@@ -793,7 +889,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                 }}
                             >
                                 <a
-                                    href="https://tanahair.indonesia.go.id/portal-web/"
+                                    href="https://onemap.big.go.id"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     style={{
@@ -840,7 +936,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                     />
                                 </a>
                                 <a
-                                    href="https://tanahair.indonesia.go.id/portal-web/"
+                                    href="https://onemap.big.go.id"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     style={{
@@ -863,7 +959,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                         target.style.transform = 'scale(1)';
                                     }}
                                 >
-                                    Satu Peta Indonesia
+                                    Kebijakan Satu Peta
                                 </a>
                             </div>
                         </Col>
@@ -1114,72 +1210,87 @@ const HomePage: React.FC<HomePageProps> = ({
             <Divider style={{ margin: '30px 0' }} />
 
             <AnimatedSection delay={1.4}>
-                <div 
-                  style={{ 
-                    textAlign: 'center', 
-                    padding: '40px 20px',
-                    background: "url('https://source.unsplash.com/1600x900/?farming,crops,rice-fields')",
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    borderRadius: "12px",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
+                <div
+                    style={{
+                        textAlign: 'center',
+                        padding: '40px 20px',
+                        background:
+                            "url('https://source.unsplash.com/1600x900/?farming,crops,rice-fields')",
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        borderRadius: '12px',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                    }}
                 >
-                  <div style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: "linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.7) 100%)",
-                    borderRadius: "12px",
-                    zIndex: 1,
-                  }}></div>
-                  
-                  <div style={{ position: "relative", zIndex: 2 }}>
-                    <div style={{ 
-                      opacity: 0, 
-                      animation: 'gentlyFadeIn 1.8s 2.5s both',
-                    }}>
-                      <Title
-                        level={3}
+                    <div
                         style={{
-                          color: "#2d5036",
-                          marginBottom: "16px",
-                          fontSize: "24px",
-                          fontWeight: "700",
-                          textShadow: "1px 1px 2px rgba(45,80,54,0.3)",
-                          animation: 'fadeInScale 1.5s ease-out forwards'
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            background:
+                                'linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.7) 100%)',
+                            borderRadius: '12px',
+                            zIndex: 1,
                         }}
-                      >
-                        Kembangkan Potensi Pertanian Indonesia Bersama Kami
-                      </Title>
+                    ></div>
+
+                    <div style={{ position: 'relative', zIndex: 2 }}>
+                        <div
+                            style={{
+                                opacity: 0,
+                                animation: 'gentlyFadeIn 1.8s 2.5s both',
+                            }}
+                        >
+                            <Title
+                                level={3}
+                                style={{
+                                    color: '#2d5036',
+                                    marginBottom: '16px',
+                                    fontSize: '24px',
+                                    fontWeight: '700',
+                                    textShadow:
+                                        '1px 1px 2px rgba(45,80,54,0.3)',
+                                    animation:
+                                        'fadeInScale 1.5s ease-out forwards',
+                                }}
+                            >
+                                Kembangkan Potensi Pertanian Indonesia Bersama
+                                Kami
+                            </Title>
+                        </div>
+
+                        <div
+                            style={{
+                                opacity: 0,
+                                animation: 'gentlyFadeIn 1.8s 2.8s both',
+                            }}
+                        >
+                            <Paragraph
+                                style={{
+                                    color: '#495057',
+                                    maxWidth: '700px',
+                                    margin: '0 auto 24px',
+                                    fontSize: '17px',
+                                    lineHeight: '1.7',
+                                    fontWeight: '500',
+                                    textShadow:
+                                        '1px 1px 2px rgba(73,80,87,0.2)',
+                                    animation:
+                                        'gentleTextFloat 6s infinite ease-in-out',
+                                }}
+                            >
+                                Dapatkan akses ke berbagai data pertanian yang
+                                akurat dan terpercaya untuk mendukung
+                                pengambilan keputusan dan penelitian Anda.
+                            </Paragraph>
+                        </div>
                     </div>
-                    
-                    <div style={{ 
-                      opacity: 0, 
-                      animation: 'gentlyFadeIn 1.8s 2.8s both', 
-                    }}>
-                      <Paragraph
-                        style={{
-                          color: "#495057",
-                          maxWidth: "700px",
-                          margin: "0 auto 24px",
-                          fontSize: "17px",
-                          lineHeight: "1.7",
-                          fontWeight: "500",
-                          textShadow: "1px 1px 2px rgba(73,80,87,0.2)",
-                          animation: 'gentleTextFloat 6s infinite ease-in-out'
-                        }}
-                      >
-                        Dapatkan akses ke berbagai data pertanian yang akurat dan terpercaya untuk mendukung pengambilan keputusan dan penelitian Anda.
-                      </Paragraph>
-                    </div>
-                  </div>
                 </div>
-                
+
                 <style>{`
                   @keyframes gradientBorder {
                     0% {
@@ -1339,7 +1450,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     }
                   }
                 `}</style>
-                
+
                 <style>{`
                   /* Override the welcome text animation to use typewriter effect */
                   div[style*="floatUp 1.8s 1.2s both"] {

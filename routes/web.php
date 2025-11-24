@@ -45,56 +45,6 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-// Main page routes that use the navbar with animations
-Route::get('/dataset', function () {
-    // Dummy data for the dataset page
-    return Inertia::render('Index', [
-        'dataCatalogs' => [
-            'data' => [
-                [
-                    'id' => 1,
-                    'title' => 'Dataset Contoh 1',
-                    'description' => 'Deskripsi dataset contoh pertama',
-                    'source_url' => '#',
-                    'api_endpoint' => '#',
-                    'category' => 'statistical',
-                    'tags' => ['contoh', 'data'],
-                    'update_frequency' => 'monthly',
-                    'last_synced_at' => date('Y-m-d'),
-                    'metadata' => [],
-                    'is_active' => true
-                ],
-                [
-                    'id' => 2,
-                    'title' => 'Dataset Contoh 2',
-                    'description' => 'Deskripsi dataset contoh kedua',
-                    'source_url' => '#',
-                    'api_endpoint' => '#',
-                    'category' => 'geospatial',
-                    'tags' => ['contoh', 'peta'],
-                    'update_frequency' => 'weekly',
-                    'last_synced_at' => date('Y-m-d'),
-                    'metadata' => [],
-                    'is_active' => true
-                ]
-            ],
-            'links' => [],
-            'meta' => [
-                'current_page' => 1,
-                'from' => 1,
-                'last_page' => 1,
-                'path' => '/',
-                'per_page' => 10,
-                'to' => 2,
-                'total' => 2
-            ]
-        ],
-        'filters' => [
-            'limit' => 10,
-            'page' => 1
-        ]
-    ]);
-})->name('dataset.index');
 
 Route::get('/about', function () {
     return Inertia::render('About');
@@ -105,6 +55,9 @@ Route::get('/auth/login', function () {
 })->name('auth.login');
 
 Route::get('/publikasi', [PublikasiController::class, 'publicIndex'])->name('publikasi.index');
+Route::get('/publikasi/{id}', [PublikasiController::class, 'publicDetail'])->name('publikasi.detail');
+
+
 
 // Additional route for the sample publication page
 Route::get('/samples/publication', [PublikasiController::class, 'publicIndex'])->name('samples.publication');
@@ -130,21 +83,13 @@ Route::get('/dataset/indicators', function () {
     return Inertia::render('IndicatorsPage');
 })->name('dataset.indicators.index');
 
-Route::get('/data/statistical', function () {
-    return Inertia::render('StatisticalPage');
-})->name('data.statistical');
 
 Route::get('/data/geospatial', function () {
     return Inertia::render('GeospatialPage');
 })->name('data.geospatial');
 
-Route::get('/berita', function () {
-    return Inertia::render('GenericPage', [
-        'pageTitle' => 'Berita Pertanian',
-        'description' => 'Informasi terkini seputar berita dan perkembangan di sektor pertanian Indonesia',
-        'category' => 'Berita'
-    ]);
-})->name('berita.index');
+Route::get('/berita', [App\Http\Controllers\BeritaPublikController::class, 'index'])->name('berita.index');
+Route::get('/berita/{id}', [App\Http\Controllers\BeritaPublikController::class, 'show'])->name('berita.show');
 
 Route::get('/galeri', function () {
     return Inertia::render('GenericPage', [
@@ -218,30 +163,7 @@ Route::get('/priority-data', function () {
     ]);
 })->name('priority-data.index');
 
-// Routes for statistical data pages
-Route::get('/statistical-data', function () {
-    return Inertia::render('StatisticalIndexPage');
-})->name('statistical-data.index');
 
-Route::get('/statistical-data/basis-data', function () {
-    return Inertia::render('StatisticalData/BasisDataStatistikPage');
-})->name('statistical-data.basis-data');
-
-Route::get('/statistical-data/export-import', function () {
-    return Inertia::render('StatisticalData/EksporImporPage');
-})->name('statistical-data.export-import');
-
-Route::get('/statistical-data/gdp', function () {
-    return Inertia::render('StatisticalData/ProdukDomestikBrutoPage');
-})->name('statistical-data.gdp');
-
-Route::get('/statistical-data/gdrp', function () {
-    return Inertia::render('StatisticalData/ProdukDomestikRegionalBrutoPage');
-})->name('statistical-data.gdrp');
-
-Route::get('/statistical-data/ntp', function () {
-    return Inertia::render('StatisticalData/NilaiTukarPetaniPage');
-})->name('statistical-data.ntp');
 
 // Additional routes for other statistical data pages
 Route::get('/statistical-data/horticulture', function () {
@@ -256,9 +178,18 @@ Route::get('/statistical-data/peternakan', function () {
     return Inertia::render('StatisticalIndexPage');
 })->name('statistical-data.peternakan');
 
-Route::get('/data/statistical', function () {
+// Additional statistical data routes
+Route::get('/statistical-data/production', function () {
     return Inertia::render('StatisticalIndexPage');
-})->name('data.statistical');
+})->name('statistical-data.production');
+
+Route::get('/statistical-data/trade', function () {
+    return Inertia::render('ExportImportPage');
+})->name('statistical-data.trade');
+
+Route::get('/statistical-data/prices', function () {
+    return Inertia::render('StatisticalIndexPage');
+})->name('statistical-data.prices');
 
 // Routes for user management pages (accessible without menuAdmin middleware)
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -281,18 +212,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Additional statistical data routes
-Route::get('/statistical-data/production', function () {
-    return Inertia::render('StatisticalIndexPage');
-})->name('statistical-data.production');
-
-Route::get('/statistical-data/trade', function () {
-    return Inertia::render('ExportImportPage');
-})->name('statistical-data.trade');
-
-Route::get('/statistical-data/prices', function () {
-    return Inertia::render('StatisticalIndexPage');
-})->name('statistical-data.prices');
 
 Route::get('dashboard', function() {
     return redirect()->route('dashboard');

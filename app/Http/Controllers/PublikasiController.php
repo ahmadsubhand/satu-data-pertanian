@@ -181,4 +181,85 @@ class PublikasiController extends Controller
             ]);
         }
     }
+    public function publicDetail($id): Response
+    {
+        try {
+            $item = MenuPublikasiTable::where('status', true)
+                ->where('id', $id)
+                ->select([
+                    'id',
+                    'judul',
+                    'keterangan',
+                    'tanggal_rilis',
+                    'file',
+                    'cover',
+                    'created_at',
+                    'updated_at',
+                    'ukuran_file',
+                    'jumlah_halaman',
+                    'abstraksi',
+                    'nomor_publikasi',
+                    'nomor_issn'
+                ])
+                ->firstOrFail();
+
+            // Format dates safely
+            $tanggalRilisFormatted = 'N/A';
+            if ($item->tanggal_rilis) {
+                try {
+                    $tanggalRilisFormatted = $item->tanggal_rilis->format('Y-m-d');
+                } catch (\Exception $e) {
+                    $tanggalRilisFormatted = $item->tanggal_rilis ?? 'N/A'; // Use raw value if formatting fails
+                }
+            }
+            if ($item->file) {
+                $item->file = Storage::disk('public')->url($this->rootPathFile . '/' . $item->file);
+            }
+            if ($item->cover) {
+                $item->cover = Storage::disk('public')->url($this->rootPathFile . '/' . $item->cover);
+            }
+            $createdAtFormatted = 'N/A';
+            if ($item->created_at) {
+                try {
+                    $createdAtFormatted = $item->created_at->format('Y-m-d H:i:s');
+                } catch (\Exception $e) {
+                    $createdAtFormatted = $item->created_at ?? 'N/A'; // Use raw value if formatting fails
+                }
+            }
+
+            $updatedAtFormatted = 'N/A';
+            if ($item->updated_at) {
+                try {
+                    $updatedAtFormatted = $item->updated_at->format('Y-m-d H:i:s');
+                } catch (\Exception $e) {
+                    $updatedAtFormatted = $item->updated_at ?? 'N/A'; // Use raw value if formatting fails
+                }
+            }
+
+            $publikasi = [
+                'id' => $item->id,
+                'judul' => $item->judul ?? 'Tanpa Judul',
+                'tanggal_rilis' => $tanggalRilisFormatted,
+                'keterangan' => $item->keterangan ?? null,
+                'nomor_publikasi' => $item->nomor_publikasi ?? null,
+                'nomor_issn' => $item->nomor_issn ?? null,
+                'file' => $item->file ?? '#',
+                'cover' => $item->cover ?? 'default-cover.png',
+                'ukuran_file' => $item->ukuran_file ?? 0,
+                'jumlah_halaman' => $item->jumlah_halaman ?? 0,
+                'abstraksi' => $item->abstraksi ?? '',
+                'created_at' => $createdAtFormatted,
+                'updated_at' => $updatedAtFormatted,
+            ];
+
+            return Inertia::render('PublikasiDetailPage', [
+                'publikasi' => $publikasi
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error in publicDetail: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return Inertia::render('PublikasiDetailPage', [
+                'publikasi' => []
+            ]);
+        }
+    }
 }
