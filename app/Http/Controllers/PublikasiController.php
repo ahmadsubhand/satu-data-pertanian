@@ -4,96 +4,98 @@ namespace App\Http\Controllers;
 
 use App\Models\MenuPublikasiTable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Log;
 
 class PublikasiController extends Controller
 {
-    public function index(): Response
-    {
-        try {
-            $rawData = MenuPublikasiTable::select([
-                'id',
-                'judul',
-                'nomor_publikasi',
-                'nomor_issn',
-                'tanggal_rilis',
-                'ukuran_file',
-                'jumlah_halaman',
-                'keterangan',
-                'file',
-                'abstraksi',
-                'cover',
-                'status',
-                'created_at',
-                'updated_at'
-            ])
-            ->get();
+    protected $rootPathFile = 'publikasi';
+    // public function index(): Response
+    // {
+    //     try {
+    //         $rawData = MenuPublikasiTable::select([
+    //             'id',
+    //             'judul',
+    //             'nomor_publikasi',
+    //             'nomor_issn',
+    //             'tanggal_rilis',
+    //             'ukuran_file',
+    //             'jumlah_halaman',
+    //             'keterangan',
+    //             'file',
+    //             'abstraksi',
+    //             'cover',
+    //             'status',
+    //             'created_at',
+    //             'updated_at'
+    //         ])
+    //         ->get();
 
-            $publikasi = [];
-            foreach ($rawData as $item) {
-                // Format dates safely
-                $tanggalRilisFormatted = null;
-                if ($item->tanggal_rilis) {
-                    try {
-                        $tanggalRilisFormatted = $item->tanggal_rilis->format('Y-m-d');
-                    } catch (\Exception $e) {
-                        $tanggalRilisFormatted = $item->tanggal_rilis;
-                    }
-                }
+    //         $publikasi = [];
+    //         foreach ($rawData as $item) {
+    //             // Format dates safely
+    //             $tanggalRilisFormatted = null;
+    //             if ($item->tanggal_rilis) {
+    //                 try {
+    //                     $tanggalRilisFormatted = $item->tanggal_rilis->format('Y-m-d');
+    //                 } catch (\Exception $e) {
+    //                     $tanggalRilisFormatted = $item->tanggal_rilis;
+    //                 }
+    //             }
 
-                $createdAtFormatted = null;
-                if ($item->created_at) {
-                    try {
-                        $createdAtFormatted = $item->created_at->format('Y-m-d H:i:s');
-                    } catch (\Exception $e) {
-                        $createdAtFormatted = $item->created_at;
-                    }
-                }
+    //             $createdAtFormatted = null;
+    //             if ($item->created_at) {
+    //                 try {
+    //                     $createdAtFormatted = $item->created_at->format('Y-m-d H:i:s');
+    //                 } catch (\Exception $e) {
+    //                     $createdAtFormatted = $item->created_at;
+    //                 }
+    //             }
 
-                $updatedAtFormatted = null;
-                if ($item->updated_at) {
-                    try {
-                        $updatedAtFormatted = $item->updated_at->format('Y-m-d H:i:s');
-                    } catch (\Exception $e) {
-                        $updatedAtFormatted = $item->updated_at;
-                    }
-                }
+    //             $updatedAtFormatted = null;
+    //             if ($item->updated_at) {
+    //                 try {
+    //                     $updatedAtFormatted = $item->updated_at->format('Y-m-d H:i:s');
+    //                 } catch (\Exception $e) {
+    //                     $updatedAtFormatted = $item->updated_at;
+    //                 }
+    //             }
 
-                $publikasi[] = [
-                    'id' => $item->id,
-                    'judul' => $item->judul ?? 'Tanpa Judul',
-                    'nomor_publikasi' => $item->nomor_publikasi ?? null,
-                    'nomor_issn' => $item->nomor_issn ?? null,
-                    'tanggal_rilis' => $tanggalRilisFormatted,
-                    'ukuran_file' => $item->ukuran_file,
-                    'jumlah_halaman' => $item->jumlah_halaman,
-                    'keterangan' => $item->keterangan ?? 'Tanpa Keterangan',
-                    'deskripsi' => $item->keterangan ?? 'Tanpa Deskripsi', // Keeping the old name for compatibility
-                    'tanggal_publikasi' => $tanggalRilisFormatted,
-                    'status' => $item->status ? 'aktif' : 'tidak_aktif',
-                    'kategori' => 'Publikasi', // Using a default category since it's not in the table
-                    'url_file' => $item->file ?? '#',
-                    'abstraksi' => $item->abstraksi ?? '',
-                    'cover' => $item->cover ?? null,
-                    'created_at' => $createdAtFormatted,
-                    'updated_at' => $updatedAtFormatted
-                ];
-            }
+    //             $publikasi[] = [
+    //                 'id' => $item->id,
+    //                 'judul' => $item->judul ?? 'Tanpa Judul',
+    //                 'nomor_publikasi' => $item->nomor_publikasi ?? null,
+    //                 'nomor_issn' => $item->nomor_issn ?? null,
+    //                 'tanggal_rilis' => $tanggalRilisFormatted,
+    //                 'ukuran_file' => $item->ukuran_file,
+    //                 'jumlah_halaman' => $item->jumlah_halaman,
+    //                 'keterangan' => $item->keterangan ?? 'Tanpa Keterangan',
+    //                 'deskripsi' => $item->keterangan ?? 'Tanpa Deskripsi', // Keeping the old name for compatibility
+    //                 'tanggal_publikasi' => $tanggalRilisFormatted,
+    //                 'status' => $item->status ? 'aktif' : 'tidak_aktif',
+    //                 'kategori' => 'Publikasi', // Using a default category since it's not in the table
+    //                 'url_file' => $item->file ?? '#',
+    //                 'abstraksi' => $item->abstraksi ?? '',
+    //                 'cover' => $item->cover ?? null,
+    //                 'created_at' => $createdAtFormatted,
+    //                 'updated_at' => $updatedAtFormatted
+    //             ];
+    //         }
 
-            Log::info('Admin publication data retrieved successfully', ['count' => count($publikasi)]);
+    //         Log::info('Admin publication data retrieved successfully', ['count' => count($publikasi)]);
 
-            return Inertia::render('admin/publikasi/index', [
-                'publikasi' => $publikasi
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error in admin index: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return Inertia::render('admin/publikasi/index', [
-                'publikasi' => []
-            ]);
-        }
-    }
+    //         return Inertia::render('admin/publikasi/index', [
+    //             'publikasi' => $publikasi
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error in admin index: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+    //         return Inertia::render('admin/publikasi/index', [
+    //             'publikasi' => []
+    //         ]);
+    //     }
+    // }
 
     public function publicIndex(): Response
     {
@@ -128,7 +130,12 @@ class PublikasiController extends Controller
                         $tanggalRilisFormatted = $item->tanggal_rilis ?? 'N/A'; // Use raw value if formatting fails
                     }
                 }
-
+                if ($item->file) {
+                    $item->file = Storage::disk('public')->url($this->rootPathFile . '/' . $item->file);
+                }
+                if ($item->cover) {
+                    $item->cover = Storage::disk('public')->url($this->rootPathFile . '/' . $item->cover);
+                }
                 $createdAtFormatted = 'N/A';
                 if ($item->created_at) {
                     try {
