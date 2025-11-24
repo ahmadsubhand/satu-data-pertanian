@@ -1,11 +1,12 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
-import type { TableColumnsType } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Upload } from 'antd';
+import type { TableColumnsType, UploadFile } from 'antd';
 import { useState } from 'react';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { adminInfografisStore, adminInfografisUpdate, adminInfografisDestroy, dashboard } from '@/routes';
+import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { adminInfografisStore, adminInfografisUpdate, adminInfografisDestroy, dashboard, adminInfografisDownload } from '@/routes';
+import { P } from 'node_modules/framer-motion/dist/types.d-BJcRxCew';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,6 +51,11 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<InfografisType | null>(null);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Use data from props instead of hardcoded values
     // No local state needed anymore since we'll use API calls
@@ -71,49 +77,60 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
 
     const columns: TableColumnsType<InfografisType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
             title: 'Tanggal Rilis',
             dataIndex: 'tanggal_rilis',
             key: 'tanggal_rilis',
             sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
-            width: 120,
+            minWidth: 120,
         },
-        {
-            title: 'Keterangan',
-            dataIndex: 'keterangan',
-            key: 'keterangan',
-            render: (keterangan: string) => (
-                <div style={{ maxWidth: '200px', whiteSpace: 'normal', wordWrap: 'break-word' }}>
-                    {keterangan.length > 50 ? `${keterangan.substring(0, 50)}...` : keterangan}
-                </div>
-            ),
-            width: 250,
-        },
-        {
-            title: 'File',
-            dataIndex: 'file',
-            key: 'file',
-            width: 150,
-        },
+        // {
+        //     title: 'Keterangan',
+        //     dataIndex: 'keterangan',
+        //     key: 'keterangan',
+        //     render: (keterangan: string) => (
+        //         <div style={{ maxWidth: '200px', whiteSpace: 'normal', wordWrap: 'break-word' }}>
+        //             {keterangan.length > 50 ? `${keterangan.substring(0, 50)}...` : keterangan}
+        //         </div>
+        //     ),
+        //     width: 250,
+        // },
         {
             title: 'Owner',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => (a.produsen_data || '').localeCompare(b.produsen_data || ''),
-            width: 150,
+            minWidth: 200
+        },
+        {
+            title: 'File',
+            dataIndex: 'file',
+            key: 'file',
+            minWidth: 200,
+            render: (file) => (
+                <a
+                    href={adminInfografisDownload.url({
+                        query: { link: file }
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#1677ff' }}
+                >
+                    {file || 'Tidak ada file'}
+                </a>
+            ),
         },
         {
             title: 'Status',
@@ -129,7 +146,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                 const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
                 return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
             },
-            width: 100,
+            minWidth: 100,
         },
         {
             title: 'Aksi',
@@ -151,7 +168,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -160,18 +177,22 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
 
     // Function to add or update infografis
     const handleAddInfografis = (values: any) => {
+        // Process file for uploading
+        const processedValues = {
+            ...values,
+            status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1',
+            file: values.file.fileList ? values.file.fileList[0].originFileObj : null
+        };
+
         if (isEditing && currentRecord) {
             // Update existing infografis via API
-            router.put(adminInfografisUpdate.url(currentRecord.id), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            router.post(adminInfografisUpdate.url(currentRecord.id), {
+                _method: 'put',
+                ...processedValues
             });
         } else {
             // Add new infografis via API
-            router.post(adminInfografisStore.url(), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
-            });
+            router.post(adminInfografisStore.url(), processedValues);
         }
     };
 
@@ -198,13 +219,27 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
 
     // Function to handle editing infografis
     const handleEdit = (record: InfografisType) => {
+        // Set up file list for existing file
+        if (record.file) {
+            setFileList([
+                {
+                    uid: '1',
+                    name: record.file,
+                    status: 'done',
+                    url: adminInfografisDownload.url({
+                        query: { link: record.file }
+                    }),
+                }
+            ]);
+        }
+
         form.setFieldsValue({
             judul: record.judul,
             tanggal_rilis: record.tanggal_rilis,
             keterangan: record.keterangan,
-            file: record.file,
             status: record.status ? 1 : 0,
             produsen_data_table_id: record.produsen_data_table_id,
+            file: record.file,
         });
 
         setCurrentRecord(record);
@@ -223,6 +258,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                         icon={<PlusOutlined />}
                         onClick={() => {
                             form.resetFields();
+                            setFileList([]);
                             setIsEditing(false);
                             setCurrentRecord(null);
                             setIsModalVisible(true);
@@ -263,6 +299,12 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} infografis`
                         }}
                         scroll={{ x: 800 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 
@@ -297,7 +339,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                             judul: '',
                             tanggal_rilis: new Date().toISOString().split('T')[0],
                             keterangan: '',
-                            file: '',
+                            file: [],
                             status: 0,
                             produsen_data_table_id: undefined
                         }}
@@ -319,6 +361,7 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                         <Form.Item
                             label="Keterangan"
                             name="keterangan"
+                            rules={[{ required: true, message: 'Keterangan wajib diisi' }]}
                         >
                             <Input.TextArea
                                 rows={4}
@@ -328,9 +371,27 @@ export default function InfografisPage({ infografis, produsenData = [] }: Props)
                         <Form.Item
                             label="File"
                             name="file"
-                            rules={[{ required: true, message: 'Nama file wajib diisi' }]}
+                            rules={[{ required: true, message: 'File wajib diupload' }]}
                         >
-                            <Input placeholder="Masukkan nama file" />
+                            <Upload
+                                beforeUpload={
+                                    (file) => {
+                                        setFileList(
+                                            [
+                                                {
+                                                    uid: '1',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ file: file }); return false; // mencegah upload otomatis
+                                    }
+                                }
+                                fileList={fileList}
+                                maxCount={1} >
+                                <Button icon={<UploadOutlined />}>Pilih File</Button>
+                            </Upload>
                         </Form.Item>
                         <Form.Item
                             label="Status"

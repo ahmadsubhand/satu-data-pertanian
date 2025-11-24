@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
       // Submenu routes for data management
       Route::prefix('input-data')->group(function () {
+          Route::get('/download', [InputDataController::class, 'download'])->name('admin-data-input-download');
           Route::get('/', [InputDataController::class, 'index'])->name('admin-data-input');
           Route::post('/', [InputDataController::class, 'store'])->name('admin-data-input-store');
           Route::put('/{menuMetadataTable}', [InputDataController::class, 'update'])->name('admin-data-input-update');
@@ -94,6 +95,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
   
   // Berita (ID: 3)
   Route::middleware('menuAdmin:3')->prefix('berita')->group(function () {
+      Route::get('/download', [MenuBeritaTableController::class, 'download'])->name('admin-berita-download');
       Route::get('/', [MenuBeritaTableController::class, 'index'])->name('admin-berita');
       Route::post('/', [MenuBeritaTableController::class, 'store'])->name('admin-berita-store');
       Route::put('/{menuBeritaTable}', [MenuBeritaTableController::class, 'update'])->name('admin-berita-update');
@@ -102,6 +104,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
   // Infografis (ID: 4)
   Route::middleware('menuAdmin:4')->prefix('infografis')->group(function () {
+      Route::get('/download', [MenuInfografisTableController::class, 'download'])->name('admin-infografis-download');
       Route::get('/', [MenuInfografisTableController::class, 'index'])->name('admin-infografis');
       Route::post('/', [MenuInfografisTableController::class, 'store'])->name('admin-infografis-store');
       Route::put('/{menuInfografisTable}', [MenuInfografisTableController::class, 'update'])->name('admin-infografis-update');
@@ -110,6 +113,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 
   // Publikasi (ID: 5)
   Route::middleware('menuAdmin:5')->prefix('publikasi')->group(function () {
+      Route::get('/download', [MenuPublikasiTableController::class, 'download'])->name('admin-publikasi-download');
       Route::get('/', [MenuPublikasiTableController::class, 'index'])->name('admin-publikasi');
       Route::post('/', [MenuPublikasiTableController::class, 'store'])->name('admin-publikasi-store');
       Route::put('/{menuPublikasiTable}', [MenuPublikasiTableController::class, 'update'])->name('admin-publikasi-update');
@@ -121,21 +125,26 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
       Route::get('/', [VerifikasiDataPrioritasController::class, 'index'])->name('admin-verifikasi-data-prioritas');
   });
 
-  // Verifikasi All Data (ID: 9)
-  Route::middleware('menuAdmin:9')->prefix('verifikasi-all-data')->group(function () {
+  // Foto/Video (ID: 7)
+  Route::middleware('menuAdmin:7')->prefix('foto-video')->group(function () {
+      Route::get('/download', [FotoVideoController::class, 'download'])->name('admin-foto-video-download');
+      Route::get('/', [FotoVideoController::class, 'index'])->name('admin-foto-video');
+      Route::post('/', [FotoVideoController::class, 'store'])->name('admin-foto-video-store');
+      Route::put('/{fotovideo}', [FotoVideoController::class, 'update'])->name('admin-foto-video-update');
+      Route::delete('/{fotovideo}', [FotoVideoController::class, 'destroy'])->name('admin-foto-video-destroy');
+  });
+
+  // Verifikasi All Data (ID: 8)
+  Route::middleware('menuAdmin:8')->prefix('verifikasi-all-data')->group(function () {
       Route::get('/', [VerifikasiAllDataController::class, 'index'])->name('admin-verifikasi-all-data');
   });
 
-  // Foto/Video (ID: 7)
-  Route::middleware('menuAdmin:7')->prefix('foto-video')->group(function () {
-      Route::get('/', [FotoVideoController::class, 'index'])->name('admin-foto-video');
-  });
 
   // Media (ID: 8)
-  Route::middleware('menuAdmin:8')->prefix('media')->group(function () {
-      Route::get('/', [FotoVideoController::class, 'index'])->name('admin-media');
-      Route::post('/', [FotoVideoController::class, 'store'])->name('admin-media-store');
-      Route::put('/{id}', [FotoVideoController::class, 'update'])->name('admin-media-update');
-      Route::delete('/{id}', [FotoVideoController::class, 'destroy'])->name('admin-media-destroy');
-  });
+//   Route::middleware('menuAdmin:9')->prefix('media')->group(function () {
+//       Route::get('/', [FotoVideoController::class, 'index'])->name('admin-media');
+//       Route::post('/', [FotoVideoController::class, 'store'])->name('admin-media-store');
+//       Route::put('/{id}', [FotoVideoController::class, 'update'])->name('admin-media-update');
+//       Route::delete('/{id}', [FotoVideoController::class, 'destroy'])->name('admin-media-destroy');
+//   });
 });

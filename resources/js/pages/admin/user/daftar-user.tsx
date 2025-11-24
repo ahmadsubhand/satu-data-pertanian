@@ -44,6 +44,10 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
     const [selectedEselon, setSelectedEselon] = useState<number | null>(null); // Changed to number for ID
     const [searchText, setSearchText] = useState('');
     const [form] = Form.useForm();
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Use data from props instead of hardcoded values
     const [userData, setUserData] = useState<UserType[]>(user);
@@ -62,25 +66,24 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
 
     const columns: TableColumnsType<UserType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'NIP',
             dataIndex: 'nip',
             key: 'nip',
             sorter: (a, b) => a.nip.localeCompare(b.nip),
-            width: 120,
+            minWidth: 170,
         },
         {
             title: 'Nama',
             dataIndex: 'nama_lengkap',
             key: 'nama_lengkap',
             sorter: (a, b) => a.nama_lengkap.localeCompare(b.nama_lengkap),
-            width: 200,
+            minWidth: 200,
         },
         {
             title: 'Eselon',
@@ -88,27 +91,27 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
             key: 'eselon',
             render: (eselon) => eselon?.value || '-',
             sorter: (a, b) => (a.eselon?.value || '').localeCompare(b.eselon?.value || ''),
-            width: 200,
+            minWidth: 200,
         },
         {
-            title: 'Unit',
+            title: 'Unit Kerja',
             dataIndex: 'unit_kerja',
             key: 'unit_kerja',
             sorter: (a, b) => a.unit_kerja.localeCompare(b.unit_kerja),
-            width: 250,
+            minWidth: 200
         },
         {
             title: 'Email',
             dataIndex: 'email',
             key: 'email',
             sorter: (a, b) => a.email.localeCompare(b.email),
-            width: 200,
+            minWidth: 200
         },
         {
-            title: 'HP',
+            title: 'Telepon',
             dataIndex: 'hp',
             key: 'hp',
-            width: 120,
+            minWidth: 120,
         },
         {
             title: 'Role',
@@ -117,14 +120,16 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
             render: (_, record) => {
                 return record.user_role?.role || 'Tdk Diketahui';
             },
-            width: 150,
+            sorter: (a, b) => a.user_role.role.localeCompare(b.user_role.role),
+            minWidth: 120,
         },
         {
-            title: 'Username',
-            dataIndex: 'username',
-            key: 'username',
-            sorter: (a, b) => a.username.localeCompare(b.username),
-            width: 150,
+            title: 'Tanggal Didaftarkan',
+            dataIndex: 'created_at',
+            key: 'created_at',
+            render: (value) => new Date(value).toISOString().split('T')[0],
+            sorter: (a, b) => a.created_at.localeCompare(b.created_at),
+            minWidth: 120
         },
         {
             title: 'Aksi',
@@ -146,7 +151,7 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -281,6 +286,12 @@ const DaftarUserPage = ({ user, roles, eselon }: Props) => {
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} pengguna`
                         }}
                         scroll={{ x: 1200 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 

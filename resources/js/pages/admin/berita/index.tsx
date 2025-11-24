@@ -1,11 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form } from 'antd';
-import type { TableColumnsType } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Upload } from 'antd';
+import type { TableColumnsType, UploadFile } from 'antd';
 import { useState } from 'react';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { adminBeritaStore, adminBeritaUpdate, adminBeritaDestroy, dashboard } from '@/routes';
+import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import { adminBeritaStore, adminBeritaUpdate, adminBeritaDestroy, dashboard, adminBeritaDownload } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -39,7 +39,6 @@ interface Props {
 }
 
 export default function BeritaPage({ berita, produsenData = [] }: Props) {
-    const { auth, flash } = usePage<SharedData>().props;
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [searchText, setSearchText] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<boolean | null>(null);
@@ -48,6 +47,12 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
     const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<NewsType | null>(null);
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [imageList, setImageList] = useState<UploadFile[]>([]);
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Filter data based on search and status
     const filteredData = berita.filter(news =>
@@ -65,32 +70,31 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
 
     const columns: TableColumnsType<NewsType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
-            title: 'Tanggal Berita',
+            title: 'Tanggal Rilis',
             dataIndex: 'tanggal_rilis',
             key: 'tanggal_rilis',
             sorter: (a, b) => a.tanggal_rilis.localeCompare(b.tanggal_rilis),
-            width: 120,
+            minWidth: 120,
         },
         {
             title: 'Owner',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => (a.produsen_data || '').localeCompare(b.produsen_data || ''),
-            width: 150,
+            minWidth: 200
         },
         {
             title: 'Status',
@@ -106,7 +110,7 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                 const bStatus = (b.status === 1 || b.status === '1' || b.status === true);
                 return (aStatus === bStatus) ? 0 : aStatus ? -1 : 1;
             },
-            width: 100,
+            minWidth: 100,
         },
         {
             title: 'Aksi',
@@ -128,7 +132,7 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -137,18 +141,23 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
 
     // Function to add or update news
     const handleAddNews = (values: any) => {
+        // Process files for uploading
+        const processedValues = {
+            ...values,
+            status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1',
+            file: values.file.fileList ? values.file.fileList[0].originFileObj : null,
+            foto: values.foto.fileList ? values.foto.fileList[0].originFileObj : null
+        };
+
         if (isEditing && currentRecord) {
             // Update existing news via API
-            router.put(adminBeritaUpdate.url(currentRecord.id), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
+            router.post(adminBeritaUpdate.url(currentRecord.id), {
+                _method: 'put',
+                ...processedValues
             });
         } else {
             // Add new news via API
-            router.post(adminBeritaStore.url(), {
-                ...values,
-                status: values.status === 'true' || values.status === true || values.status === 1 || values.status === '1'
-            });
+            router.post(adminBeritaStore.url(), processedValues);
         }
     };
 
@@ -175,15 +184,42 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
 
     // Function to handle editing news
     const handleEdit = (record: NewsType) => {
+        // Set up file lists for existing files
+        if (record.file) {
+            setFileList([
+                {
+                    uid: '1',
+                    name: record.file,
+                    status: 'done',
+                    url: adminBeritaDownload.url({
+                        query: { link: record.file }
+                    }),
+                }
+            ]);
+        }
+
+        if (record.foto) {
+            setImageList([
+                {
+                    uid: '2',
+                    name: record.foto,
+                    status: 'done',
+                    url: adminBeritaDownload.url({
+                        query: { link: record.foto }
+                    }),
+                }
+            ]);
+        }
+
         form.setFieldsValue({
             judul: record.judul,
             tanggal_rilis: record.tanggal_rilis,
             isi_singkat: record.isi_singkat,
             isi: record.isi,
-            file: record.file,
-            foto: record.foto,
             status: record.status ? 1 : 0,
             produsen_data_table_id: record.produsen_data_table_id,
+            file: record.file,
+            foto: record.foto,
         });
 
         setCurrentRecord(record);
@@ -202,6 +238,8 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                         icon={<PlusOutlined />}
                         onClick={() => {
                             form.resetFields();
+                            setFileList([]);
+                            setImageList([]);
                             setIsEditing(false);
                             setCurrentRecord(null);
                             setIsModalVisible(true);
@@ -242,6 +280,12 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} berita`
                         }}
                         scroll={{ x: 800 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 
@@ -277,8 +321,8 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                             tanggal_rilis: new Date().toISOString().split('T')[0],
                             isi_singkat: '',
                             isi: '',
-                            file: '',
-                            foto: '',
+                            file: [],
+                            foto: [],
                             status: false,
                             produsen_data_table_id: undefined
                         }}
@@ -319,14 +363,52 @@ export default function BeritaPage({ berita, produsenData = [] }: Props) {
                         <Form.Item
                             label="File"
                             name="file"
+                            rules={[{ required: true, message: 'File wajib diupload' }]}
                         >
-                            <Input placeholder="Masukkan nama file" />
+                            <Upload
+                                beforeUpload={
+                                    (file) => {
+                                        setFileList(
+                                            [
+                                                {
+                                                    uid: '1',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ file: file }); return false; // mencegah upload otomatis
+                                    }
+                                }
+                                fileList={fileList}
+                                maxCount={1} >
+                                <Button icon={<UploadOutlined />}>Pilih File</Button>
+                            </Upload>
                         </Form.Item>
                         <Form.Item
                             label="Foto"
                             name="foto"
+                            rules={[{ required: true, message: 'Foto wajib diupload' }]}
                         >
-                            <Input placeholder="Masukkan nama foto" />
+                            <Upload
+                                beforeUpload={
+                                    (file) => {
+                                        setImageList(
+                                            [
+                                                {
+                                                    uid: '2',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ foto: file }); return false; // mencegah upload otomatis
+                                    }
+                                }
+                                fileList={imageList}
+                                maxCount={1} >
+                                <Button icon={<UploadOutlined />}>Pilih Foto</Button>
+                            </Upload>
                         </Form.Item>
                         <Form.Item
                             label="Status"

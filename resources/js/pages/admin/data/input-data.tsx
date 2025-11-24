@@ -1,11 +1,11 @@
 import AdminLayout from '@/layouts/admin/layout';
 import { SharedData, type BreadcrumbItem } from '@/types';
 import { Head, usePage, router } from '@inertiajs/react';
-import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Checkbox } from 'antd';
-import type { TableColumnsType } from 'antd';
+import { Card, Table, Button, Space, Tag, Input, Select, Modal, Form, Upload } from 'antd';
+import type { TableColumnsType, UploadFile } from 'antd';
 import { useState } from 'react';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy, dashboard } from '@/routes';
+import { EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
+import { adminDataInputStore, adminDataInputUpdate, adminDataInputDestroy, dashboard, adminDataInputDownload } from '@/routes';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -50,8 +50,7 @@ interface Props {
     users?: Array<{id: number, nama_lengkap: string}>;
 }
 
-const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users = [] }: Props) => {
-    const { auth, flash } = usePage<SharedData>().props;
+const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [] }: Props) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [currentRecord, setCurrentRecord] = useState<DataItem | null>(null);
@@ -61,9 +60,13 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
     const [selectedKategori, setSelectedKategori] = useState<string | null>(null);
     const [selectedPrioritas, setSelectedPrioritas] = useState<boolean | null>(null);
     const [form] = Form.useForm();
+    const [pagination, setPagination] = useState({
+        current: 1,
+        pageSize: 10
+    });
 
     // Initialize data from props
-    const [dataItemsState, setDataItemsState] = useState<DataItem[]>(dataItems || []);
+    const [dataItemsState] = useState<DataItem[]>(dataItems || []);
 
     // Filter data based on search and filters
     const filteredData = dataItemsState.filter(item =>
@@ -84,45 +87,44 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
 
     const columns: TableColumnsType<DataItem> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-            sorter: (a, b) => a.id - b.id,
-            width: 80,
+            title: 'No',
+            key: 'no',
+            render: (_text, _record, index) =>
+                (pagination.current - 1) * pagination.pageSize + index + 1,
         },
         {
             title: 'Judul',
             dataIndex: 'judul',
             key: 'judul',
             sorter: (a, b) => a.judul.localeCompare(b.judul),
-            width: 200,
+            minWidth: 200,
         },
         {
             title: 'Tanggal Rilis',
             dataIndex: 'tgl_rilis',
             key: 'tgl_rilis',
             sorter: (a, b) => a.tgl_rilis.localeCompare(b.tgl_rilis),
-            width: 120,
+            minWidth: 120
         },
-        {
-            title: 'Abstraksi',
-            dataIndex: 'abstraksi',
-            key: 'abstraksi',
-            width: 250,
-        },
+        // {
+        //     title: 'Abstraksi',
+        //     dataIndex: 'abstraksi',
+        //     key: 'abstraksi',
+        //     width: 250,
+        // },
         {
             title: 'Produsen Data',
             dataIndex: 'produsen_data',
             key: 'produsen_data',
             sorter: (a, b) => a.produsen_data.localeCompare(b.produsen_data),
-            width: 150,
+            minWidth: 200
         },
         {
             title: 'Kategori Data',
             dataIndex: 'kategori_data',
             key: 'kategori_data',
             sorter: (a, b) => a.kategori_data.localeCompare(b.kategori_data),
-            width: 120,
+            minWidth: 120,
         },
         {
             title: 'Tagging Data Prioritas',
@@ -133,13 +135,25 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                     {(prioritas === 1 || prioritas === '1' || prioritas === true) ? 'Prioritas' : 'Non Prioritas'}
                 </Tag>
             ),
-            width: 100,
+            minWidth: 120
         },
         {
             title: 'File',
             dataIndex: 'file_statistik',
             key: 'file_statistik',
-            width: 120,
+            minWidth: 200,
+            render: (file) => (
+                <a
+                    href={adminDataInputDownload.url({
+                        query: { link: file }
+                    })}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#1677ff' }}
+                >
+                    {file || 'Tidak ada file'}
+                </a>
+            ),
         },
         {
             title: 'Aksi',
@@ -161,7 +175,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                     />
                 </Space>
             ),
-            width: 100,
+            minWidth: 100,
         },
     ];
 
@@ -173,12 +187,16 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
         // Convert boolean values for compatibility between SQLite and MySQL
         const processedValues = {
             ...values,
-            is_data_prioritas: values.is_data_prioritas === 'true' || values.is_data_prioritas === true || values.is_data_prioritas === 1 || values.is_data_prioritas === '1'
+            is_data_prioritas: values.is_data_prioritas === 'true' || values.is_data_prioritas === true || values.is_data_prioritas === 1 || values.is_data_prioritas === '1',
+            file_statistik: values.file_statistik.fileList ? values.file_statistik.fileList[0].originFileObj : null
         };
 
         if (isEditing && currentRecord) {
             // Update existing data via API
-            router.put(adminDataInputUpdate.url(currentRecord.id), processedValues);
+            router.post(adminDataInputUpdate.url(currentRecord.id), {
+                _method: 'put',
+                ...processedValues
+            });
         } else {
             // Add new data via API
             router.post(adminDataInputStore.url(), processedValues);
@@ -208,7 +226,20 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
 
 
     // Function to handle editing data
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+
     const handleEdit = (record: DataItem) => {
+        setFileList([
+            {
+                uid: '1',
+                name: record.file_statistik,
+                status: 'done',
+                url: adminDataInputDownload.url({
+                    query: { link: record.file_statistik }
+                }),
+            }
+        ])
+
         form.setFieldsValue({
             judul: record.judul,
             tanggal_rilis: record.tgl_rilis,
@@ -239,6 +270,7 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                         type="primary"
                         onClick={() => {
                             form.resetFields();
+                            setFileList([]);
                             setIsEditing(false);
                             setCurrentRecord(null);
                             setIsModalVisible(true);
@@ -289,6 +321,12 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                             showTotal: (total, range) => `${range[0]}-${range[1]} dari ${total} data`
                         }}
                         scroll={{ x: 1200 }}
+                        onChange={(paginationConfig) => {
+                            setPagination({
+                                current: paginationConfig.current!,
+                                pageSize: paginationConfig.pageSize!
+                            });
+                        }}
                     />
                 </Card>
 
@@ -353,10 +391,31 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                                 ))}
                             </Select>
                         </Form.Item>
+                        <Form.Item label="File" name="file_statistik" rules={[{ required: true, message: 'File wajib diupload' }]}> 
+                            <Upload
+                                beforeUpload={
+                                    (file) => { 
+                                        setFileList(
+                                            [
+                                                {
+                                                    uid: '1',
+                                                    name: file.name,
+                                                    status: 'done',
+                                                }
+                                            ]
+                                        );
+                                        form.setFieldsValue({ file_statistik: file }); return false; // mencegah upload otomatis 
+                                    }
+                                } 
+                                fileList={fileList}
+                                maxCount={1} > 
+                                <Button icon={<UploadOutlined />}>Pilih File</Button> 
+                            </Upload>
+                        </Form.Item>
                         <Form.Item label="Link Meta" name="link_meta">
                             <Input placeholder="Masukkan link metadata" />
                         </Form.Item>
-                        <Form.Item label="File Meta 1" name="file_meta1">
+                        {/* <Form.Item label="File Meta 1" name="file_meta1">
                             <Input placeholder="Masukkan nama file meta 1" />
                         </Form.Item>
                         <Form.Item label="File Meta 2" name="file_meta2">
@@ -364,13 +423,10 @@ const InputDataPage = ({ dataItems, produsenData = [], kategoriData = [], users 
                         </Form.Item>
                         <Form.Item label="File Meta 3" name="file_meta3">
                             <Input placeholder="Masukkan nama file meta 3" />
-                        </Form.Item>
-                        <Form.Item label="Ukuran File" name="ukuran_file" rules={[{ required: true, message: 'Ukuran file wajib diisi' }]}>
+                        </Form.Item> */}
+                        {/* <Form.Item label="Ukuran File" name="ukuran_file" rules={[{ required: true, message: 'Ukuran file wajib diisi' }]}>
                             <Input type="number" placeholder="Masukkan ukuran file dalam bytes" />
-                        </Form.Item>
-                        <Form.Item label="File" name="file_statistik">
-                            <Input placeholder="Masukkan nama file" />
-                        </Form.Item>
+                        </Form.Item> */}
                     </Form>
                 </Modal>
 
