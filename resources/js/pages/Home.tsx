@@ -235,113 +235,7 @@ const HomePage: React.FC<HomePageProps> = ({
                 </div>
             </AnimatedSection>
 
-            {/* Satudata Data Section - New Section for displaying data from the existing satudata database */}
-            <AnimatedSection delay={0.2}>
-                <div style={{ marginBottom: '30px' }}>
-                    <Title
-                        level={2}
-                        style={{
-                            color: '#2d5036',
-                            marginBottom: '20px',
-                            fontSize: '24px',
-                        }}
-                    >
-                        Data Satu Data Terbaru
-                    </Title>
-                    <Row gutter={[12, 12]}>
-                        {' '}
-                        {/* Reduced gutter for mobile */}
-                        <Col xs={24} sm={12} md={12}>
-                            <AnimatedCard delay={0.1} index={0}>
-                                <Card>
-                                    <Statistic
-                                        title="Dataset Tersedia"
-                                        value={datasets.length}
-                                        suffix="dataset"
-                                    />
-                                </Card>
-                            </AnimatedCard>
-                        </Col>
-                        <Col xs={24} sm={12} md={12}>
-                            <AnimatedCard delay={0.2} index={1}>
-                                <Card>
-                                    <Statistic
-                                        title="Publikasi"
-                                        value={satudataPublications.length}
-                                        suffix="publikasi"
-                                    />
-                                </Card>
-                            </AnimatedCard>
-                        </Col>
-                    </Row>
-                </div>
-            </AnimatedSection>
 
-            {/* Dataset Section */}
-            <AnimatedSection delay={0.4}>
-                <div style={{ marginBottom: '30px' }}>
-                    <Title
-                        level={2}
-                        style={{
-                            color: '#2d5036',
-                            marginBottom: '20px',
-                            fontSize: '24px',
-                        }}
-                    >
-                        Dataset Terbaru
-                    </Title>
-                    <Row gutter={[12, 12]}>
-                        {datasets.slice(0, 3).map((dataset, index) => (
-                            <Col
-                                xs={24}
-                                sm={12}
-                                md={8}
-                                key={`dataset-${index}`}
-                            >
-                                {' '}
-                                {/* Added sm={12} for tablet */}
-                                <AnimatedCard delay={0.1} index={index}>
-                                    <Card
-                                        title={dataset.nama_dataset}
-                                        style={{ height: '100%' }}
-                                    >
-                                        <Paragraph ellipsis={{ rows: 2 }}>
-                                            {dataset.objek_data ||
-                                                'Objek data tidak tersedia'}
-                                        </Paragraph>
-                                        <div
-                                            style={{
-                                                marginTop: '12px',
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                flexWrap: 'wrap',
-                                                gap: '8px',
-                                            }}
-                                        >
-                                            <Tag
-                                                color="#a8d5ba"
-                                                style={{ color: '#2d5036' }}
-                                            >
-                                                {dataset.status ||
-                                                    'Status Tidak Diketahui'}
-                                            </Tag>
-                                            <span
-                                                style={{
-                                                    fontSize: '12px',
-                                                    color: '#666',
-                                                }}
-                                            >
-                                                Tahun: {dataset.tahun || 'N/A'}
-                                            </span>
-                                        </div>
-                                    </Card>
-                                </AnimatedCard>
-                            </Col>
-                        ))}
-                    </Row>
-                </div>
-            </AnimatedSection>
 
             {/* Dataset and Publications Section from Satudata */}
             <AnimatedSection delay={0.5}>
@@ -925,8 +819,8 @@ const HomePage: React.FC<HomePageProps> = ({
                                     }}
                                 >
                                     <img
-                                        src="/images/logos/logo-geospasial.png"
-                                        alt="Logo Geospasial"
+                                        src="/images/logos/logo-onemap.png"
+                                        alt="Logo OneMap"
                                         style={{
                                             maxHeight: '120px',
                                             maxWidth: '140px',
