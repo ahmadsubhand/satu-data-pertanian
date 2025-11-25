@@ -744,7 +744,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
           </div>
         )}
 
-        {/* Enhanced Navigation Section */}
+        {/* Navigation Info Section */}
         <div style={{
           textAlign: 'center',
           padding: '40px',
@@ -754,182 +754,29 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
           boxShadow: '0 10px 40px rgba(45, 80, 54, 0.25)',
         }}>
           <h3 style={{
-            color: 'white',
+            color: '#ffffff',
             marginBottom: '16px',
-            fontSize: '24px',
-            textShadow: '1px 1px 3px rgba(0,0,0,0.3)',
+            fontSize: '28px',
+            fontWeight: '700',
+            textShadow: '1px 1px 4px rgba(0,0,0,0.4)',
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            letterSpacing: '-0.5px',
           }}>
             Jelajahi Lebih Lanjut
           </h3>
           <p style={{
-            color: '#e8f5e9',
+            color: '#ffffff',
             maxWidth: '700px',
             margin: '0 auto 24px',
-            fontSize: '16px',
-            lineHeight: '1.7',
+            fontSize: '17px',
+            lineHeight: '1.8',
+            fontWeight: '400',
+            textShadow: '0 1px 2px rgba(0,0,0,0.2)',
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
           }}>
             Temukan lebih banyak informasi dan data pertanian melalui halaman-halaman berikut.
             Setiap halaman menyediakan berbagai sumber daya untuk mendukung penelitian dan analisis Anda.
           </p>
-
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-            gap: '15px',
-            marginTop: '20px',
-          }}>
-            <Link
-              href="/dataset"
-              style={{
-                padding: '14px 24px',
-                background: 'linear-gradient(135deg, #ffffff, #f0f0f0)',
-                color: '#2d5036',
-                textDecoration: 'none',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: '600',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                boxShadow: '0 6px 15px rgba(0,0,0,0.15)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #e8f5e9)';
-                e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 12px 25px rgba(0,0,0,0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #f0f0f0)';
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
-              }}
-            >
-              <span>📊</span>
-              Dataset Utama
-            </Link>
-            <Link
-              href="/samples"
-              style={{
-                padding: '14px 24px',
-                background: 'linear-gradient(135deg, #ffffff, #f0f0f0)',
-                color: '#2d5036',
-                textDecoration: 'none',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: '600',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                boxShadow: '0 6px 15px rgba(0,0,0,0.15)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #e8f5e9)';
-                e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 12px 25px rgba(0,0,0,0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #f0f0f0)';
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
-              }}
-            >
-              <span>🔬</span>
-              Contoh Halaman
-            </Link>
-            <Link
-              href="/samples/home"
-              style={{
-                padding: '14px 24px',
-                background: 'linear-gradient(135deg, #ffffff, #f0f0f0)',
-                color: '#2d5036',
-                textDecoration: 'none',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: '600',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                boxShadow: '0 6px 15px rgba(0,0,0,0.15)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #e8f5e9)';
-                e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 12px 25px rgba(0,0,0,0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #f0f0f0)';
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
-              }}
-            >
-              <span>🏠</span>
-              Beranda
-            </Link>
-            <Link
-              href="/samples/publikasi"
-              style={{
-                padding: '14px 24px',
-                background: 'linear-gradient(135deg, #ffffff, #f0f0f0)',
-                color: '#2d5036',
-                textDecoration: 'none',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: '600',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                boxShadow: '0 6px 15px rgba(0,0,0,0.15)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #e8f5e9)';
-                e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 12px 25px rgba(0,0,0,0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #f0f0f0)';
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
-              }}
-            >
-              <span>📘</span>
-              Publikasi
-            </Link>
-            <Link
-              href="/samples/tentang"
-              style={{
-                padding: '14px 24px',
-                background: 'linear-gradient(135deg, #ffffff, #f0f0f0)',
-                color: '#2d5036',
-                textDecoration: 'none',
-                borderRadius: '10px',
-                fontSize: '15px',
-                fontWeight: '600',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                boxShadow: '0 6px 15px rgba(0,0,0,0.15)',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #e8f5e9)';
-                e.currentTarget.style.transform = 'translateY(-5px) scale(1.05)';
-                e.currentTarget.style.boxShadow = '0 12px 25px rgba(0,0,0,0.2)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #ffffff, #f0f0f0)';
-                e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                e.currentTarget.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
-              }}
-            >
-              <span>ℹ️</span>
-              Tentang Kami
-            </Link>
-          </div>
         </div>
       </div>
     </PublicLayout>

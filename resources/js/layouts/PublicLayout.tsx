@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Layout, Menu } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FiChevronDown, FiMenu, FiUser, FiX } from 'react-icons/fi';
-import { Instagram } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
 
 // Define Ant Design menu item types
 interface AntMenuItemType {
@@ -205,41 +205,61 @@ const PublicLayout = ({
                         {
                             key: 'basis-data-statistik',
                             label: (
-                                <Link href="/statistical-data/basis-data">
+                                <a
+                                    href="https://bdsp2.pertanian.go.id/bdsp/id/home.html"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     Basis Data Statistik
-                                </Link>
+                                </a>
                             ),
                         },
                         {
                             key: 'statistik-ekspor-impor',
                             label: (
-                                <Link href="/statistical-data/export-import">
+                                <a
+                                    href="https://app3.pertanian.go.id/eksim/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     Ekspor Impor
-                                </Link>
+                                </a>
                             ),
                         },
                         {
                             key: 'statistik-pdb',
                             label: (
-                                <Link href="/statistical-data/gdp">
+                                <a
+                                    href="https://11ap.pertanian.go.id/pdb/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     Produk Domestik Bruto
-                                </Link>
+                                </a>
                             ),
                         },
                         {
                             key: 'statistik-pdrb',
                             label: (
-                                <Link href="/statistical-data/gdrp">
+                                <a
+                                    href="https://11ap.pertanian.go.id/pdrb/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     Produk Domestik Regional Bruto
-                                </Link>
+                                </a>
                             ),
                         },
                         {
                             key: 'statistik-ntp',
                             label: (
-                                <Link href="/statistical-data/ntp">
+                                <a
+                                    href="https://11ap.pertanian.go.id/ntp/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
                                     Nilai Tukar Petani
-                                </Link>
+                                </a>
                             ),
                         },
                     ],
@@ -295,44 +315,6 @@ const PublicLayout = ({
                 </div>
             ),
             children: [
-                {
-                    key: 'satudata',
-                    label: (
-                        <div
-                            onMouseEnter={() => setOpenDropdown('satudata')}
-                            onMouseLeave={() => setOpenDropdown(null)}
-                        >
-                            Satu Data
-                        </div>
-                    ),
-                    children: [
-                        {
-                            key: 'tentang',
-                            label: <Link href="/about">Tentang</Link>,
-                        },
-                        {
-                            key: 'regulasi',
-                            label: <Link href="/regulation">Regulasi</Link>,
-                        },
-                        {
-                            key: 'prinsip',
-                            label: (
-                                <Link href="/data-principles">
-                                    Prinsip Satu Data
-                                </Link>
-                            ),
-                        },
-                        {
-                            key: 'prioritas',
-                            label: (
-                                <Link href="/priority-data">
-                                    Data Prioritas
-                                </Link>
-                            ),
-                        },
-                    ],
-                },
-
                 {
                     key: 'rencana-rilis',
                     label: <Link href="/release-plans">Rencana Rilis</Link>,
@@ -479,36 +461,6 @@ const PublicLayout = ({
             key: 'manajemen',
             label: 'Manajemen',
             children: [
-                {
-                    key: 'satudata',
-                    label: 'Satudata',
-                    children: [
-                        {
-                            key: 'tentang',
-                            label: <Link href="/about">Tentang</Link>,
-                        },
-                        {
-                            key: 'regulasi',
-                            label: <Link href="/regulation">Regulasi</Link>,
-                        },
-                        {
-                            key: 'prinsip',
-                            label: (
-                                <Link href="/data-principles">
-                                    Prinsip Satu Data
-                                </Link>
-                            ),
-                        },
-                        {
-                            key: 'prioritas',
-                            label: (
-                                <Link href="/priority-data">
-                                    Data Prioritas
-                                </Link>
-                            ),
-                        },
-                    ],
-                },
                 {
                     key: 'rencana-rilis',
                     label: <Link href="/release-plans">Rencana Rilis</Link>,
@@ -1030,6 +982,7 @@ const PublicLayout = ({
                                         rel="noopener noreferrer"
                                         style={{
                                             display: 'inline-block',
+                                            marginRight: '12px',
                                             transition: 'transform 0.3s ease, color 0.3s ease'
                                         }}
                                         onMouseEnter={(e) => {
@@ -1042,6 +995,31 @@ const PublicLayout = ({
                                         }}
                                     >
                                         <Instagram
+                                            size={20}
+                                            style={{
+                                                verticalAlign: 'middle',
+                                                color: '#333'
+                                            }}
+                                        />
+                                    </a>
+                                    <a
+                                        href="https://www.facebook.com/kementan"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            display: 'inline-block',
+                                            transition: 'transform 0.3s ease, color 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1.2)';
+                                            e.currentTarget.style.color = '#1877F2';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.color = '';
+                                        }}
+                                    >
+                                        <Facebook
                                             size={20}
                                             style={{
                                                 verticalAlign: 'middle',

@@ -108,7 +108,7 @@ Route::get('/infografis', function () {
 })->name('infografis.index');
 
 Route::get('/products/multimedia', function () {
-    return Inertia::render('GenericPage', [
+    return Inertia::render('MultimediaPage', [
         'pageTitle' => 'Multimedia',
         'description' => 'Konten multimedia terkait pertanian dalam berbagai format',
         'category' => 'Multimedia'
