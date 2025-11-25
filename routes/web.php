@@ -100,12 +100,18 @@ Route::get('/galeri', function () {
 })->name('galeri.index');
 
 Route::get('/infografis', function () {
-    return Inertia::render('GenericPage', [
-        'pageTitle' => 'Infografis',
-        'description' => 'Informasi penting seputar pertanian dalam bentuk visual yang mudah dipahami',
-        'category' => 'Infografis'
+    $infografis = \App\Models\MenuInfografisTable::where('status', true)->orderBy('tanggal_rilis', 'desc')->get();
+    return Inertia::render('InfografisPage', [
+        'infografis' => $infografis
     ]);
 })->name('infografis.index');
+
+Route::get('/infografis/{id}', function ($id) {
+    $infografis = \App\Models\MenuInfografisTable::where('status', true)->findOrFail($id);
+    return Inertia::render('InfografisDetailPage', [
+        'infografis' => $infografis
+    ]);
+})->where('id', '[0-9]+')->name('infografis.detail');
 
 Route::get('/products/multimedia', function () {
     return Inertia::render('MultimediaPage', [
