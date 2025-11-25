@@ -656,7 +656,6 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
                           alignItems: 'center',
                           justifyContent: 'center',
                           borderRadius: '50%',
-                          border: 'none',
                           backgroundColor: isCurrent
                             ? 'linear-gradient(135deg, #2d5036, #4CAF50)'
                             : 'white',

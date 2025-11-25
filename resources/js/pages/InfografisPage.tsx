@@ -371,14 +371,13 @@ const InfografisPage: React.FC<InfografisPageProps> = ({ infografis = [] }) => {
                                                 style={{
                                                     width: '100%',
                                                     height: '160px',
-                                                    background: '#f0f0f0',
                                                     borderRadius: '8px',
                                                     marginBottom: '12px',
                                                     overflow: 'hidden',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    background: `linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16)}, #${Math.floor(Math.random()*16777215).toString(16)})`,
+                                                    background: `linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')})`,
                                                 }}
                                             >
                                                 <span style={{ fontSize: '40px' }}>📊</span>

@@ -2,7 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { Layout, Menu } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FiChevronDown, FiMenu, FiUser, FiX } from 'react-icons/fi';
-import { Facebook, Instagram } from 'lucide-react';
+import { Facebook, Instagram, Youtube } from 'lucide-react';
 
 // Define Ant Design menu item types
 interface AntMenuItemType {
@@ -1008,6 +1008,7 @@ const PublicLayout = ({
                                         rel="noopener noreferrer"
                                         style={{
                                             display: 'inline-block',
+                                            marginRight: '12px',
                                             transition: 'transform 0.3s ease, color 0.3s ease'
                                         }}
                                         onMouseEnter={(e) => {
@@ -1020,6 +1021,31 @@ const PublicLayout = ({
                                         }}
                                     >
                                         <Facebook
+                                            size={20}
+                                            style={{
+                                                verticalAlign: 'middle',
+                                                color: '#333'
+                                            }}
+                                        />
+                                    </a>
+                                    <a
+                                        href="http://www.youtube.com/@KementanRI"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            display: 'inline-block',
+                                            transition: 'transform 0.3s ease, color 0.3s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1.2)';
+                                            e.currentTarget.style.color = '#FF0000';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'scale(1)';
+                                            e.currentTarget.style.color = '';
+                                        }}
+                                    >
+                                        <Youtube
                                             size={20}
                                             style={{
                                                 verticalAlign: 'middle',

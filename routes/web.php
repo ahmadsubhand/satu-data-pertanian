@@ -92,12 +92,18 @@ Route::get('/berita', [App\Http\Controllers\BeritaPublikController::class, 'inde
 Route::get('/berita/{id}', [App\Http\Controllers\BeritaPublikController::class, 'show'])->name('berita.show');
 
 Route::get('/galeri', function () {
-    return Inertia::render('GenericPage', [
-        'pageTitle' => 'Galeri Data',
-        'description' => 'Koleksi visualisasi data dan peta terkait sektor pertanian',
-        'category' => 'Visualisasi'
+    $multimedia = \App\Models\MenuMultimediaTable::where('status', true)->orderBy('tanggal_rilis', 'desc')->get();
+    return Inertia::render('MultimediaPage', [
+        'multimedia' => $multimedia
     ]);
 })->name('galeri.index');
+
+Route::get('/galeri/{id}', function ($id) {
+    $multimedia = \App\Models\MenuMultimediaTable::where('status', true)->findOrFail($id);
+    return Inertia::render('MultimediaDetailPage', [
+        'multimedia' => $multimedia
+    ]);
+})->where('id', '[0-9]+')->name('galeri.detail');
 
 Route::get('/infografis', function () {
     $infografis = \App\Models\MenuInfografisTable::where('status', true)->orderBy('tanggal_rilis', 'desc')->get();
@@ -113,12 +119,14 @@ Route::get('/infografis/{id}', function ($id) {
     ]);
 })->where('id', '[0-9]+')->name('infografis.detail');
 
+// Route for Instagram media page in multimedia submenu
+Route::get('/media/instagram', function () {
+    return Inertia::render('InstagramMediaPage');
+})->name('media.instagram');
+
+// Keep the old route for backward compatibility but redirect to the new one
 Route::get('/products/multimedia', function () {
-    return Inertia::render('MultimediaPage', [
-        'pageTitle' => 'Multimedia',
-        'description' => 'Konten multimedia terkait pertanian dalam berbagai format',
-        'category' => 'Multimedia'
-    ]);
+    return Inertia::render('InstagramMediaPage');
 })->name('products.multimedia');
 
 Route::get('/release-plans', function () {
