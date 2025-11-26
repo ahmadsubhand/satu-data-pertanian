@@ -163,33 +163,64 @@ const InfografisDetailPage: React.FC<InfografisDetailPageProps> = ({
                                     borderRadius: '16px 16px 0 0',
                                 }}
                             >
-                                {/* Infografis preview placeholder */}
-                                <div
-                                    style={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        width: '100%',
-                                        height: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        background: `linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16)}, #${Math.floor(Math.random()*16777215).toString(16)})`,
-                                        transition: 'all 0.3s ease',
-                                        borderRadius: '12px',
-                                        boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform =
-                                            'scale(1.05)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform =
-                                            'scale(1)';
-                                    }}
-                                >
-                                    <span style={{ fontSize: '60px' }}>📊</span>
-                                </div>
+                                {/* Infografis preview */}
+                                {infografis.file ? (
+                                    <img
+                                        src={`/storage/${infografis.file}`}
+                                        alt={infografis.judul}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'contain',
+                                            transition: 'all 0.3s ease',
+                                            borderRadius: '12px',
+                                            boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform =
+                                                'scale(1.05)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform =
+                                                'scale(1)';
+                                        }}
+                                        onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.onerror = null; // prevents looping
+                                            target.style.display = 'none';
+                                        }}
+                                    />
+                                ) : (
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            background: `linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16)}, #${Math.floor(Math.random()*16777215).toString(16)})`,
+                                            transition: 'all 0.3s ease',
+                                            borderRadius: '12px',
+                                            boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform =
+                                                'scale(1.05)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform =
+                                                'scale(1)';
+                                        }}
+                                    >
+                                        <span style={{ fontSize: '60px' }}>📊</span>
+                                    </div>
+                                )}
 
                                 {/* Status badge */}
                                 <div

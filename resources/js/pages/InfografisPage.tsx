@@ -370,17 +370,50 @@ const InfografisPage: React.FC<InfografisPageProps> = ({ infografis = [] }) => {
                                             <div
                                                 style={{
                                                     width: '100%',
-                                                    height: '160px',
+                                                    // Using padding-top technique for portrait aspect ratio (2:3)
+                                                    paddingTop: '150%',
                                                     borderRadius: '8px',
                                                     marginBottom: '12px',
                                                     overflow: 'hidden',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    background: `linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')})`,
+                                                    position: 'relative',
                                                 }}
                                             >
-                                                <span style={{ fontSize: '40px' }}>📊</span>
+                                                {infografisItem.file ? (
+                                                    <img
+                                                        src={`/storage/${infografisItem.file}`}
+                                                        alt={infografisItem.judul}
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            objectFit: 'contain',
+                                                            transition: 'all 0.3s ease',
+                                                        }}
+                                                        onError={(e) => {
+                                                            const target = e.target as HTMLImageElement;
+                                                            target.onerror = null; // prevents looping
+                                                            target.style.display = 'none';
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <div
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            background: `linear-gradient(135deg, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}, #${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')})`,
+                                                        }}
+                                                    >
+                                                        <span style={{ fontSize: '40px' }}>📊</span>
+                                                    </div>
+                                                )}
                                             </div>
                                             
                                             <div style={{ 

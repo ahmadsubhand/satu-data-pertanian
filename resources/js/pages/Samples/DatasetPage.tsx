@@ -375,17 +375,26 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
                   e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.08)';
                 }}
               >
-                {/* Status indicator */}
+                {/* Dataset title */}
+                <h3 style={{
+                  color: '#2d5036',
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  marginBottom: '12px',
+                  lineHeight: '1.4',
+                }}>
+                  {dataset.judul}
+                </h3>
+
+                {/* Status indicator moved below the title */}
                 <div style={{
-                  position: 'absolute',
-                  top: '15px',
-                  right: '15px',
                   background: dataset.is_data_prioritas ? '#fff3cd' : '#d4edda',
                   color: dataset.is_data_prioritas ? '#856404' : '#155724',
                   padding: '4px 12px',
                   borderRadius: '15px',
                   fontSize: '12px',
                   fontWeight: '600',
+                  marginBottom: '12px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
@@ -401,17 +410,6 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
                     </>
                   )}
                 </div>
-
-                {/* Dataset title */}
-                <h3 style={{
-                  color: '#2d5036',
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  marginBottom: '12px',
-                  lineHeight: '1.4',
-                }}>
-                  {dataset.judul}
-                </h3>
 
                 {/* Date and metadata */}
                 <div style={{
