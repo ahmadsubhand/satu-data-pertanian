@@ -99,33 +99,36 @@ export default function AuthSplitLayout({
                     <div className="animate-slide-in-left animation-delay-300 relative z-20 flex flex-1 flex-col justify-center space-y-6">
                         <div className="space-y-4">
                             <h2 className="animate-slide-in-left animation-delay-500 text-3xl font-bold tracking-tight">
-                                Satudata Pertanian
+                                Login Administrator
                             </h2>
                             <p className="animate-slide-in-left animation-delay-700 max-w-md text-lg text-green-100/90">
-                                Platform satu data untuk sektor pertanian yang
-                                menyediakan informasi data statistik,
-                                geospasial, dan publikasi terkait pembangunan
-                                pertanian di Indonesia.
+                                Akses panel administrasi untuk mengelola data statistik,
+                                publikasi, dan konten lainnya di Portal Satu Data Pertanian.
                             </p>
                         </div>
 
-                        <div className="animate-slide-in-left animation-delay-1000 grid grid-cols-3 gap-6 pt-6">
-                            <div className="animate-fade-in-up animation-delay-1200 flex flex-col items-center text-center">
-                                <div className="text-2xl font-bold">300+</div>
-                                <div className="text-sm text-green-200">
-                                    Dataset
+                        <div className="animate-slide-in-left animation-delay-1000 space-y-4 pt-6">
+                            <div className="animate-fade-in-up animation-delay-1200 flex items-start space-x-3">
+                                <div className="text-green-300 text-xl">✓</div>
+                                <div>
+                                    <div className="font-semibold text-white">Kelola Data</div>
+                                    <div className="text-sm text-green-200">Atur dataset dan publikasi</div>
                                 </div>
                             </div>
-                            <div className="animate-fade-in-up animation-delay-1400 flex flex-col items-center text-center">
-                                <div className="text-2xl font-bold">50+</div>
-                                <div className="text-sm text-green-200">
-                                    Publikasi
+
+                            <div className="animate-fade-in-up animation-delay-1400 flex items-start space-x-3">
+                                <div className="text-green-300 text-xl">✓</div>
+                                <div>
+                                    <div className="font-semibold text-white">Analisis Statistik</div>
+                                    <div className="text-sm text-green-200">Monitor data pertanian terkini</div>
                                 </div>
                             </div>
-                            <div className="animate-fade-in-up animation-delay-1600 flex flex-col items-center text-center">
-                                <div className="text-2xl font-bold">25+</div>
-                                <div className="text-sm text-green-200">
-                                    Infografis
+
+                            <div className="animate-fade-in-up animation-delay-1600 flex items-start space-x-3">
+                                <div className="text-green-300 text-xl">✓</div>
+                                <div>
+                                    <div className="font-semibold text-white">Keamanan Terjamin</div>
+                                    <div className="text-sm text-green-200">Akses terbatas untuk administrator</div>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +145,11 @@ export default function AuthSplitLayout({
                             href={home()}
                             className="relative z-20 flex items-center justify-center lg:hidden"
                         >
-                            <AppLogoIcon className="h-10 fill-current text-black sm:h-12" />
+                            <img
+                                src="/images/logos/logo-satudata.png"
+                                alt="Logo Satudata Pertanian"
+                                className="h-10 sm:h-12"
+                            />
                         </Link>
                         <div className="flex flex-col items-start gap-2 text-left sm:items-center sm:text-center">
                             <h1 className="text-2xl font-semibold">{title}</h1>
