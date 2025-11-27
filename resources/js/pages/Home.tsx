@@ -14,7 +14,7 @@ import {
     Tag,
     Typography,
 } from 'antd';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const { Title, Paragraph } = Typography;
 
@@ -96,6 +96,32 @@ const HomePage: React.FC<HomePageProps> = ({
     dataPrinciples = [],
     priorityData = [],
 }) => {
+    const datasetCountRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const animateCounter = (element: HTMLElement, start: number, end: number, duration: number) => {
+            let startTimestamp: number | null = null;
+            const step = (timestamp: number) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentValue = Math.floor(progress * (end - start) + start);
+                element.textContent = currentValue.toString();
+
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    element.textContent = end.toString();
+                }
+            };
+            window.requestAnimationFrame(step);
+        };
+
+        // Animate the dataset counter when component mounts
+        if (datasetCountRef.current && datasetsCount > 0) {
+            const element = datasetCountRef.current;
+            animateCounter(element, 0, datasetsCount, 2000); // Animate from 0 to the count over 2 seconds
+        }
+    }, [datasetsCount]);
     return (
         <PublicLayout title="Beranda - Satudata Pertanian">
             <Head title="Beranda - Satudata Pertanian" />
@@ -214,24 +240,6 @@ const HomePage: React.FC<HomePageProps> = ({
                             </div>
                         </div>
                     </Paragraph>
-                    <Button
-                        type="primary"
-                        size="large"
-                        onClick={() => {
-                            // Scroll ke bagian bawah halaman
-                            window.scrollTo({
-                                top: document.body.scrollHeight,
-                                behavior: 'smooth',
-                            });
-                        }}
-                        style={{
-                            background: '#2d5036',
-                            borderColor: '#2d5036',
-                            fontSize: '16px', // Better for touch targets on mobile
-                        }}
-                    >
-                        Jelajahi Data
-                    </Button>
                 </div>
             </AnimatedSection>
 
@@ -263,6 +271,8 @@ const HomePage: React.FC<HomePageProps> = ({
                                     transition:
                                         'transform 0.3s ease, box-shadow 0.3s ease',
                                     boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform =
@@ -294,6 +304,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                         Dataset Tersedia
                                     </h3>
                                     <div
+                                        ref={datasetCountRef}
                                         style={{
                                             fontSize: '36px',
                                             color: '#2d5036',
@@ -331,7 +342,8 @@ const HomePage: React.FC<HomePageProps> = ({
                                         justifyContent: 'center',
                                         alignItems: 'center',
                                         marginBottom: '20px',
-                                        minHeight: '120px',
+                                        minHeight: '80px',
+                                        maxHeight: '100px',
                                     }}
                                 >
                                     <div
@@ -346,22 +358,22 @@ const HomePage: React.FC<HomePageProps> = ({
                                             alignItems: 'center',
                                             color: 'white',
                                             fontSize: '32px',
-                                            transition: 'transform 0.3s ease',
+                                            transition: 'all 0.6s ease',
                                         }}
-                                        onMouseEnter={(e) =>
-                                            (e.currentTarget.style.transform =
-                                                'scale(1.05)')
-                                        }
-                                        onMouseLeave={(e) =>
-                                            (e.currentTarget.style.transform =
-                                                'scale(1)')
-                                        }
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.transform = 'rotateY(10deg) scale(1.1)';
+                                            e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.transform = 'rotateY(0deg) scale(1)';
+                                            e.currentTarget.style.boxShadow = 'none';
+                                        }}
                                     >
                                         📊
                                     </div>
                                 </div>
 
-                                <div style={{ textAlign: 'center' }}>
+                                <div style={{ textAlign: 'center', marginTop: 'auto' }}>
                                     <Link
                                         href="/dataset"
                                         style={{
@@ -408,6 +420,8 @@ const HomePage: React.FC<HomePageProps> = ({
                                     transition:
                                         'transform 0.3s ease, box-shadow 0.3s ease',
                                     boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform =
@@ -440,13 +454,15 @@ const HomePage: React.FC<HomePageProps> = ({
                                     </h3>
                                 </div>
 
-                                {/* Auto Scrolling Publications Container */}
+                                {/* Publications Container with different animation */}
                                 <div
                                     style={{
-                                        height: '200px',
+                                        minHeight: '120px',
+                                        maxHeight: '140px',
                                         overflow: 'hidden',
                                         position: 'relative',
                                         marginBottom: '20px',
+                                        flex: 1,
                                     }}
                                 >
                                     <div
@@ -474,7 +490,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                             }
 
                                             .publication-container {
-                                                animation: smoothScroll 20s linear infinite;
+                                                animation: smoothScroll 15s linear infinite;
                                             }
                                         `}</style>
                                         <div className="publication-container">
@@ -535,7 +551,7 @@ const HomePage: React.FC<HomePageProps> = ({
                                     </div>
                                 </div>
 
-                                <div style={{ textAlign: 'center' }}>
+                                <div style={{ textAlign: 'center', marginTop: 'auto' }}>
                                     <Link
                                         href="/publikasi"
                                         style={{

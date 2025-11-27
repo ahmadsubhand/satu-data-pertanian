@@ -88,7 +88,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
 
   return (
     <PublicLayout title="Dataset - Satudata Pertanian">
-      <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="dataset-container" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Hero Section */}
         <div
           style={{
@@ -174,7 +174,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
         </div>
 
         {/* Search and Filter Section */}
-        <div style={{
+        <div className="search-filter-section" style={{
           marginBottom: '30px',
           padding: '25px',
           background: 'linear-gradient(to right, #f8f9fa, #e8f5e9)',
@@ -189,8 +189,8 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
               alignItems: 'end'
             }}>
               <div style={{
-                flex: 1,
-                minWidth: '250px',
+                flex: '1 1 250px',
+                minWidth: '200px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '8px'
@@ -232,8 +232,8 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
               </div>
 
               <div style={{
-                flex: 1,
-                minWidth: '250px',
+                flex: '1 1 250px',
+                minWidth: '200px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '8px'
@@ -280,7 +280,8 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
               <div style={{
                 display: 'flex',
                 gap: '12px',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                flex: '0 0 auto'
               }}>
                 <button
                   type="submit"
@@ -347,7 +348,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
         {/* Dataset Listings with modern card layout */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(350px, 100%), 1fr))',
           gap: '25px',
           marginBottom: '30px'
         }}>
@@ -559,7 +560,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
 
         {/* Enhanced Pagination */}
         {paginator.last_page > 1 && (
-          <div style={{
+          <div className="pagination-container" style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -571,7 +572,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
             borderRadius: '16px',
             boxShadow: '0 8px 25px rgba(0,0,0,0.08)',
           }}>
-            <div style={{
+            <div className="pagination-info" style={{
               fontSize: '16px',
               color: '#2d5036',
               fontWeight: '600',
@@ -579,7 +580,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
               Menampilkan {paginator.from} - {paginator.to} dari {paginator.total} dataset
             </div>
 
-            <div style={{
+            <div className="pagination-controls" style={{
               display: 'flex',
               alignItems: 'center',
               gap: '10px',
@@ -776,6 +777,40 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
           </p>
         </div>
       </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .dataset-container {
+            padding: 15px !important;
+          }
+
+          .search-filter-section {
+            padding: 20px !important;
+            flex-direction: column !important;
+          }
+
+          .search-filter-section > div {
+            width: 100% !important;
+            flex: 0 0 auto !important;
+          }
+        }
+
+        @media (max-width: 576px) {
+          .pagination-container {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 15px !important;
+          }
+
+          .pagination-info {
+            text-align: center !important;
+          }
+
+          .pagination-controls {
+            justify-content: center !important;
+          }
+        }
+      `}</style>
     </PublicLayout>
   );
 };

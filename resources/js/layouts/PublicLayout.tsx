@@ -400,148 +400,6 @@ const PublicLayout = ({
         },
     ];
 
-    // Mobile menu items
-    const mobileMenuItems: CustomMenuItemType[] = [
-        { key: 'beranda', label: <Link href="/">Beranda</Link> },
-        {
-            key: 'dataset',
-            label: 'Dataset',
-            children: [
-                {
-                    key: 'm-dataset',
-                    label: <Link href="/dataset">Dataset</Link>,
-                },
-                {
-                    key: 'm-indikator',
-                    label: <Link href="/dataset/indicators">Indikator</Link>,
-                },
-                {
-                    key: 'm-variabel',
-                    label: <Link href="/dataset/variables">Variabel</Link>,
-                },
-                {
-                    key: 'm-metadata',
-                    label: <Link href="/metadata">Metadata</Link>,
-                },
-            ],
-        },
-        {
-            key: 'publikasi',
-            label: 'Publikasi',
-            children: [
-                {
-                    key: 'm-publikasi',
-                    label: <Link href="/publikasi">Publikasi</Link>,
-                },
-                {
-                    key: 'm-berita',
-                    label: <Link href="/berita">Berita</Link>,
-                },
-            ],
-        },
-        {
-            key: 'multimedia',
-            label: 'Multimedia',
-            children: [
-                {
-                    key: 'm-galeri',
-                    label: <Link href="/galeri">Galeri</Link>,
-                },
-                {
-                    key: 'm-infografis',
-                    label: <Link href="/infografis">Infografis</Link>,
-                },
-                {
-                    key: 'm-multimedia',
-                    label: <Link href="/products/multimedia">Media</Link>,
-                },
-            ],
-        },
-        {
-            key: 'manajemen',
-            label: 'Manajemen',
-            children: [
-                {
-                    key: 'rencana-rilis',
-                    label: <Link href="/release-plans">Rencana Rilis</Link>,
-                },
-                {
-                    key: 'm-metadata',
-                    label: <Link href="/metadata">Metadata</Link>,
-                },
-                {
-                    key: 'm-link',
-                    label: <Link href="/satudata">Referensi Link</Link>,
-                },
-            ],
-        },
-        {
-            key: 'permohonan-data',
-            label: (
-                <a
-                    href="https://simpeldatin.setjen.pertanian.go.id/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Permohonan Data
-                </a>
-            ),
-        },
-        {
-            key: 'link-lainnya',
-            label: 'Link Lainnya',
-            children: [
-                {
-                    key: 'satudata-indonesia',
-                    label: (
-                        <a
-                            href="https://data.go.id"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Satu Data Indonesia
-                        </a>
-                    ),
-                },
-                {
-                    key: 'satu-peta',
-                    label: (
-                        <a
-                            href="https://onemap.big.go.id"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Kebijakan Satu Peta
-                        </a>
-                    ),
-                },
-                {
-                    key: 'kementan',
-                    label: (
-                        <a
-                            href="https://www.pertanian.go.id"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Kementerian Pertanian
-                        </a>
-                    ),
-                },
-            ],
-        },
-        {
-            key: 'login',
-            label: (
-                <Link
-                    href="/auth/login"
-                    style={{ color: '#2E7D32', fontWeight: '600' }}
-                >
-                    Login
-                </Link>
-            ),
-        },
-    ];
-
     // Define types for menu items
     interface CustomMenuItemType {
         key: string;
@@ -596,6 +454,8 @@ const PublicLayout = ({
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px 24px',
+                    boxShadow: 'none', // Remove any shadow that may cause lines
+                    borderBottom: 'none', // Remove any border
                 }}
             >
                 {/* Left side - Logo with animated agricultural text */}
@@ -617,7 +477,11 @@ const PublicLayout = ({
                             title="Satudata Pertanian"
                             style={{
                                 height: '50px',
+                                width: 'auto',
+                                maxHeight: '50px',
+                                objectFit: 'contain',
                                 filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.1))',
+                                transition: 'height 0.3s ease, max-height 0.3s ease',
                             }}
                             onError={(e) => {
                                 const target = e.target as HTMLImageElement;
@@ -750,7 +614,7 @@ const PublicLayout = ({
                     </button>
                 </div>
 
-                {/* Mobile Menu Overlay */}
+                {/* Mobile Menu Overlay - Now used for all screen sizes */}
                 <div
                     className={`mobile-menu ${isMobileMenuOpen ? 'active' : ''}`}
                     style={{
@@ -774,9 +638,13 @@ const PublicLayout = ({
                 >
                     <Menu
                         mode="inline"
-                        items={renderMenuItems(mobileMenuItems)}
+                        items={renderMenuItems(menuItems)}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        style={{ border: 'none' }}
+                        style={{
+                            border: 'none',
+                            maxHeight: 'calc(100vh - 100px)',
+                            overflowY: 'auto'
+                        }}
                         className="mobile-nav-menu"
                     />
                 </div>
@@ -1545,34 +1413,40 @@ const PublicLayout = ({
           .desktop-menu {
             display: none !important;
           }
-          
+
           .mobile-menu-toggle {
             display: block !important;
           }
-          
+
           .mobile-menu {
             display: flex !important;
           }
-          
+
           .site-layout-content {
             padding: 70px 16px 16px;
             margin-top: 64px;
           }
-          
+
           /* Mobile layout adjustments */
           .ant-layout-header {
             padding: 0 16px !important;
           }
-          
+
           .refined-navbar {
             padding: 12px 16px !important;
           }
-          
+
+          /* Mobile logo adjustments */
+          .modern-navbar img[alt="Logo Satudata Pertanian"] {
+            height: 40px !important;
+            max-height: 40px !important;
+          }
+
           /* Mobile menu styling */
           .ant-menu.ant-menu-root.ant-menu-inline {
             background: transparent;
           }
-          
+
           .mobile-nav-menu .ant-menu-item,
           .mobile-nav-menu .ant-menu-submenu-title {
             border-radius: 8px;
@@ -1581,64 +1455,192 @@ const PublicLayout = ({
             font-size: 16px;
           }
         }
-        
-        @media (min-width: 769px) {
-          .mobile-menu-toggle {
-            display: none !important;
+
+        /* iPhone SE and smallest mobile devices */
+        @media (max-width: 320px) {
+          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
+            height: 28px !important;
+            max-height: 28px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Small mobile devices */
+        @media (min-width: 321px) and (max-width: 375px) {
+          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
+            height: 30px !important;
+            max-height: 30px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Medium mobile devices */
+        @media (min-width: 376px) and (max-width: 480px) {
+          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
+            height: 32px !important;
+            max-height: 32px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Large mobile devices */
+        @media (min-width: 481px) and (max-width: 575px) {
+          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
+            height: 35px !important;
+            max-height: 35px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Extra small tablets */
+        @media (min-width: 576px) and (max-width: 768px) {
+          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
+            height: 40px !important;
+            max-height: 40px !important;
+            width: auto !important;
           }
         }
         
-        @media (max-width: 768px) {
-          .desktop-menu {
-            display: none !important;
-          }
-          
+        @media (min-width: 769px) {
           .mobile-menu-toggle {
             display: block !important;
           }
-          
-          .mobile-menu {
-            display: flex !important;
+
+          .desktop-menu {
+            display: none !important;
           }
-          
+
+          /* Desktop logo styling */
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 50px !important;
+            max-height: 50px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Small tablets */
+        @media (min-width: 769px) and (max-width: 850px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 42px !important;
+            max-height: 42px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Medium tablets */
+        @media (min-width: 851px) and (max-width: 991px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 45px !important;
+            max-height: 45px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Large tablets (iPad Pro, etc.) */
+        @media (min-width: 992px) and (max-width: 1024px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 47px !important;
+            max-height: 47px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Small laptops */
+        @media (min-width: 1025px) and (max-width: 1199px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 48px !important;
+            max-height: 48px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Medium laptops */
+        @media (min-width: 1200px) and (max-width: 1365px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 50px !important;
+            max-height: 50px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Large laptops and small desktops */
+        @media (min-width: 1366px) and (max-width: 1440px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 52px !important;
+            max-height: 52px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Desktop monitors */
+        @media (min-width: 1441px) and (max-width: 1920px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 54px !important;
+            max-height: 54px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Large desktop monitors (Nest Hub Max equivalent and larger) */
+        @media (min-width: 1921px) {
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 56px !important;
+            max-height: 56px !important;
+            width: auto !important;
+          }
+        }
+
+        @media (max-width: 768px) {
           .site-layout-content {
             padding: 70px 16px 16px;
             margin-top: 64px;
           }
-          
-          /* Mobile layout adjustments */
-          .ant-layout-header {
-            padding: 0 16px !important;
+
+          .modern-navbar {
+            padding: 10px 16px !important;
           }
-          
+
+          .modern-navbar > div {
+            flex: unset !important;
+          }
+
+          .modern-navbar > div:first-child {
+            flex: 0 0 auto !important;
+          }
+
+          .modern-navbar > div:nth-child(2) {
+            flex: 1 1 auto !important;
+            padding-left: 10px !important;
+          }
+
+          .modern-navbar > div:last-child {
+            flex: 0 0 auto !important;
+          }
+
           .navbar {
             padding: 0 16px !important;
           }
-          
-          /* Mobile menu styling */
+
+          /* Mobile logo adjustments */
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 40px !important;
+            max-height: 40px !important;
+            width: auto !important;
+          }
+
+          /* Mobile menu styling - keep desktop menu visible */
           .ant-menu.ant-menu-root.ant-menu-inline {
             background: transparent;
           }
-          
+
           .ant-menu-item,
           .ant-menu-submenu-title {
             border-radius: 8px;
             margin: 4px 0;
-            padding: 12px 16px !important;
+            padding: 8px 12px !important;
+            font-size: 14px !important;
           }
-          
-          /* Ensure mobile menu items are properly styled */
-          .mobile-nav-menu .ant-menu-item {
-            font-size: 16px;
-            line-height: 1.5;
-          }
-          
-          .mobile-nav-menu .ant-menu-submenu-title {
-            font-size: 16px;
-            line-height: 1.5;
-            padding: 12px 16px !important;
-          }
-          
+
           /* Fade in and scale animation for agricultural text */
           @keyframes fadeInScale {
             0% {
@@ -1649,6 +1651,144 @@ const PublicLayout = ({
               opacity: 1;
               transform: scale(1);
             }
+          }
+        }
+
+        /* Additional specific styling for very small devices like iPhone SE */
+        @media (max-width: 375px) {
+          .modern-navbar {
+            padding: 8px 12px !important;
+          }
+        }
+
+        /* Small tablet adjustments */
+        @media (min-width: 769px) and (max-width: 991px) {
+          .modern-navbar > div:nth-child(2) {
+            padding-left: 20px !important;
+          }
+
+          .modern-navbar > div:last-child {
+            flex: 0 0 auto !important;
+          }
+
+          .navbar {
+            padding: 0 16px !important;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .desktop-menu {
+            display: none !important;
+          }
+
+          .mobile-menu-toggle {
+            display: block !important;
+          }
+
+          .mobile-menu {
+            display: flex !important;
+          }
+
+          .site-layout-content {
+            padding: 70px 16px 16px;
+            margin-top: 64px;
+          }
+
+          /* Mobile layout adjustments */
+          .ant-layout-header {
+            padding: 0 16px !important;
+          }
+
+          .modern-navbar > div {
+            flex: unset !important;
+          }
+
+          .modern-navbar > div:first-child {
+            flex: 0 0 auto !important;
+          }
+
+          .modern-navbar > div:nth-child(2) {
+            display: none !important;
+          }
+
+          .modern-navbar > div:last-child {
+            flex: 0 0 auto !important;
+          }
+
+          .navbar {
+            padding: 0 16px !important;
+          }
+
+          /* Mobile logo adjustments */
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 40px !important;
+            max-height: 40px !important;
+            width: auto !important;
+          }
+
+          /* Mobile menu styling */
+          .ant-menu.ant-menu-root.ant-menu-inline {
+            background: transparent;
+          }
+
+          .ant-menu-item,
+          .ant-menu-submenu-title {
+            border-radius: 8px;
+            margin: 4px 0;
+            padding: 12px 16px !important;
+          }
+
+          /* Ensure mobile menu items are properly styled */
+          .mobile-nav-menu .ant-menu-item {
+            font-size: 16px;
+            line-height: 1.5;
+          }
+
+          .mobile-nav-menu .ant-menu-submenu-title {
+            font-size: 16px;
+            line-height: 1.5;
+            padding: 12px 16px !important;
+          }
+
+          /* Fade in and scale animation for agricultural text */
+          @keyframes fadeInScale {
+            0% {
+              opacity: 0;
+              transform: scale(0.8);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+        }
+
+        @media (min-width: 769px) {
+          .mobile-menu-toggle {
+            display: none !important;
+          }
+
+          .desktop-menu {
+            display: flex !important;
+          }
+
+          .modern-navbar > div:nth-child(2) {
+            display: flex !important;
+            padding-left: 40px !important;
+          }
+
+          /* Desktop logo styling */
+          .modern-navbar .ant-layout-header a[style*="flex"] img {
+            height: 50px !important;
+            max-height: 50px !important;
+            width: auto !important;
+          }
+        }
+
+        /* Tablet responsive adjustments */
+        @media (min-width: 769px) and (max-width: 991px) {
+          .modern-navbar > div:nth-child(2) {
+            display: none !important;
           }
         }
       `}</style>
