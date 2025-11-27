@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Layout, Menu } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { FiChevronDown, FiMenu, FiUser, FiX } from 'react-icons/fi';
@@ -46,10 +46,64 @@ const PublicLayout = ({
     title?: string;
     children: React.ReactNode;
 }) => {
-    const [current, setCurrent] = useState('beranda');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+    const { url } = usePage().props;
+    const currentUrl = url as string || window.location.pathname;
+
+    // Function to determine active menu key based on current URL
+    const getActiveMenuKey = (currentPath: string): string => {
+        // Define path to menu key mapping
+        const pathMap: Record<string, string> = {
+            '/': 'beranda',
+            '/dataset': 'm-dataset',
+            '/dataset/indicators': 'm-indikator',
+            '/dataset/variables': 'm-variabel',
+            '/publikasi': 'm-publikasi',
+            '/berita': 'm-berita',
+            '/galeri': 'm-galeri',
+            '/infografis': 'm-infografis',
+            '/products/multimedia': 'm-multimedia',
+            '/data/geospatial': 'geospasial',
+            '/release-plans': 'rencana-rilis',
+            '/metadata': 'm-metadata',
+            '/satudata': 'm-link',
+        };
+
+        // Check for exact matches first
+        if (pathMap[currentPath]) {
+            return pathMap[currentPath];
+        }
+
+        // Check for partial matches for nested routes
+        if (currentPath.startsWith('/dataset')) {
+            return 'dataset';
+        }
+        if (currentPath.startsWith('/publikasi') || currentPath.startsWith('/berita')) {
+            return 'publikasi';
+        }
+        if (currentPath.startsWith('/galeri') || currentPath.startsWith('/infografis') || currentPath.startsWith('/products/multimedia')) {
+            return 'multimedia';
+        }
+        if (currentPath.startsWith('/data')) {
+            return 'data';
+        }
+        if (currentPath.startsWith('/release-plans') || currentPath.startsWith('/metadata') || currentPath.startsWith('/satudata')) {
+            return 'manajemen';
+        }
+
+        return 'beranda'; // default
+    };
+
+    const [current, setCurrent] = useState<string>(getActiveMenuKey(currentUrl));
+
+    // Update current menu item when the page URL changes
+    useEffect(() => {
+        const newCurrent = getActiveMenuKey(currentUrl);
+        setCurrent(newCurrent);
+    }, [currentUrl]);
 
     // Handle scroll effect for navbar
     useEffect(() => {
