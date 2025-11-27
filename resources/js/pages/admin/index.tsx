@@ -27,7 +27,7 @@ export const getAdminNavItems = (user: User): MenuItem[] => {
         2 : {
             id: 2,
             title: 'Manajemen Data',
-            description: 'Kelola data statistik dan geospasial',
+            description: 'Kelola data statistik, geospasial, dan tautan',
             icon: <BarChart3 className="h-10 w-10 text-cyan-500 mb-3" />,
             link: adminDataInput.url()
         },

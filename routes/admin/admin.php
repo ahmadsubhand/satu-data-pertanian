@@ -13,6 +13,7 @@ use App\Http\Controllers\KalenderDataController;
 use App\Http\Controllers\ManajemenUserController;
 use App\Http\Controllers\MenuBeritaTableController;
 use App\Http\Controllers\MenuInfografisTableController;
+use App\Http\Controllers\MenuLinkTableController;
 use App\Http\Controllers\MenuPublikasiTableController;
 use App\Http\Controllers\PublikasiController;
 use App\Http\Controllers\UserController;
@@ -86,11 +87,17 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
       });
 
       Route::prefix('input-link-website')->group(function () {
-          Route::get('/', [InputLinkWebsiteController::class, 'index'])->name('admin-data-input-link');
-          Route::post('/', [InputLinkWebsiteController::class, 'store'])->name('admin-data-input-link-store');
-          Route::put('/{id}', [InputLinkWebsiteController::class, 'update'])->name('admin-data-input-link-update');
-          Route::delete('/{id}', [InputLinkWebsiteController::class, 'destroy'])->name('admin-data-input-link-destroy');
+            Route::get('/download', [InputLinkWebsiteController::class, 'download'])->name('admin-data-input-link-download');
+            Route::get('/', [InputLinkWebsiteController::class, 'index'])->name('admin-data-input-link');
+            Route::post('/', [InputLinkWebsiteController::class, 'store'])->name('admin-data-input-link-store');
+            Route::put('/{menuLinkTable}', [InputLinkWebsiteController::class, 'update'])->name('admin-data-input-link-update');
+            Route::delete('/{menuLinkTable}', [InputLinkWebsiteController::class, 'destroy'])->name('admin-data-input-link-destroy');
       });
+  });
+
+  // Link Management (ID: 9 or appropriate ID)
+  Route::middleware('menuAdmin:9')->prefix('link')->group(function () {
+      
   });
   
   // Berita (ID: 3)
