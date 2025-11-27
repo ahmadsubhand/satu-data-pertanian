@@ -8,6 +8,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\MenuInfografisTableSeeder;
 use Database\Seeders\MenuPublikasiTableSeeder;
 use Database\Seeders\MenuMultimediaTableSeeder;
+use Database\Seeders\MenuLinkTableSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,7 +28,8 @@ class DatabaseSeeder extends Seeder
             MenuBeritaTableSeeder::class,
             MenuInfografisTableSeeder::class,
             MenuPublikasiTableSeeder::class,
-            MenuMultimediaTableSeeder::class
+            MenuMultimediaTableSeeder::class,
+            MenuLinkTableSeeder::class
         ]);
 
         // User::factory(10)->create();
