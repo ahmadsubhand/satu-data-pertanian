@@ -1,0 +1,29 @@
+.linksTable {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.linksTable :global(.ant-table-thead) > tr > th {
+    background-color: #2d5036 !important;
+    color: white !important;
+    font-weight: 600;
+    border: none;
+}
+
+.linksTable :global(.ant-table-tbody) > tr > td {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.linksTable :global(.ant-table-tbody) > tr:hover > td {
+    background-color: #f0fdf4 !important;
+}
+
+.linksTable :global(.ant-pagination) {
+    margin: 1rem;
+}
+
+.linksTable :global(.ant-table-content) {
+    border-radius: 0 0 0.5rem 0.5rem;
+}

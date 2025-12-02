@@ -69,7 +69,7 @@ const PublicLayout = ({
             '/data/geospatial': 'geospasial',
             '/release-plans': 'rencana-rilis',
             '/metadata': 'm-metadata',
-            '/satudata': 'm-link',
+            '/referensi-link': 'm-link',
         };
 
         // Check for exact matches first
@@ -90,7 +90,7 @@ const PublicLayout = ({
         if (currentPath.startsWith('/data')) {
             return 'data';
         }
-        if (currentPath.startsWith('/release-plans') || currentPath.startsWith('/metadata') || currentPath.startsWith('/satudata')) {
+        if (currentPath.startsWith('/release-plans') || currentPath.startsWith('/metadata') || currentPath.startsWith('/referensi-link')) {
             return 'manajemen';
         }
 
@@ -127,7 +127,7 @@ const PublicLayout = ({
     const menuItems: CustomMenuItemType[] = [
         {
             key: 'beranda',
-            label: <Link href="/">Beranda</Link>,
+            label: <Link href="/" style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Beranda</Link>,
         },
         {
             key: 'dataset',
@@ -135,8 +135,9 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('dataset')}
                     onMouseLeave={() => setOpenDropdown(null)}
+                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold' }}>Dataset</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Dataset</span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
@@ -150,15 +151,15 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'm-dataset',
-                    label: <Link href="/dataset">Dataset</Link>,
+                    label: <Link href="/dataset" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Dataset</Link>,
                 },
                 {
                     key: 'm-indikator',
-                    label: <Link href="/dataset/indicators">Indikator</Link>,
+                    label: <Link href="/dataset/indicators" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Indikator</Link>,
                 },
                 {
                     key: 'm-variabel',
-                    label: <Link href="/dataset/variables">Variabel</Link>,
+                    label: <Link href="/dataset/variables" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Variabel</Link>,
                 },
             ],
         },
@@ -168,8 +169,9 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('publikasi')}
                     onMouseLeave={() => setOpenDropdown(null)}
+                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold' }}>Publikasi</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Publikasi</span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
@@ -183,11 +185,11 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'm-publikasi',
-                    label: <Link href="/publikasi">Publikasi</Link>,
+                    label: <Link href="/publikasi" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Publikasi</Link>,
                 },
                 {
                     key: 'm-berita',
-                    label: <Link href="/berita">Berita</Link>,
+                    label: <Link href="/berita" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Berita</Link>,
                 },
             ],
         },
@@ -197,8 +199,9 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('multimedia')}
                     onMouseLeave={() => setOpenDropdown(null)}
+                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold' }}>Multimedia</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Multimedia</span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
@@ -212,15 +215,15 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'm-galeri',
-                    label: <Link href="/galeri">Galeri</Link>,
+                    label: <Link href="/galeri" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Galeri</Link>,
                 },
                 {
                     key: 'm-infografis',
-                    label: <Link href="/infografis">Infografis</Link>,
+                    label: <Link href="/infografis" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Infografis</Link>,
                 },
                 {
                     key: 'm-multimedia',
-                    label: <Link href="/products/multimedia">Media</Link>,
+                    label: <Link href="/products/multimedia" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Instagram</Link>,
                 },
             ],
         },
@@ -230,8 +233,9 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('data')}
                     onMouseLeave={() => setOpenDropdown(null)}
+                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold' }}>Data</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Data</span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
@@ -249,8 +253,9 @@ const PublicLayout = ({
                         <div
                             onMouseEnter={() => setOpenDropdown('statistik')}
                             onMouseLeave={() => setOpenDropdown(null)}
+                            style={{ transition: 'all 0.3s ease' }}
                         >
-                            <span style={{ fontWeight: 'bold' }}>
+                            <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>
                                 Statistik
                             </span>
                         </div>
@@ -263,6 +268,7 @@ const PublicLayout = ({
                                     href="https://bdsp2.pertanian.go.id/bdsp/id/home.html"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                                 >
                                     Basis Data Statistik
                                 </a>
@@ -275,6 +281,7 @@ const PublicLayout = ({
                                     href="https://app3.pertanian.go.id/eksim/"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                                 >
                                     Ekspor Impor
                                 </a>
@@ -287,6 +294,7 @@ const PublicLayout = ({
                                     href="https://11ap.pertanian.go.id/pdb/"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                                 >
                                     Produk Domestik Bruto
                                 </a>
@@ -299,6 +307,7 @@ const PublicLayout = ({
                                     href="https://11ap.pertanian.go.id/pdrb/"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                                 >
                                     Produk Domestik Regional Bruto
                                 </a>
@@ -311,6 +320,7 @@ const PublicLayout = ({
                                     href="https://11ap.pertanian.go.id/ntp/"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                                 >
                                     Nilai Tukar Petani
                                 </a>
@@ -320,7 +330,7 @@ const PublicLayout = ({
                 },
                 {
                     key: 'geospasial',
-                    label: <Link href="/data/geospatial">Geospasial</Link>,
+                    label: <Link href="/data/geospatial" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Geospasial</Link>,
                     children: [
                         {
                             key: 'simotandi',
@@ -329,6 +339,7 @@ const PublicLayout = ({
                                     href="https://simotandi.pertanian.go.id"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                                 >
                                     SIMOTANDI
                                 </a>
@@ -341,6 +352,7 @@ const PublicLayout = ({
                                     href="https://siperditan.pertanian.go.id"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                                 >
                                     SIPERDITAN
                                 </a>
@@ -356,8 +368,9 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('manajemen')}
                     onMouseLeave={() => setOpenDropdown(null)}
+                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold' }}>Manajemen</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Manajemen</span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
@@ -371,15 +384,15 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'rencana-rilis',
-                    label: <Link href="/release-plans">Rencana Rilis</Link>,
+                    label: <Link href="/release-plans" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Rencana Rilis</Link>,
                 },
                 {
                     key: 'm-metadata',
-                    label: <Link href="/metadata">Metadata</Link>,
+                    label: <Link href="/metadata" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Metadata</Link>,
                 },
                 {
                     key: 'm-link',
-                    label: <Link href="/satudata">Referensi Link</Link>,
+                    label: <Link href="/referensi-link" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Referensi Link</Link>,
                 },
             ],
         },
@@ -390,8 +403,9 @@ const PublicLayout = ({
                     href="https://simpeldatin.setjen.pertanian.go.id/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold' }}>Permohonan Data</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Permohonan Data</span>
                 </a>
             ),
         },
@@ -401,8 +415,9 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('link-lainnya')}
                     onMouseLeave={() => setOpenDropdown(null)}
+                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold' }}>Link Lainnya</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Link Lainnya</span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
@@ -421,6 +436,7 @@ const PublicLayout = ({
                             href="https://data.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
+                            style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                         >
                             Satu Data Indonesia
                         </a>
@@ -433,6 +449,7 @@ const PublicLayout = ({
                             href="https://onemap.big.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
+                            style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                         >
                             Kebijakan Satu Peta
                         </a>
@@ -445,6 +462,7 @@ const PublicLayout = ({
                             href="https://www.pertanian.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
+                            style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
                         >
                             Kementerian Pertanian
                         </a>

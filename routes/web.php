@@ -130,27 +130,15 @@ Route::get('/products/multimedia', function () {
 })->name('products.multimedia');
 
 Route::get('/release-plans', function () {
-    return Inertia::render('GenericPage', [
-        'pageTitle' => 'Rencana Rilis',
-        'description' => 'Jadwal dan rencana rilis data terbaru dari Kementerian Pertanian',
-        'category' => 'Perencanaan'
-    ]);
+    return Inertia::render('RencanaRilisPage');
 })->name('release-plans.index');
 
 Route::get('/metadata', function () {
-    return Inertia::render('GenericPage', [
-        'pageTitle' => 'Metadata',
-        'description' => 'Informasi deskriptif tentang dataset yang tersedia di Satudata Pertanian',
-        'category' => 'Metadata'
-    ]);
+    return Inertia::render('MetadataPage');
 })->name('metadata.index');
 
 Route::get('/satudata', function () {
-    return Inertia::render('GenericPage', [
-        'pageTitle' => 'Referensi Link',
-        'description' => 'Kumpulan tautan penting terkait Satudata Pertanian dan program lainnya',
-        'category' => 'Referensi'
-    ]);
+    return redirect()->route('referensi-link.index');
 })->name('satudata.index');
 
 Route::get('/regulation', function () {
@@ -176,6 +164,8 @@ Route::get('/priority-data', function () {
         'category' => 'Data Prioritas'
     ]);
 })->name('priority-data.index');
+
+Route::get('/referensi-link', [App\Http\Controllers\LinkController::class, 'index'])->name('referensi-link.index');
 
 
 
