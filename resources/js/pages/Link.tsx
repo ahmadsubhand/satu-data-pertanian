@@ -11,6 +11,7 @@ interface LinkItem {
     id: number;
     nama: string;
     link: string;
+    foto: string | null;
 }
 
 interface LinkPageProps extends PageProps {
@@ -51,6 +52,24 @@ const LinkPage: React.FC<LinkPageProps> = ({ links = [] }) => {
                     {link}
                 </a>
             ),
+        },
+        {
+            title: 'Logo',
+            key: 'foto',
+            render: (text: any, record: LinkItem) =>
+                record.foto ? (
+                    <img
+                        src={record.foto}
+                        alt={record.nama}
+                        className="h-10 w-10 object-contain rounded"
+                        onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                        }}
+                    />
+                ) : (
+                    <span className="text-gray-400 text-center">-</span>
+                ),
         }
     ];
 

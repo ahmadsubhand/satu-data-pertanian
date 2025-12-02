@@ -11,13 +11,14 @@ class LinkController extends Controller
     public function index()
     {
         $links = MenuLinkTable::where('status', true)
-            ->select(['id', 'nama', 'link'])
+            ->select(['id', 'nama', 'link', 'foto'])
             ->get()
             ->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'nama' => $item->nama ?? 'Link Tanpa Nama',
                     'link' => $item->link,
+                    'foto' => $item->foto ? asset('storage/' . $item->foto) : null,
                 ];
             });
 
