@@ -1017,102 +1017,188 @@ const HomePage: React.FC<HomePageProps> = ({
                         dotPosition="bottom"
                         style={{ borderRadius: '8px', overflow: 'hidden' }}
                     >
-                        {gallery.length > 0
-                            ? gallery.map((item, index) => (
-                                  <div key={index}>
-                                      <div
-                                          style={{
-                                              height: '300px' /* Reduced height for mobile */,
-                                              background: `url(${item.image_path}) center/cover`,
-                                              display: 'flex',
-                                              alignItems: 'flex-end',
-                                              justifyContent: 'center',
-                                              position: 'relative',
-                                          }}
-                                      >
-                                          <div
-                                              style={{
-                                                  position: 'absolute',
-                                                  top: 0,
-                                                  left: 0,
-                                                  right: 0,
-                                                  bottom: 0,
-                                                  background:
-                                                      'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
-                                              }}
-                                          ></div>
-                                          <div
-                                              style={{
-                                                  padding: '16px',
-                                                  textAlign: 'center',
-                                                  color: 'white',
-                                                  width: '100%',
-                                                  position: 'relative',
-                                                  zIndex: 1,
-                                              }}
-                                          >
-                                              <Title
-                                                  level={3}
-                                                  style={{
-                                                      color: 'white',
-                                                      marginBottom: '8px',
-                                                      fontSize: '20px',
-                                                  }}
-                                              >
-                                                  {item.title}
-                                              </Title>
-                                              <Paragraph
-                                                  style={{
-                                                      color: 'white',
-                                                      marginBottom: 0,
-                                                      fontSize: '14px',
-                                                  }}
-                                              >
-                                                  {item.description}
-                                              </Paragraph>
-                                          </div>
-                                      </div>
-                                  </div>
-                              ))
-                            : // Placeholder carousel items if no gallery data
-                              [1, 2, 3].map((item) => (
-                                  <div key={`placeholder-${item}`}>
-                                      <div
-                                          style={{
-                                              height: '300px' /* Reduced height for mobile */,
-                                              background: '#d0f0e0',
-                                              display: 'flex',
-                                              alignItems: 'center',
-                                              justifyContent: 'center',
-                                              flexDirection: 'column',
-                                          }}
-                                      >
-                                          <div
-                                              style={{
-                                                  fontSize: '48px',
-                                                  marginBottom: '16px',
-                                              }}
-                                          >
-                                              🌾
-                                          </div>
-                                          <Title
-                                              level={3}
-                                              style={{
-                                                  color: '#2d5036',
-                                                  marginBottom: '8px',
-                                              }}
-                                          >
-                                              Gambar {item}
-                                          </Title>
-                                          <Paragraph
-                                              style={{ color: '#495057' }}
-                                          >
-                                              Deskripsi gambar terkait data
-                                              pertanian
-                                          </Paragraph>
-                                      </div>
-                                  </div>
-                              ))}
+                        {/* SDI Image 1 */}
+                        <div>
+                            <div
+                                style={{
+                                    height: '300px',
+                                    background: `url('/storage/publikasi/SDI1-Landscape.webp') center/cover`,
+                                    display: 'flex',
+                                    alignItems: 'flex-end',
+                                    justifyContent: 'center',
+                                    position: 'relative',
+                                }}
+                                onError={(e) => {
+                                    const target = e.target as HTMLElement;
+                                    target.style.background = '#d0f0e0';
+                                    target.innerHTML = '<img src="https://placehold.co/800x300/e8f5e9/2d5036?text=Gambar+Tidak+Tersedia" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />';
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        background:
+                                            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
+                                    }}
+                                ></div>
+                                <div
+                                    style={{
+                                        padding: '16px',
+                                        textAlign: 'center',
+                                        color: 'white',
+                                        width: '100%',
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    }}
+                                >
+                                    <Title
+                                        level={3}
+                                        style={{
+                                            color: 'white',
+                                            marginBottom: '8px',
+                                            fontSize: '20px',
+                                        }}
+                                    >
+                                        Pemenuhan Prinsip SDI untuk Data Prioritas 2023 dan Kode Refrensi Komoditas Pertanian, 5 Mei 2023
+                                    </Title>
+                                    <Paragraph
+                                        style={{
+                                            color: 'white',
+                                            marginBottom: 0,
+                                            fontSize: '14px',
+                                        }}
+                                    >
+                                        Prinsip SDI pada Data Prioritas
+                                    </Paragraph>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SDI Image 2 */}
+                        <div>
+                            <div
+                                style={{
+                                    height: '300px',
+                                    background: `url('/storage/publikasi/SDI3-Landscape.webp') center/cover`,
+                                    display: 'flex',
+                                    alignItems: 'flex-end',
+                                    justifyContent: 'center',
+                                    position: 'relative',
+                                }}
+                                onError={(e) => {
+                                    const target = e.target as HTMLElement;
+                                    target.style.background = '#d0f0e0';
+                                    target.innerHTML = '<img src="https://placehold.co/800x300/e8f5e9/2d5036?text=Gambar+Tidak+Tersedia" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />';
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        background:
+                                            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
+                                    }}
+                                ></div>
+                                <div
+                                    style={{
+                                        padding: '16px',
+                                        textAlign: 'center',
+                                        color: 'white',
+                                        width: '100%',
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    }}
+                                >
+                                    <Title
+                                        level={3}
+                                        style={{
+                                            color: 'white',
+                                            marginBottom: '8px',
+                                            fontSize: '20px',
+                                        }}
+                                    >
+                                        Interoperabilitas Data Melalui Aplikasi Sistem Penghubung Layanan Pemerintah (SPLP) Kominfo, 4 Agustus 2023
+                                    </Title>
+                                    <Paragraph
+                                        style={{
+                                            color: 'white',
+                                            marginBottom: 0,
+                                            fontSize: '14px',
+                                        }}
+                                    >
+                                        Interoperabilitas Data melalui SPLP
+                                    </Paragraph>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* SDI Image 3 */}
+                        <div>
+                            <div
+                                style={{
+                                    height: '300px',
+                                    background: `url('/storage/publikasi/SDI4-Landscape.webp') center/cover`,
+                                    display: 'flex',
+                                    alignItems: 'flex-end',
+                                    justifyContent: 'center',
+                                    position: 'relative',
+                                }}
+                                onError={(e) => {
+                                    const target = e.target as HTMLElement;
+                                    target.style.background = '#d0f0e0';
+                                    target.innerHTML = '<img src="https://placehold.co/800x300/e8f5e9/2d5036?text=Gambar+Tidak+Tersedia" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" />';
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        background:
+                                            'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
+                                    }}
+                                ></div>
+                                <div
+                                    style={{
+                                        padding: '16px',
+                                        textAlign: 'center',
+                                        color: 'white',
+                                        width: '100%',
+                                        position: 'relative',
+                                        zIndex: 1,
+                                    }}
+                                >
+                                    <Title
+                                        level={3}
+                                        style={{
+                                            color: 'white',
+                                            marginBottom: '8px',
+                                            fontSize: '20px',
+                                        }}
+                                    >
+                                        Pemenuhan Prinsip SDI Data Spasial serta Data Statistik dan Penyepakatan Berbagi Data Kementan dengan Pemerintah Provinsi Jawa Barat, 27 Juni 2023
+                                    </Title>
+                                    <Paragraph
+                                        style={{
+                                            color: 'white',
+                                            marginBottom: 0,
+                                            fontSize: '14px',
+                                        }}
+                                    >
+                                        Implementasi SDI Data Spasial dan Statistik
+                                    </Paragraph>
+                                </div>
+                            </div>
+                        </div>
                     </Carousel>
                 </div>
             </AnimatedSection>
