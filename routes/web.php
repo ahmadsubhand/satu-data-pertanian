@@ -51,7 +51,7 @@ Route::get('/about', function () {
 })->name('about.index');
 
 Route::get('/auth/login', function () {
-    return Inertia::render('auth/Login');
+    return redirect('/login');
 })->name('auth.login');
 
 Route::get('/publikasi', [PublikasiController::class, 'publicIndex'])->name('publikasi.index');

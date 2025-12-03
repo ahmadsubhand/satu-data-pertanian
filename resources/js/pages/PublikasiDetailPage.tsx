@@ -190,7 +190,11 @@ const PublikasiDetailPage: React.FC<PublikasiDetailPageProps> = ({
                                 {/* Full portrait cover image */}
                                 <img
                                     src={
-                                        publikasi.cover
+                                        publikasi.cover &&
+                                        publikasi.cover !==
+                                            'default-cover.png' &&
+                                        publikasi.cover !== 'null' &&
+                                        publikasi.cover !== null
                                             ? `${publikasi.cover}`
                                             : '/storage/publikasi/nenas2020.png'
                                     }
@@ -414,19 +418,37 @@ const PublikasiDetailPage: React.FC<PublikasiDetailPageProps> = ({
                                         borderTop: '2px dashed #a8d5ba',
                                     }}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                    <div
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '10px',
+                                        }}
+                                    >
                                         {publikasi.file &&
                                         publikasi.file !== '#' ? (
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '10px',
+                                                }}
+                                            >
                                                 <a
                                                     href={publikasi.file}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    onClick={() => incrementDownloadCount('publikasi', publikasi.id)}
+                                                    onClick={() =>
+                                                        incrementDownloadCount(
+                                                            'publikasi',
+                                                            publikasi.id,
+                                                        )
+                                                    }
                                                     style={{
                                                         display: 'inline-flex',
                                                         alignItems: 'center',
-                                                        justifyContent: 'center',
+                                                        justifyContent:
+                                                            'center',
                                                         padding: '10px 20px',
                                                         background: '#2d5036',
                                                         color: 'white',
@@ -434,7 +456,8 @@ const PublikasiDetailPage: React.FC<PublikasiDetailPageProps> = ({
                                                         borderRadius: '8px',
                                                         fontSize: '15px',
                                                         fontWeight: '600',
-                                                        transition: 'all 0.3s ease',
+                                                        transition:
+                                                            'all 0.3s ease',
                                                         boxShadow:
                                                             '0 4px 15px rgba(45, 80, 54, 0.3)',
                                                     }}
@@ -465,7 +488,9 @@ const PublikasiDetailPage: React.FC<PublikasiDetailPageProps> = ({
                                                         strokeWidth="2"
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
-                                                        style={{ marginRight: '8px' }}
+                                                        style={{
+                                                            marginRight: '8px',
+                                                        }}
                                                     >
                                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                                         <polyline points="7,10 12,15 17,10" />
@@ -501,13 +526,24 @@ const PublikasiDetailPage: React.FC<PublikasiDetailPageProps> = ({
                                                         strokeWidth="2"
                                                         strokeLinecap="round"
                                                         strokeLinejoin="round"
-                                                        style={{ marginRight: '2px' }}
+                                                        style={{
+                                                            marginRight: '2px',
+                                                        }}
                                                     >
                                                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                                         <polyline points="7,10 12,15 17,10" />
-                                                        <line x1="12" y1="15" x2="12" y2="3" />
+                                                        <line
+                                                            x1="12"
+                                                            y1="15"
+                                                            x2="12"
+                                                            y2="3"
+                                                        />
                                                     </svg>
-                                                    {getDownloadCount('publikasi', publikasi.id)}x
+                                                    {getDownloadCount(
+                                                        'publikasi',
+                                                        publikasi.id,
+                                                    )}
+                                                    x
                                                 </div>
                                             </div>
                                         ) : (
@@ -537,7 +573,9 @@ const PublikasiDetailPage: React.FC<PublikasiDetailPageProps> = ({
                                                     strokeWidth="2"
                                                     strokeLinecap="round"
                                                     strokeLinejoin="round"
-                                                    style={{ marginRight: '8px' }}
+                                                    style={{
+                                                        marginRight: '8px',
+                                                    }}
                                                 >
                                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                                                     <polyline points="7,10 12,15 17,10" />
@@ -571,7 +609,8 @@ const PublikasiDetailPage: React.FC<PublikasiDetailPageProps> = ({
                                                 }}
                                             >
                                                 {Math.round(
-                                                    (publikasi.ukuran_file || 0) / 1024,
+                                                    (publikasi.ukuran_file ||
+                                                        0) / 1024,
                                                 )}{' '}
                                                 KB
                                             </div>

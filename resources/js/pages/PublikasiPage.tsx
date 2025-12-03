@@ -416,7 +416,7 @@ const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
                                         {/* Full portrait cover image */}
                                         <img
                                             src={
-                                                pub.cover
+                                                pub.cover && pub.cover !== 'default-cover.png' && pub.cover !== 'null' && pub.cover !== null
                                                     ? `${pub.cover}`
                                                     : '/storage/publikasi/nenas2020.png'
                                             }
