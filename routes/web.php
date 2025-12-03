@@ -239,5 +239,9 @@ Route::get('dashboard', function() {
 //     })->name('dashboard');
 // });
 
+// Download routes for news, publications, and datasets
+Route::get('/download/{type}/{id}', [App\Http\Controllers\DownloadController::class, 'download'])->name('download.file');
+Route::get('/download-count/{type}/{id}', [App\Http\Controllers\DownloadController::class, 'getDownloadCount'])->name('download.count');
+
 require __DIR__ . '/settings.php';
 require __DIR__ . '/admin/admin.php';
