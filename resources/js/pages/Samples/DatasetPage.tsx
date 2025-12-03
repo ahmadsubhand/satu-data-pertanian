@@ -3,6 +3,25 @@ import { PageProps } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
+// Client-side download counter functions
+const getDownloadCount = (type: string, id: number): number => {
+    if (typeof window === 'undefined') return 0;
+
+    const key = `download_count_${type}_${id}`;
+    const count = localStorage.getItem(key);
+    return count ? parseInt(count, 10) : 0;
+};
+
+const incrementDownloadCount = (type: string, id: number): number => {
+    if (typeof window === 'undefined') return 0;
+
+    const currentCount = getDownloadCount(type, id);
+    const newCount = currentCount + 1;
+    const key = `download_count_${type}_${id}`;
+    localStorage.setItem(key, newCount.toString());
+    return newCount;
+};
+
 interface Dataset {
   id: number;
   judul: string;
@@ -459,61 +478,79 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
                   paddingTop: '15px',
                   borderTop: '1px dashed #dfece0',
                 }}>
-                  <a
-                    href={dataset.file_statistik}
-                    download
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      padding: '10px 18px',
-                      background: 'linear-gradient(135deg, #2d5036, #4CAF50)',
-                      color: 'white',
-                      textDecoration: 'none',
-                      borderRadius: '8px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 4px 12px rgba(45, 80, 54, 0.3)',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'linear-gradient(135deg, #1e3a25, #43A047)';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(45, 80, 54, 0.4)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'linear-gradient(135deg, #2d5036, #4CAF50)';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(45, 80, 54, 0.3)';
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      style={{ marginRight: '6px' }}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <a
+                      href={dataset.file_statistik}
+                      download
+                      onClick={() => incrementDownloadCount('dataset', dataset.id)}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        padding: '10px 18px',
+                        background: 'linear-gradient(135deg, #2d5036, #4CAF50)',
+                        color: 'white',
+                        textDecoration: 'none',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        transition: 'all 0.3s ease',
+                        boxShadow: '0 4px 12px rgba(45, 80, 54, 0.3)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #1e3a25, #43A047)';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 6px 16px rgba(45, 80, 54, 0.4)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'linear-gradient(135deg, #2d5036, #4CAF50)';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(45, 80, 54, 0.3)';
+                      }}
                     >
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                      <polyline points="7,10 12,15 17,10" />
-                      <line x1="12" y1="15" x2="12" y2="3" />
-                    </svg>
-                    Unduh
-                  </a>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{ marginRight: '6px' }}
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7,10 12,15 17,10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                      Unduh
+                    </a>
 
-                  <div style={{
-                    fontSize: '13px',
-                    background: '#e8f5e9',
-                    color: '#2d5036',
-                    padding: '5px 12px',
-                    borderRadius: '15px',
-                    fontWeight: '600',
-                  }}>
-                    #{dataset.id}
+                    <div style={{
+                      fontSize: '12px',
+                      background: '#e8f5e9',
+                      color: '#2d5036',
+                      padding: '4px 10px',
+                      borderRadius: '12px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '3px'
+                    }}>
+                      <span style={{ fontSize: '10px' }}>📥</span>
+                      {getDownloadCount('dataset', dataset.id)}x
+                    </div>
+
+                    <div style={{
+                      fontSize: '11px',
+                      background: '#f1f8e9',
+                      color: '#2E7D32',
+                      padding: '3px 8px',
+                      borderRadius: '12px',
+                      fontWeight: '500',
+                    }}>
+                      #{dataset.id}
+                    </div>
                   </div>
                 </div>
               </div>

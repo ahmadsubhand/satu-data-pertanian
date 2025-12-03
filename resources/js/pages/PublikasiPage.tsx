@@ -7,6 +7,25 @@ import React, { useState } from 'react';
 const { Title, Text, Paragraph } = Typography;
 const { Search } = Input;
 
+// Client-side download counter functions
+const getDownloadCount = (type: string, id: number): number => {
+    if (typeof window === 'undefined') return 0;
+
+    const key = `download_count_${type}_${id}`;
+    const count = localStorage.getItem(key);
+    return count ? parseInt(count, 10) : 0;
+};
+
+const incrementDownloadCount = (type: string, id: number): number => {
+    if (typeof window === 'undefined') return 0;
+
+    const currentCount = getDownloadCount(type, id);
+    const newCount = currentCount + 1;
+    const key = `download_count_${type}_${id}`;
+    localStorage.setItem(key, newCount.toString());
+    return newCount;
+};
+
 // Interface untuk publikasi berdasarkan struktur dari tabel menu_publikasi_tables
 interface Publication {
     id: number;
@@ -577,6 +596,7 @@ const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
                                                 href={pub.file}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
+                                                onClick={() => incrementDownloadCount('publikasi', pub.id)}
                                                 style={{
                                                     display: 'inline-flex',
                                                     alignItems: 'center',
@@ -627,8 +647,12 @@ const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
                                                 borderRadius: '12px',
                                                 color: '#2d5036',
                                                 fontWeight: '600',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '3px'
                                             }}>
-                                                {Math.round((pub.ukuran_file || 0) / 1024)} KB
+                                                <span style={{ fontSize: '10px' }}>📥</span>
+                                                {getDownloadCount('publikasi', pub.id)}x
                                             </div>
                                         </div>
                                     </div>

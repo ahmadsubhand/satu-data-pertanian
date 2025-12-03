@@ -4,6 +4,25 @@ import { Head } from '@inertiajs/react';
 import { Card, Col, Divider, Row, Space, Tag, Typography } from 'antd';
 import React from 'react';
 
+// Client-side download counter functions
+const getDownloadCount = (type: string, id: number): number => {
+    if (typeof window === 'undefined') return 0;
+
+    const key = `download_count_${type}_${id}`;
+    const count = localStorage.getItem(key);
+    return count ? parseInt(count, 10) : 0;
+};
+
+const incrementDownloadCount = (type: string, id: number): number => {
+    if (typeof window === 'undefined') return 0;
+
+    const currentCount = getDownloadCount(type, id);
+    const newCount = currentCount + 1;
+    const key = `download_count_${type}_${id}`;
+    localStorage.setItem(key, newCount.toString());
+    return newCount;
+};
+
 const { Title, Text, Paragraph } = Typography;
 
 interface Berita {
@@ -13,6 +32,7 @@ interface Berita {
     isi_singkat: string | null;
     isi: string;
     foto: string;
+    file: string | null;
     status: number;
     produsen_data: string;
     created_at: string;
