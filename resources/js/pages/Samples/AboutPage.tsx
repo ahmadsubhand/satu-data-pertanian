@@ -8,7 +8,7 @@ interface AboutPageProps extends PageProps {
 
 const AboutPage: React.FC<AboutPageProps> = () => {
   return (
-    <PublicLayout title="Tentang Kami - Satudata Pertanian">
+    <PublicLayout title="Tentang Kami - Satu Data Pertanian">
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 
           textAlign: 'center', 
@@ -33,7 +33,7 @@ const AboutPage: React.FC<AboutPageProps> = () => {
           textAlign: 'center'
         }}>
           <h2 style={{ color: '#2d5036', marginBottom: '12px', fontSize: '28px' }}>
-            Satudata Pertanian
+            Satu Data Pertanian
           </h2>
           <p style={{ 
             fontSize: '16px', 
@@ -50,7 +50,7 @@ const AboutPage: React.FC<AboutPageProps> = () => {
         <div style={{ marginTop: '30px' }}>
           <h2 style={{ color: '#2d5036', marginBottom: '20px' }}>Misi Kami</h2>
           <p style={{ fontSize: '16px', lineHeight: '1.6', color: '#495057' }}>
-            Misi Satudata Pertanian adalah menyediakan akses terbuka terhadap data pertanian 
+            Misi Satu Data Pertanian adalah menyediakan akses terbuka terhadap data pertanian
             yang akurat, terpercaya, dan terkini untuk mendukung pengambilan keputusan yang 
             berbasis data di sektor pertanian.
           </p>

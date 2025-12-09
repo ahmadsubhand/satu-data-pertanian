@@ -25,7 +25,7 @@ interface PublicationPageProps extends PageProps {
 
 const PublicationPage: React.FC<PublicationPageProps> = ({ publikasi = [] }) => {
   return (
-    <PublicLayout title="Publikasi - Satudata Pertanian">
+    <PublicLayout title="Publikasi - Satu Data Pertanian">
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{
           textAlign: 'center',

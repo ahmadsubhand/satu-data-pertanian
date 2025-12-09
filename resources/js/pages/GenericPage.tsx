@@ -19,8 +19,8 @@ const GenericPage: React.FC<GenericPageProps> = ({
   category = "Umum" 
 }) => {
   return (
-    <PublicLayout title={`${pageTitle} - Satudata Pertanian`}>
-      <Head title={`${pageTitle} - Satudata Pertanian`} />
+    <PublicLayout title={`${pageTitle} - Satu Data Pertanian`}>
+      <Head title={`${pageTitle} - Satu Data Pertanian`} />
       
       <div>
         {/* Hero Section */}
@@ -99,7 +99,7 @@ const GenericPage: React.FC<GenericPageProps> = ({
               Informasi {pageTitle}
             </Title>
             <Paragraph style={{ fontSize: '16px', color: '#495057' }}>
-              Halaman ini merupakan bagian dari portal Satudata Pertanian yang menyediakan akses terhadap 
+              Halaman ini merupakan bagian dari portal Satu Data Pertanian yang menyediakan akses terhadap
               berbagai informasi {category.toLowerCase()} yang berkaitan dengan sektor pertanian di Indonesia. 
               Data yang tersedia dihalaman ini dikumpulkan dan dikelola oleh Kementerian Pertanian untuk 
               mendukung pengambilan keputusan yang berbasis data.
@@ -193,7 +193,7 @@ const GenericPage: React.FC<GenericPageProps> = ({
               fontSize: '16px'
             }}
           >
-            Jelajahi ribuan dataset yang tersedia di Satudata Pertanian untuk mendukung 
+            Jelajahi ribuan dataset yang tersedia di Satu Data Pertanian untuk mendukung
             penelitian, analisis, dan pengambilan keputusan Anda.
           </Paragraph>
           <Button 

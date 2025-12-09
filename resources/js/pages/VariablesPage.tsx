@@ -19,8 +19,8 @@ export default function VariablesPage({}: PageProps) {
     };
 
     return (
-        <PublicLayout title="Variabel - Satudata Pertanian">
-            <Head title="Variabel - Satudata Pertanian" />
+        <PublicLayout title="Variabel - Satu Data Pertanian">
+            <Head title="Variabel - Satu Data Pertanian" />
             <div style={{ padding: '20px', textAlign: 'center', minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div>
                     <h1 style={{ color: '#2d5036' }}>Halaman Variabel</h1>

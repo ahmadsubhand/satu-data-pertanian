@@ -118,8 +118,8 @@ const EksporImporPage: React.FC<EksporImporPageProps> = () => {
   ];
 
   return (
-    <PublicLayout title="Data Ekspor-Impor Pertanian - Satudata Pertanian">
-      <Head title="Data Ekspor-Impor Pertanian - Satudata Pertanian" />
+    <PublicLayout title="Data Ekspor-Impor Pertanian - Satu Data Pertanian">
+      <Head title="Data Ekspor-Impor Pertanian - Satu Data Pertanian" />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 

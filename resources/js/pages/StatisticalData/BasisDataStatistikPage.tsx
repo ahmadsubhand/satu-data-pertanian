@@ -62,8 +62,8 @@ const BasisDataStatistikPage: React.FC<BasisDataStatistikPageProps> = () => {
   ];
 
   return (
-    <PublicLayout title="Basis Data Statistik Pertanian - Satudata Pertanian">
-      <Head title="Basis Data Statistik Pertanian - Satudata Pertanian" />
+    <PublicLayout title="Basis Data Statistik Pertanian - Satu Data Pertanian">
+      <Head title="Basis Data Statistik Pertanian - Satu Data Pertanian" />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 
@@ -225,7 +225,7 @@ const BasisDataStatistikPage: React.FC<BasisDataStatistikPageProps> = () => {
         }}>
           <Title level={3} style={{ color: '#2d5036', marginBottom: '16px' }}>Jelajahi Lebih Lanjut</Title>
           <Paragraph style={{ color: '#495057', marginBottom: '24px', maxWidth: '600px', margin: '0 auto 24px' }}>
-            Temukan lebih banyak dataset statistik pertanian yang tersedia di portal Satudata Pertanian 
+            Temukan lebih banyak dataset statistik pertanian yang tersedia di portal Satu Data Pertanian
             untuk mendukung penelitian, analisis, dan pengambilan keputusan Anda.
           </Paragraph>
           <Button 

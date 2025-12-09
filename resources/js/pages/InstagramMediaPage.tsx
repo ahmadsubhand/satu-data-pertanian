@@ -13,8 +13,8 @@ interface InstagramMediaPageProps extends PageProps {
 
 const InstagramMediaPage: React.FC<InstagramMediaPageProps> = ({}) => {
     return (
-        <PublicLayout title="Instagram Media - Satudata Pertanian">
-            <Head title="Instagram Media - Satudata Pertanian" />
+        <PublicLayout title="Instagram Media - Satu Data Pertanian">
+            <Head title="Instagram Media - Satu Data Pertanian" />
 
             <div
                 style={{

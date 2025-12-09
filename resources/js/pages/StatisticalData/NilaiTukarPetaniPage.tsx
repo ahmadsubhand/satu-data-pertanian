@@ -139,8 +139,8 @@ const NilaiTukarPetaniPage: React.FC<NilaiTukarPetaniPageProps> = () => {
   ];
 
   return (
-    <PublicLayout title="Nilai Tukar Petani - Satudata Pertanian">
-      <Head title="Nilai Tukar Petani - Satudata Pertanian" />
+    <PublicLayout title="Nilai Tukar Petani - Satu Data Pertanian">
+      <Head title="Nilai Tukar Petani - Satu Data Pertanian" />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 

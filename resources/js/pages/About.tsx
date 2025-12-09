@@ -10,16 +10,16 @@ const { Title, Paragraph } = Typography;
 
 const AboutPage: React.FC = ({}) => {
   return (
-    <PublicLayout title="Tentang - Satudata Pertanian">
-      <Head title="Tentang - Satudata Pertanian" />
+    <PublicLayout title="Tentang - Satu Data Pertanian">
+      <Head title="Tentang - Satu Data Pertanian" />
       
       <div>
-        <Title level={1} style={{ color: '#2d5036', textAlign: 'center', marginBottom: '32px' }}>Tentang Satudata Pertanian</Title>
+        <Title level={1} style={{ color: '#2d5036', textAlign: 'center', marginBottom: '32px' }}>Tentang Satu Data Pertanian</Title>
         
         <Card style={{ marginBottom: '24px' }}>
-          <Title level={2} style={{ color: '#2d5036' }}>Apa itu Satudata Pertanian?</Title>
+          <Title level={2} style={{ color: '#2d5036' }}>Apa itu Satu Data Pertanian?</Title>
           <Paragraph>
-            Satudata Pertanian adalah portal data tunggal untuk sektor pertanian di Indonesia. 
+            Satu Data Pertanian adalah portal data tunggal untuk sektor pertanian di Indonesia.
             Platform ini dirancang untuk menyatukan berbagai sumber data pertanian dari berbagai 
             unit dan instansi terkait, sehingga memudahkan aksesibilitas dan ketersediaan data 
             yang akurat dan terpercaya bagi seluruh stakeholder.
@@ -29,7 +29,7 @@ const AboutPage: React.FC = ({}) => {
         <Card style={{ marginBottom: '24px' }}>
           <Title level={2} style={{ color: '#2d5036' }}>Tujuan dan Manfaat</Title>
           <Paragraph>
-            Tujuan utama dari Satudata Pertanian adalah:
+            Tujuan utama dari Satu Data Pertanian adalah:
           </Paragraph>
           <ul>
             <li>Menyediakan satu sumber data pertanian yang terpadu dan terpercaya</li>
@@ -59,9 +59,9 @@ const AboutPage: React.FC = ({}) => {
         <Card>
           <Title level={2} style={{ color: '#2d5036' }}>Struktur Organisasi</Title>
           <Paragraph>
-            Portal Satudata Pertanian dikelola oleh Kementerian Pertanian melalui unit-unit 
-            teknis yang berkompeten di bidang data dan informasi pertanian. Struktur ini 
-            didukung oleh sistem tata kelola data yang jelas, termasuk kebijakan dan 
+            Portal Satu Data Pertanian dikelola oleh Kementerian Pertanian melalui unit-unit
+            teknis yang berkompeten di bidang data dan informasi pertanian. Struktur ini
+            didukung oleh sistem tata kelola data yang jelas, termasuk kebijakan dan
             prosedur standar untuk pengelolaan data.
           </Paragraph>
         </Card>

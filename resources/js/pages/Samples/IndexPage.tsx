@@ -8,7 +8,7 @@ interface SampleIndexPageProps extends PageProps {
 
 const SampleIndexPage: React.FC<SampleIndexPageProps> = () => {
   return (
-    <PublicLayout title="Contoh Halaman - Satudata Pertanian">
+    <PublicLayout title="Contoh Halaman - Satu Data Pertanian">
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <h1 style={{ color: '#2d5036', marginBottom: '20px' }}>Contoh Halaman</h1>
         <p style={{ fontSize: '16px', lineHeight: '1.6', color: '#495057' }}>
@@ -160,7 +160,7 @@ const SampleIndexPage: React.FC<SampleIndexPageProps> = () => {
           }}>
             <h3 style={{ color: '#2d5036', marginBottom: '10px' }}>Tentang Kami</h3>
             <p style={{ color: '#6c757d', marginBottom: '15px' }}>
-              Informasi tentang Satudata Pertanian
+              Informasi tentang Satu Data Pertanian
             </p>
             <Link 
               href="/samples/about"

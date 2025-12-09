@@ -24,7 +24,7 @@ export default function Login({
             title="Selamat Datang Kembali"
             description="Silakan masuk ke akun Anda untuk melanjutkan"
         >
-            <Head title="Masuk | Satudata Pertanian" />
+            <Head title="Masuk | Satu Data Pertanian" />
 
             <Form
                 {...store.form()}

@@ -8,7 +8,7 @@ interface AuthPageProps extends PageProps {
 
 const AuthPage: React.FC<AuthPageProps> = () => {
   return (
-    <PublicLayout title="Login - Satudata Pertanian">
+    <PublicLayout title="Login - Satu Data Pertanian">
       <div style={{ 
         padding: '20px', 
         maxWidth: '1200px', 

@@ -19,8 +19,8 @@ export default function RencanaRilisPage({}: PageProps) {
     };
 
     return (
-        <PublicLayout title="Rencana Rilis - Satudata Pertanian">
-            <Head title="Rencana Rilis - Satudata Pertanian" />
+        <PublicLayout title="Rencana Rilis - Satu Data Pertanian">
+            <Head title="Rencana Rilis - Satu Data Pertanian" />
             <div style={{ padding: '20px', textAlign: 'center', minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div>
                     <h1 style={{ color: '#2d5036' }}>Halaman Rencana Rilis</h1>

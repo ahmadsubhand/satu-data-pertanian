@@ -54,8 +54,8 @@ const StatisticalIndexPage: React.FC<StatisticalIndexPageProps> = () => {
   ];
 
   return (
-    <PublicLayout title="Data Statistik - Satudata Pertanian">
-      <Head title="Data Statistik - Satudata Pertanian" />
+    <PublicLayout title="Data Statistik - Satu Data Pertanian">
+      <Head title="Data Statistik - Satu Data Pertanian" />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 

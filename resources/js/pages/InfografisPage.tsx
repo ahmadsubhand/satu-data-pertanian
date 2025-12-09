@@ -50,8 +50,8 @@ const InfografisPage: React.FC<InfografisPageProps> = ({ infografis = [] }) => {
     );
 
     return (
-        <PublicLayout title="Infografis - Satudata Pertanian">
-            <Head title="Infografis - Satudata Pertanian" />
+        <PublicLayout title="Infografis - Satu Data Pertanian">
+            <Head title="Infografis - Satu Data Pertanian" />
 
             <div
                 style={{
@@ -92,7 +92,7 @@ const InfografisPage: React.FC<InfografisPageProps> = ({ infografis = [] }) => {
                                 textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
                             }}
                         >
-                            📊 Infografis Satudata Pertanian
+                            📊 Infografis Satu Data Pertanian
                         </Title>
                         <Paragraph
                             style={{

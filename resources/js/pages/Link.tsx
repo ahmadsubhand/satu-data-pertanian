@@ -74,8 +74,8 @@ const LinkPage: React.FC<LinkPageProps> = ({ links = [] }) => {
     ];
 
     return (
-        <PublicLayout title="Referensi Link - Satudata Pertanian">
-            <Head title="Referensi Link - Satudata Pertanian" />
+        <PublicLayout title="Referensi Link - Satu Data Pertanian">
+            <Head title="Referensi Link - Satu Data Pertanian" />
 
             <div className="space-y-6">
                 <div
@@ -88,7 +88,7 @@ const LinkPage: React.FC<LinkPageProps> = ({ links = [] }) => {
                         Referensi Link
                     </Title>
                     <p className="text-green-100">
-                        Kumpulan tautan penting terkait Satudata Pertanian dan program lainnya
+                        Kumpulan tautan penting terkait Satu Data Pertanian dan program lainnya
                     </p>
                 </div>
 

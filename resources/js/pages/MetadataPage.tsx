@@ -19,8 +19,8 @@ export default function MetadataPage({}: PageProps) {
     };
 
     return (
-        <PublicLayout title="Metadata - Satudata Pertanian">
-            <Head title="Metadata - Satudata Pertanian" />
+        <PublicLayout title="Metadata - Satu Data Pertanian">
+            <Head title="Metadata - Satu Data Pertanian" />
             <div style={{ padding: '20px', textAlign: 'center', minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div>
                     <h1 style={{ color: '#2d5036' }}>Halaman Metadata</h1>

@@ -74,8 +74,8 @@ const GdpPage: React.FC<GdpPageProps> = () => {
   ];
 
   return (
-    <PublicLayout title="Produk Domestik Bruto Pertanian - Satudata Pertanian">
-      <Head title="Produk Domestik Bruto Pertanian - Satudata Pertanian" />
+    <PublicLayout title="Produk Domestik Bruto Pertanian - Satu Data Pertanian">
+      <Head title="Produk Domestik Bruto Pertanian - Satu Data Pertanian" />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 

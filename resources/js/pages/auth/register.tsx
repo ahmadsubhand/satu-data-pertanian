@@ -16,7 +16,7 @@ export default function Register() {
             title="Buat Akun Baru"
             description="Silakan isi data berikut untuk membuat akun Anda"
         >
-            <Head title="Daftar | Satudata Pertanian" />
+            <Head title="Daftar | Satu Data Pertanian" />
             <Form
                 {...store.form()}
                 resetOnSuccess={['password', 'password_confirmation']}

@@ -1,10 +1,11 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Layout, Menu } from 'antd';
+import { Facebook, Instagram, Youtube } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { FiChevronDown, FiMenu, FiUser, FiX } from 'react-icons/fi';
-import { Facebook, Instagram, Youtube } from 'lucide-react';
 
-// Define Ant Design menu item types
+// --- DEFINISI TIPE & INTERFACE ---
+
 interface AntMenuItemType {
     key: string;
     label?: React.ReactNode;
@@ -37,10 +38,19 @@ interface AntMenuItemGroupType {
 
 type AntItemType = AntMenuItemType | AntSubMenuType | AntMenuItemGroupType;
 
+interface CustomMenuItemType {
+    key: string;
+    label: React.ReactNode;
+    type?: string;
+    children?: CustomMenuItemType[];
+}
+
 const { Header, Content, Footer } = Layout;
 
+// --- KOMPONEN UTAMA ---
+
 const PublicLayout = ({
-    title = 'Satudata Pertanian',
+    title = 'Satu Data Pertanian',
     children,
 }: {
     title?: string;
@@ -51,11 +61,10 @@ const PublicLayout = ({
     const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
     const { url } = usePage().props;
-    const currentUrl = url as string || window.location.pathname;
+    const currentUrl = (url as string) || window.location.pathname;
 
-    // Function to determine active menu key based on current URL
+    // --- LOGIC MENU AKTIF ---
     const getActiveMenuKey = (currentPath: string): string => {
-        // Define path to menu key mapping
         const pathMap: Record<string, string> = {
             '/': 'beranda',
             '/dataset': 'm-dataset',
@@ -70,42 +79,53 @@ const PublicLayout = ({
             '/release-plans': 'rencana-rilis',
             '/metadata': 'm-metadata',
             '/referensi-link': 'm-link',
+            '/about': 'tentang-kami',
+            '/regulation': 'regulasi',
+            '/data-principles': 'prinsip-satudata',
+            '/priority-data': 'm-prioritas',
         };
 
-        // Check for exact matches first
-        if (pathMap[currentPath]) {
-            return pathMap[currentPath];
-        }
+        if (pathMap[currentPath]) return pathMap[currentPath];
 
-        // Check for partial matches for nested routes
-        if (currentPath.startsWith('/dataset')) {
-            return 'dataset';
-        }
-        if (currentPath.startsWith('/publikasi') || currentPath.startsWith('/berita')) {
+        if (currentPath.startsWith('/dataset') &&
+            !currentPath.startsWith('/dataset/indicators') &&
+            !currentPath.startsWith('/dataset/variables')) return 'dataset';
+        if (
+            currentPath.startsWith('/dataset/indicators') ||
+            currentPath.startsWith('/dataset/variables')
+        ) return 'm-dataset'; // Redirect these to Daftar Data
+        if (
+            currentPath.startsWith('/publikasi') ||
+            currentPath.startsWith('/berita')
+        )
             return 'publikasi';
-        }
-        if (currentPath.startsWith('/galeri') || currentPath.startsWith('/infografis') || currentPath.startsWith('/products/multimedia')) {
+        if (
+            currentPath.startsWith('/galeri') ||
+            currentPath.startsWith('/infografis') ||
+            currentPath.startsWith('/products/multimedia')
+        )
             return 'multimedia';
-        }
-        if (currentPath.startsWith('/data')) {
-            return 'data';
-        }
-        if (currentPath.startsWith('/release-plans') || currentPath.startsWith('/metadata') || currentPath.startsWith('/referensi-link')) {
+        if (currentPath.startsWith('/data')) return 'data';
+        if (
+            currentPath.startsWith('/release-plans') ||
+            currentPath.startsWith('/metadata') ||
+            currentPath.startsWith('/referensi-link')
+        )
             return 'manajemen';
-        }
 
-        return 'beranda'; // default
+        return 'beranda';
     };
 
-    const [current, setCurrent] = useState<string>(getActiveMenuKey(currentUrl));
+    const [current, setCurrent] = useState<string>(
+        getActiveMenuKey(currentUrl),
+    );
 
-    // Update current menu item when the page URL changes
     useEffect(() => {
         const newCurrent = getActiveMenuKey(currentUrl);
         setCurrent(newCurrent);
     }, [currentUrl]);
 
-    // Handle scroll effect for navbar
+    // --- SCROLL EFFECT ---
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 50) {
@@ -114,7 +134,6 @@ const PublicLayout = ({
                 setIsScrolled(false);
             }
         };
-
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -123,11 +142,18 @@ const PublicLayout = ({
         setCurrent(e.key);
     };
 
-    // Menu items for the navbar
+    // --- MENU DATA ---
     const menuItems: CustomMenuItemType[] = [
         {
             key: 'beranda',
-            label: <Link href="/" style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Beranda</Link>,
+            label: (
+                <Link
+                    href="/"
+                    style={{ fontWeight: 'bold', fontFamily: 'inherit' }}
+                >
+                    Beranda
+                </Link>
+            ),
         },
         {
             key: 'dataset',
@@ -135,13 +161,13 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('dataset')}
                     onMouseLeave={() => setOpenDropdown(null)}
-                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Dataset</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                        Katalog Data
+                    </span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
-                            transition: 'transform 0.3s ease',
                             verticalAlign: 'middle',
                             display: 'inline-block',
                         }}
@@ -151,15 +177,70 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'm-dataset',
-                    label: <Link href="/dataset" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Dataset</Link>,
+                    label: (
+                        <Link href="/dataset" style={{ fontWeight: 600 }}>
+                            Daftar Data
+                        </Link>
+                    ),
                 },
                 {
-                    key: 'm-indikator',
-                    label: <Link href="/dataset/indicators" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Indikator</Link>,
+                    key: 'm-prioritas',
+                    label: (
+                        <Link
+                            href="/priority-data"
+                            style={{ fontWeight: 600 }}
+                        >
+                            Data Prioritas
+                        </Link>
+                    ),
                 },
                 {
-                    key: 'm-variabel',
-                    label: <Link href="/dataset/variables" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Variabel</Link>,
+                    key: 'terkait-satudata',
+                    label: (
+                        <div
+                            onMouseEnter={() => setOpenDropdown('terkait-satudata')}
+                            onMouseLeave={() => setOpenDropdown(null)}
+                        >
+                            <span style={{ fontWeight: '600' }}>
+                                Terkait Satu Data
+                            </span>
+                        </div>
+                    ),
+                    children: [
+                        {
+                            key: 'tentang-kami',
+                            label: (
+                                <Link
+                                    href="/about"
+                                    style={{ fontWeight: 600 }}
+                                >
+                                    Tentang Kami
+                                </Link>
+                            ),
+                        },
+                        {
+                            key: 'regulasi',
+                            label: (
+                                <Link
+                                    href="/regulation"
+                                    style={{ fontWeight: 600 }}
+                                >
+                                    Regulasi
+                                </Link>
+                            ),
+                        },
+                        {
+                            key: 'prinsip-satudata',
+                            label: (
+                                <Link
+                                    href="/data-principles"
+                                    style={{ fontWeight: 600 }}
+                                >
+                                    Prinsip Satu Data
+                                </Link>
+                            ),
+                        },
+                    ],
                 },
             ],
         },
@@ -169,13 +250,13 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('publikasi')}
                     onMouseLeave={() => setOpenDropdown(null)}
-                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Publikasi</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                        Publikasi
+                    </span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
-                            transition: 'transform 0.3s ease',
                             verticalAlign: 'middle',
                             display: 'inline-block',
                         }}
@@ -185,11 +266,19 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'm-publikasi',
-                    label: <Link href="/publikasi" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Publikasi</Link>,
+                    label: (
+                        <Link href="/publikasi" style={{ fontWeight: 600 }}>
+                            Publikasi
+                        </Link>
+                    ),
                 },
                 {
                     key: 'm-berita',
-                    label: <Link href="/berita" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Berita</Link>,
+                    label: (
+                        <Link href="/berita" style={{ fontWeight: 600 }}>
+                            Berita
+                        </Link>
+                    ),
                 },
             ],
         },
@@ -199,13 +288,13 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('multimedia')}
                     onMouseLeave={() => setOpenDropdown(null)}
-                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Multimedia</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                        Multimedia
+                    </span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
-                            transition: 'transform 0.3s ease',
                             verticalAlign: 'middle',
                             display: 'inline-block',
                         }}
@@ -215,15 +304,30 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'm-galeri',
-                    label: <Link href="/galeri" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Galeri</Link>,
+                    label: (
+                        <Link href="/galeri" style={{ fontWeight: 600 }}>
+                            Galeri
+                        </Link>
+                    ),
                 },
                 {
                     key: 'm-infografis',
-                    label: <Link href="/infografis" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Infografis</Link>,
+                    label: (
+                        <Link href="/infografis" style={{ fontWeight: 600 }}>
+                            Infografis
+                        </Link>
+                    ),
                 },
                 {
                     key: 'm-multimedia',
-                    label: <Link href="/products/multimedia" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Instagram</Link>,
+                    label: (
+                        <Link
+                            href="/products/multimedia"
+                            style={{ fontWeight: 600 }}
+                        >
+                            Instagram
+                        </Link>
+                    ),
                 },
             ],
         },
@@ -233,13 +337,13 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('data')}
                     onMouseLeave={() => setOpenDropdown(null)}
-                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Data</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                        Data
+                    </span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
-                            transition: 'transform 0.3s ease',
                             verticalAlign: 'middle',
                             display: 'inline-block',
                         }}
@@ -253,9 +357,13 @@ const PublicLayout = ({
                         <div
                             onMouseEnter={() => setOpenDropdown('statistik')}
                             onMouseLeave={() => setOpenDropdown(null)}
-                            style={{ transition: 'all 0.3s ease' }}
                         >
-                            <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>
+                            <span
+                                style={{
+                                    fontWeight: 'bold',
+                                    fontFamily: 'inherit',
+                                }}
+                            >
                                 Statistik
                             </span>
                         </div>
@@ -268,7 +376,7 @@ const PublicLayout = ({
                                     href="https://bdsp2.pertanian.go.id/bdsp/id/home.html"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                                    style={{ fontWeight: 600 }}
                                 >
                                     Basis Data Statistik
                                 </a>
@@ -281,7 +389,7 @@ const PublicLayout = ({
                                     href="https://app3.pertanian.go.id/eksim/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                                    style={{ fontWeight: 600 }}
                                 >
                                     Ekspor Impor
                                 </a>
@@ -294,7 +402,7 @@ const PublicLayout = ({
                                     href="https://11ap.pertanian.go.id/pdb/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                                    style={{ fontWeight: 600 }}
                                 >
                                     Produk Domestik Bruto
                                 </a>
@@ -307,7 +415,7 @@ const PublicLayout = ({
                                     href="https://11ap.pertanian.go.id/pdrb/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                                    style={{ fontWeight: 600 }}
                                 >
                                     Produk Domestik Regional Bruto
                                 </a>
@@ -320,7 +428,7 @@ const PublicLayout = ({
                                     href="https://11ap.pertanian.go.id/ntp/"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                                    style={{ fontWeight: 600 }}
                                 >
                                     Nilai Tukar Petani
                                 </a>
@@ -330,7 +438,14 @@ const PublicLayout = ({
                 },
                 {
                     key: 'geospasial',
-                    label: <Link href="/data/geospatial" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Geospasial</Link>,
+                    label: (
+                        <Link
+                            href="/data/geospatial"
+                            style={{ fontWeight: 600 }}
+                        >
+                            Geospasial
+                        </Link>
+                    ),
                     children: [
                         {
                             key: 'simotandi',
@@ -339,7 +454,7 @@ const PublicLayout = ({
                                     href="https://simotandi.pertanian.go.id"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                                    style={{ fontWeight: 600 }}
                                 >
                                     SIMOTANDI
                                 </a>
@@ -352,7 +467,7 @@ const PublicLayout = ({
                                     href="https://siperditan.pertanian.go.id"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                                    style={{ fontWeight: 600 }}
                                 >
                                     SIPERDITAN
                                 </a>
@@ -368,13 +483,13 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('manajemen')}
                     onMouseLeave={() => setOpenDropdown(null)}
-                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Manajemen</span>
+                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit' }}>
+                        Manajemen
+                    </span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
-                            transition: 'transform 0.3s ease',
                             verticalAlign: 'middle',
                             display: 'inline-block',
                         }}
@@ -384,15 +499,30 @@ const PublicLayout = ({
             children: [
                 {
                     key: 'rencana-rilis',
-                    label: <Link href="/release-plans" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Rencana Rilis</Link>,
+                    label: (
+                        <Link href="/release-plans" style={{ fontWeight: 600 }}>
+                            Rencana Rilis
+                        </Link>
+                    ),
                 },
                 {
                     key: 'm-metadata',
-                    label: <Link href="/metadata" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Metadata</Link>,
+                    label: (
+                        <Link href="/metadata" style={{ fontWeight: 600 }}>
+                            Metadata
+                        </Link>
+                    ),
                 },
                 {
                     key: 'm-link',
-                    label: <Link href="/referensi-link" style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Referensi Link</Link>,
+                    label: (
+                        <Link
+                            href="/referensi-link"
+                            style={{ fontWeight: 600 }}
+                        >
+                            Referensi Link
+                        </Link>
+                    ),
                 },
             ],
         },
@@ -403,9 +533,9 @@ const PublicLayout = ({
                     href="https://simpeldatin.setjen.pertanian.go.id/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                    style={{ fontWeight: 600 }}
                 >
-                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Permohonan Data</span>
+                    <span style={{ fontWeight: 'bold' }}>Permohonan Data</span>
                 </a>
             ),
         },
@@ -415,13 +545,11 @@ const PublicLayout = ({
                 <div
                     onMouseEnter={() => setOpenDropdown('link-lainnya')}
                     onMouseLeave={() => setOpenDropdown(null)}
-                    style={{ transition: 'all 0.3s ease' }}
                 >
-                    <span style={{ fontWeight: 'bold', fontFamily: 'inherit', transition: 'all 0.2s ease' }}>Link Lainnya</span>
+                    <span style={{ fontWeight: 'bold' }}>Link Lainnya</span>
                     <FiChevronDown
                         style={{
                             marginLeft: '6px',
-                            transition: 'transform 0.3s ease',
                             verticalAlign: 'middle',
                             display: 'inline-block',
                         }}
@@ -436,7 +564,7 @@ const PublicLayout = ({
                             href="https://data.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                            style={{ fontWeight: 600 }}
                         >
                             Satu Data Indonesia
                         </a>
@@ -449,7 +577,7 @@ const PublicLayout = ({
                             href="https://onemap.big.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                            style={{ fontWeight: 600 }}
                         >
                             Kebijakan Satu Peta
                         </a>
@@ -462,7 +590,7 @@ const PublicLayout = ({
                             href="https://www.pertanian.go.id"
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s ease' }}
+                            style={{ fontWeight: 600 }}
                         >
                             Kementerian Pertanian
                         </a>
@@ -472,15 +600,6 @@ const PublicLayout = ({
         },
     ];
 
-    // Define types for menu items
-    interface CustomMenuItemType {
-        key: string;
-        label: React.ReactNode;
-        type?: string;
-        children?: CustomMenuItemType[];
-    }
-
-    // Function to render menu items recursively
     const renderMenuItems = (items: CustomMenuItemType[]): AntItemType[] => {
         return items.map((item) => {
             if (item.children) {
@@ -508,7 +627,7 @@ const PublicLayout = ({
         >
             <Head title={title} />
 
-            {/* Modern Navbar with side arrows and green transparent blur effect on scroll */}
+            {/* --- NAVBAR --- */}
             <Header
                 className={`modern-navbar ${isScrolled ? 'scrolled' : ''}`}
                 style={{
@@ -526,11 +645,11 @@ const PublicLayout = ({
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px 24px',
-                    boxShadow: 'none', // Remove any shadow that may cause lines
-                    borderBottom: 'none', // Remove any border
+                    boxShadow: 'none',
+                    borderBottom: 'none',
                 }}
             >
-                {/* Left side - Logo with animated agricultural text */}
+                {/* Logo Section */}
                 <div
                     style={{
                         display: 'flex',
@@ -545,26 +664,26 @@ const PublicLayout = ({
                     >
                         <img
                             src="/images/logos/logo-satudata.png"
-                            alt="Logo Satudata Pertanian"
-                            title="Satudata Pertanian"
+                            alt="Logo Satu Data Pertanian"
                             style={{
                                 height: '50px',
                                 width: 'auto',
                                 maxHeight: '50px',
                                 objectFit: 'contain',
                                 filter: 'drop-shadow(0 2px 2px rgba(0,0,0,0.1))',
-                                transition: 'height 0.3s ease, max-height 0.3s ease',
+                                transition:
+                                    'height 0.3s ease, max-height 0.3s ease',
                             }}
                             onError={(e) => {
                                 const target = e.target as HTMLImageElement;
-                                target.onerror = null; // prevents looping
+                                target.onerror = null;
                                 target.style.display = 'none';
                             }}
                         />
                     </Link>
                 </div>
 
-                {/* Center - Desktop Menu - shifted slightly to the right */}
+                {/* Desktop Menu */}
                 <div
                     style={{
                         display: 'flex',
@@ -591,7 +710,7 @@ const PublicLayout = ({
                     />
                 </div>
 
-                {/* Right side - Login and Mobile Toggle */}
+                {/* Right Actions (Login & Mobile Toggle) */}
                 <div
                     style={{
                         display: 'flex',
@@ -601,71 +720,41 @@ const PublicLayout = ({
                         flex: 1,
                     }}
                 >
-                    {/* Login link with premium elegant text and icon animations only - enlarged */}
                     <Link
                         href="/login"
+                        className="login-link-container"
                         style={{
                             display: 'flex',
                             alignItems: 'center',
                             color: '#2d5036',
-                            transition:
-                                'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                            transition: 'all 0.3s ease',
                             cursor: 'pointer',
                             textDecoration: 'none',
                             fontSize: '16px',
                             fontWeight: '600',
                             position: 'relative',
-                            overflow: 'hidden',
-                        }}
-                        onMouseEnter={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.color = '#FF9800';
-                        }}
-                        onMouseLeave={(e) => {
-                            const target = e.target as HTMLElement;
-                            target.style.color = '#2d5036';
                         }}
                     >
                         <FiUser
+                            className="login-icon"
                             style={{
                                 marginRight: '10px',
                                 fontSize: '20px',
-                                transition:
-                                    'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                position: 'relative',
+                                transition: 'all 0.3s ease',
                             }}
-                            className="login-icon"
                         />
-                        <span
-                            className="login-text"
-                            style={{
-                                transition:
-                                    'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                position: 'relative',
-                            }}
-                        >
+                        <span className="login-text">
                             Login
-                            <span
-                                className="login-underline"
-                                style={{
-                                    position: 'absolute',
-                                    bottom: '-3px',
-                                    left: 0,
-                                    width: '0%',
-                                    height: '2px',
-                                    borderRadius: '2px',
-                                    background:
-                                        'linear-gradient(90deg, #FF9800, #FF5722)',
-                                    transition:
-                                        'all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                }}
-                            ></span>
                         </span>
                     </Link>
 
-                    {/* Mobile Menu Toggle */}
+                    {/* Mobile Toggle Button */}
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        className="mobile-menu-toggle"
+                        aria-label={
+                            isMobileMenuOpen ? 'Close menu' : 'Open menu'
+                        }
                         style={{
                             background: 'none',
                             border: 'none',
@@ -674,19 +763,15 @@ const PublicLayout = ({
                             cursor: 'pointer',
                             display: 'none',
                             padding: '8px',
-                            borderRadius: '4px',
-                            transition: 'all 0.3s ease',
                         }}
-                        className="mobile-menu-toggle"
-                        aria-label={
-                            isMobileMenuOpen ? 'Close menu' : 'Open menu'
-                        }
                     >
                         {isMobileMenuOpen ? <FiX /> : <FiMenu />}
                     </button>
                 </div>
 
-                {/* Mobile Menu Overlay - Now used for all screen sizes */}
+                {/* MOBILE MENU OVERLAY
+                  Menggunakan padding kondisional agar tidak ada whitespace saat tertutup
+                */}
                 <div
                     className={`mobile-menu ${isMobileMenuOpen ? 'active' : ''}`}
                     style={{
@@ -696,7 +781,12 @@ const PublicLayout = ({
                         right: 0,
                         background: 'white',
                         zIndex: 999,
-                        padding: '16px',
+                        // Fix Whitebox: Padding jadi 0 kalau tertutup
+                        padding: isMobileMenuOpen ? '16px' : '0',
+                        // Fix Shadow: Hilang kalau tertutup
+                        boxShadow: isMobileMenuOpen
+                            ? '0 4px 12px rgba(0, 0, 0, 0.1)'
+                            : 'none',
                         display: 'none',
                         flexDirection: 'column',
                         gap: '8px',
@@ -704,8 +794,10 @@ const PublicLayout = ({
                             ? 'calc(100vh - 64px)'
                             : '0',
                         overflow: 'hidden',
-                        transition: 'max-height 0.3s ease-in-out',
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                        // Animasi halus untuk semua properti termasuk padding
+                        transition: 'all 0.3s ease-in-out',
+                        opacity: isMobileMenuOpen ? 1 : 0,
+                        visibility: isMobileMenuOpen ? 'visible' : 'hidden',
                     }}
                 >
                     <Menu
@@ -715,13 +807,14 @@ const PublicLayout = ({
                         style={{
                             border: 'none',
                             maxHeight: 'calc(100vh - 100px)',
-                            overflowY: 'auto'
+                            overflowY: 'auto',
                         }}
                         className="mobile-nav-menu"
                     />
                 </div>
             </Header>
 
+            {/* --- CONTENT UTAMA --- */}
             <Content
                 className="site-layout-content"
                 style={{
@@ -743,7 +836,7 @@ const PublicLayout = ({
                 </div>
             </Content>
 
-            {/* Custom Footer */}
+            {/* --- FOOTER --- */}
             <Footer
                 style={{
                     textAlign: 'left',
@@ -751,7 +844,6 @@ const PublicLayout = ({
                     padding: '40px 48px',
                     marginTop: 'auto',
                 }}
-                className="footer"
             >
                 <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                     <div
@@ -778,7 +870,6 @@ const PublicLayout = ({
                                 kebijakan pertanian di Indonesia.
                             </p>
                         </div>
-
                         <div>
                             <h4
                                 style={{
@@ -790,61 +881,33 @@ const PublicLayout = ({
                                 Tautan Cepat
                             </h4>
                             <ul style={{ listStyle: 'none', padding: 0 }}>
-                                <li>
-                                    <Link
-                                        href="/about"
-                                        style={{
-                                            color: '#495057',
-                                            textDecoration: 'none',
-                                            display: 'block',
-                                            marginBottom: '8px',
-                                        }}
-                                    >
-                                        Tentang Kami
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/regulation"
-                                        style={{
-                                            color: '#495057',
-                                            textDecoration: 'none',
-                                            display: 'block',
-                                            marginBottom: '8px',
-                                        }}
-                                    >
-                                        Regulasi
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/data-principles"
-                                        style={{
-                                            color: '#495057',
-                                            textDecoration: 'none',
-                                            display: 'block',
-                                            marginBottom: '8px',
-                                        }}
-                                    >
-                                        Prinsip Satu Data
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        href="/priority-data"
-                                        style={{
-                                            color: '#495057',
-                                            textDecoration: 'none',
-                                            display: 'block',
-                                            marginBottom: '8px',
-                                        }}
-                                    >
-                                        Data Prioritas
-                                    </Link>
-                                </li>
+                                {[
+                                    'Tentang Kami',
+                                    'Regulasi',
+                                    'Prinsip Satu Data',
+                                ].map((item, index) => {
+                                    const links = [
+                                        '/about',
+                                        '/regulation',
+                                        '/data-principles',
+                                    ];
+                                    return (
+                                        <li key={index}>
+                                            <Link
+                                                href={links[index]}
+                                                style={{
+                                                    color: '#495057',
+                                                    display: 'block',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                {item}
+                                            </Link>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
-
                         <div>
                             <h4
                                 style={{
@@ -861,7 +924,6 @@ const PublicLayout = ({
                                         href="/data/statistical"
                                         style={{
                                             color: '#495057',
-                                            textDecoration: 'none',
                                             display: 'block',
                                             marginBottom: '8px',
                                         }}
@@ -874,7 +936,6 @@ const PublicLayout = ({
                                         href="/data/geospatial"
                                         style={{
                                             color: '#495057',
-                                            textDecoration: 'none',
                                             display: 'block',
                                             marginBottom: '8px',
                                         }}
@@ -887,7 +948,6 @@ const PublicLayout = ({
                                         href="/release-plans"
                                         style={{
                                             color: '#495057',
-                                            textDecoration: 'none',
                                             display: 'block',
                                             marginBottom: '8px',
                                         }}
@@ -897,7 +957,6 @@ const PublicLayout = ({
                                 </li>
                             </ul>
                         </div>
-
                         <div>
                             <h4
                                 style={{
@@ -911,127 +970,75 @@ const PublicLayout = ({
                             <ul style={{ listStyle: 'none', padding: 0 }}>
                                 <li
                                     style={{
-                                        color: '#495057',
                                         marginBottom: '8px',
-                                        marginTop: '5px',
+                                        color: '#495057',
                                     }}
                                 >
-                                    <a
-                                        href="https://www.instagram.com/pusdatin_kementan?igsh=bmM0cjVicG1vOHk3"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                            display: 'inline-block',
-                                            marginRight: '12px',
-                                            transition: 'transform 0.3s ease, color 0.3s ease'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1.2)';
-                                            e.currentTarget.style.color = '#E4405F';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1)';
-                                            e.currentTarget.style.color = '';
-                                        }}
+                                    <div
+                                        style={{ display: 'flex', gap: '12px' }}
                                     >
-                                        <Instagram
-                                            size={20}
-                                            style={{
-                                                verticalAlign: 'middle',
-                                                color: '#333'
-                                            }}
-                                        />
-                                    </a>
-                                    <a
-                                        href="https://www.facebook.com/kementan"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                            display: 'inline-block',
-                                            marginRight: '12px',
-                                            transition: 'transform 0.3s ease, color 0.3s ease'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1.2)';
-                                            e.currentTarget.style.color = '#1877F2';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1)';
-                                            e.currentTarget.style.color = '';
-                                        }}
-                                    >
-                                        <Facebook
-                                            size={20}
-                                            style={{
-                                                verticalAlign: 'middle',
-                                                color: '#333'
-                                            }}
-                                        />
-                                    </a>
-                                    <a
-                                        href="http://www.youtube.com/@KementanRI"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        style={{
-                                            display: 'inline-block',
-                                            transition: 'transform 0.3s ease, color 0.3s ease'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1.2)';
-                                            e.currentTarget.style.color = '#FF0000';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.transform = 'scale(1)';
-                                            e.currentTarget.style.color = '';
-                                        }}
-                                    >
-                                        <Youtube
-                                            size={20}
-                                            style={{
-                                                verticalAlign: 'middle',
-                                                color: '#333'
-                                            }}
-                                        />
-                                    </a>
+                                        <a
+                                            href="https://www.instagram.com/pusdatin_kementan"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#333' }}
+                                        >
+                                            <Instagram size={20} />
+                                        </a>
+                                        <a
+                                            href="https://www.facebook.com/kementan"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#333' }}
+                                        >
+                                            <Facebook size={20} />
+                                        </a>
+                                        <a
+                                            href="http://www.youtube.com/@KementanRI"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: '#333' }}
+                                        >
+                                            <Youtube size={20} />
+                                        </a>
+                                    </div>
                                 </li>
                                 <li
                                     style={{
-                                        color: '#495057',
                                         marginBottom: '8px',
+                                        color: '#495057',
                                     }}
                                 >
-                                    Kementerian Pertanian <br />
-                                    Pusat Data dan Sistem Informasi Pertanian
+                                    Kementerian Pertanian <br /> Pusat Data dan
+                                    Sistem Informasi Pertanian
                                 </li>
                                 <li
                                     style={{
-                                        color: '#495057',
                                         marginBottom: '8px',
+                                        color: '#495057',
                                     }}
                                 >
-                                    Kantor Pusat Kementerian Pertanian <br />
                                     Gedung D Lantai 4 Jl. Harsono RM No.3,
-                                    Ragunan, Kota Jakarta Selatan, 12550
+                                    Ragunan, Jakarta Selatan
                                 </li>
                                 <li
                                     style={{
-                                        color: '#495057',
                                         marginBottom: '8px',
+                                        color: '#495057',
                                     }}
                                 >
                                     Telp: (021) 7822638
                                 </li>
                                 <li
                                     style={{
-                                        color: '#495057',
                                         marginBottom: '8px',
+                                        color: '#495057',
                                     }}
                                 >
                                     Email: pusdatin@pertanian.go.id
                                 </li>
                             </ul>
                         </div>
-
                         <div>
                             <h4
                                 style={{
@@ -1050,7 +1057,6 @@ const PublicLayout = ({
                                         rel="noopener noreferrer"
                                         style={{
                                             color: '#495057',
-                                            textDecoration: 'none',
                                             display: 'block',
                                             marginBottom: '8px',
                                         }}
@@ -1065,7 +1071,6 @@ const PublicLayout = ({
                                         rel="noopener noreferrer"
                                         style={{
                                             color: '#495057',
-                                            textDecoration: 'none',
                                             display: 'block',
                                             marginBottom: '8px',
                                         }}
@@ -1076,7 +1081,6 @@ const PublicLayout = ({
                             </ul>
                         </div>
                     </div>
-
                     <div
                         style={{
                             borderTop: '1px solid #dee2e6',
@@ -1087,783 +1091,106 @@ const PublicLayout = ({
                             fontSize: '14px',
                         }}
                     >
-                        Portal Satu Data Pertanian V2.0. <br />
-                        Kementerian Pertanian - Pusat Data dan Sistem Informasi Pertanian &copy;
-                        {new Date().getFullYear()}{' '}
+                        Portal Satu Data Pertanian V2.0. <br /> Kementerian
+                        Pertanian - Pusat Data dan Sistem Informasi Pertanian
+                        &copy; {new Date().getFullYear()}
                     </div>
                 </div>
             </Footer>
 
+            {/* --- GLOBAL STYLES (RESPONSIVE & ANIMATIONS) --- */}
             <style>{`
-        .refined-navbar.scrolled {
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-          background: rgba(255, 255, 255, 0.95) !important;
-          backdrop-filter: blur(10px);
-        }
-        
-        .modern-navbar.scrolled {
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Premium elegant login link animations */
-        .login-icon {
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-          position: relative;
-        }
-        
-        .login-text {
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-          position: relative;
-        }
-        
-        .login-icon::before {
-          content: '';
-          position: absolute;
-          top: -4px;
-          left: -4px;
-          right: -4px;
-          bottom: -4px;
-          border-radius: 50%;
-          background: linear-gradient(45deg, #FF9800, #FF5722, #FF9800);
-          z-index: -1;
-          opacity: 0;
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-          animation: rotateGradient 4s linear infinite;
-        }
-        
-        .login-icon {
-          animation: floatGentle 6s ease-in-out infinite;
-        }
-        
-        @keyframes floatGentle {
-          0%, 100% {
-            transform: translateY(0) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-3px) rotate(1deg);
-          }
-        }
-        
-        .login-text {
-          animation: textShimmer 8s ease-in-out infinite;
-        }
-        
-        @keyframes textShimmer {
-          0%, 100% {
-            background: linear-gradient(45deg, #2d5036, #4CAF50, #2d5036);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-          }
-          50% {
-            background-position: 100% center;
-          }
-        }
-        
-        .login-icon:hover {
-          transform: translateY(-5px) scale(1.3) rotate(10deg);
-          color: #FF9800;
-          filter: drop-shadow(0 0 8px rgba(255, 152, 0, 0.7));
-        }
-        
-        .login-icon:hover::before {
-          opacity: 0.3;
-          transform: scale(1.5);
-        }
-        
-        .login-text:hover {
-          transform: translateX(3px);
-          letter-spacing: 2px;
-          text-shadow: 0 0 10px rgba(255, 152, 0, 0.7);
-        }
-        
-        .login-underline {
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        /* Premium elegant hover effects */
-        .login-text::after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: -3px;
-          left: 0;
-          background: linear-gradient(90deg, transparent, #FF9800, #FF5722, transparent);
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-          border-radius: 2px;
-        }
-        
-        .login-text:hover::after {
-          width: 100%;
-          box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
-        }
-        
-        @keyframes rotateGradient {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        
-        /* Simplified navbar styling */
-        .ant-menu-horizontal {
-          border: none;
-          display: flex;
-          align-items: center;
-        }
-        
-        .ant-menu-item,
-        .ant-menu-submenu-title {
-          font-weight: 500 !important;
-          font-size: 15px;
-          border-radius: 6px;
-          margin: 0 4px;
-          transition: all 0.3s ease !important;
-          padding: 8px 12px !important;
-        }
-        
-        .ant-menu-item,
-        .ant-menu-submenu-title {
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
-          position: relative;
-        }
-        
-        .ant-menu-item:hover,
-        .ant-menu-submenu-title:hover {
-          background: linear-gradient(45deg, rgba(168, 213, 186, 0.2) 0%, rgba(102, 187, 106, 0.3) 100%) !important;
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-          animation: subtleGradient 3s ease infinite;
-        }
-        
-        .ant-menu-item > a,
-        .ant-menu-submenu-title > div {
-          font-weight: 500 !important;
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-          color: #2d5036 !important;
-          padding: 8px 12px;
-          position: relative;
-        }
-        
-        .ant-menu-item > a:hover,
-        .ant-menu-submenu-title > div:hover {
-          color: #1a237e !important;
-          text-decoration: none;
-        }
-        
-        /* Elegant multi-layer hover effect with animated underlines */
-        .ant-menu-item,
-        .ant-menu-submenu-title {
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
-          position: relative;
-          overflow: visible;
-        }
-        
-        .ant-menu-item > a,
-        .ant-menu-submenu-title > div {
-          position: relative;
-          overflow: visible;
-        }
-        
-        .ant-menu-item > a::after,
-        .ant-menu-submenu-title > div::after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 3px;
-          bottom: -2px;
-          left: 50%;
-          background: linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50);
-          transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-          border-radius: 3px;
-          transform: translateX(-50%);
-          z-index: 1;
-        }
-        
-        .ant-menu-item:hover > a::after,
-        .ant-menu-submenu-title:hover > div::after {
-          width: 90%;
-        }
-        
-        /* Second animated line with different gradient */
-        .ant-menu-item > a::before,
-        .ant-menu-submenu-title > div::before {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 1px;
-          bottom: -5px;
-          left: 50%;
-          background: linear-gradient(90deg, #FF9800, #FF5722, #FF9800);
-          transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-          border-radius: 2px;
-          transform: translateX(-50%);
-          z-index: 1;
-          animation-delay: 0.2s;
-        }
-        
-        .ant-menu-item:hover > a::before,
-        .ant-menu-submenu-title:hover > div::before {
-          width: 70%;
-        }
-        
-        /* Dropdown styling */
-        .ant-menu-sub {
-          border-radius: 8px;
-          overflow: hidden;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
-          border: 1px solid rgba(168, 213, 186, 0.4) !important;
-          background: rgba(255, 255, 255, 0.95) !important;
-        }
-        
-        .ant-menu-item-group-title {
-          font-weight: 600;
-          color: #2d5036;
-          padding: 8px 16px !important;
-        }
-        
-        .ant-menu-item,
-        .ant-menu-submenu-title {
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
-        }
-        
-        .ant-menu-item-selected {
-          font-weight: 600 !important;
-          background: transparent !important;
-        }
-        
-        .ant-menu-item-selected > a {
-          color: #FF9800 !important;
-          position: relative;
-        }
-        
-        .ant-menu-item-selected > a::after {
-          content: '';
-          position: absolute;
-          width: 80%;
-          height: 2px;
-          bottom: 5px;
-          left: 50%;
-          background: #FF9800;
-          border-radius: 2px;
-          transform: translateX(-50%);
-        }
-        
-        @keyframes gradientMove {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-        
-        @keyframes subtleGradient {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-        
-        /* Hide default dropdown arrow and only show custom arrow on the side */
-        .ant-menu-submenu-title::after {
-          display: none !important;
-        }
-        
-        /* Dropdown styling */
-        .ant-menu-sub {
-          border-radius: 8px;
-          overflow: hidden;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
-          border: 1px solid rgba(168, 213, 186, 0.4) !important;
-          background: rgba(255, 255, 255, 0.95) !important;
-        }
-        
-        .ant-menu-item-group-title {
-          font-weight: 600;
-          color: #2d5036;
-          padding: 8px 16px !important;
-        }
-        
-        .ant-menu-item,
-        .ant-menu-submenu-title {
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
-          position: relative;
-        }
-        
-        .ant-menu-item:hover,
-        .ant-menu-submenu-title:hover {
-          background-color: rgba(168, 213, 186, 0.2) !important;
-          transform: translateY(-2px);
-          z-index: 2;
-          box-shadow: 0 5px 15px rgba(168, 213, 186, 0.4);
-        }
-        
-        .ant-menu-item > a,
-        .ant-menu-submenu-title > div {
-          font-weight: 600 !important;
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
-          color: #2d5036 !important;
-          position: relative;
-          letter-spacing: 0.2px;
-          font-size: 16px;
-        }
-        
-        .ant-menu-item > a:hover,
-        .ant-menu-submenu-title > div:hover {
-          color: #1a3322 !important;
-          text-decoration: none;
-        }
-        
-        /* Elegant animation for menu items */
-        .ant-menu-item > a::after {
-          content: '';
-          position: absolute;
-          width: 0;
-          height: 2px;
-          bottom: 0;
-          left: 50%;
-          background: #4CAF50;
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-          border-radius: 2px;
-          transform: translateX(-50%);
-        }
-        
-        .ant-menu-item:hover > a::after {
-          width: 80%;
-        }
-        
-        /* Dropdown styling */
-        .ant-menu-sub {
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
-          border: 1px solid rgba(168, 213, 186, 0.4) !important;
-          background: rgba(255, 255, 255, 0.95) !important;
-        }
-        
-        .ant-menu-item-group-title {
-          font-weight: 600;
-          color: #2d5036;
-          padding-top: 8px !important;
-        }
-        
-        .ant-menu-item, .ant-menu-submenu-title {
-          transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1) !important;
-        }
-        
-        .ant-menu-item-selected {
-          font-weight: 700 !important;
-        }
-        
-        .ant-menu-item-selected > a::after {
-          content: '';
-          position: absolute;
-          width: 80%;
-          height: 2px;
-          bottom: 0;
-          left: 50%;
-          background: #4CAF50;
-          border-radius: 2px;
-          transform: translateX(-50%);
-        }
-        
-        /* Mobile responsiveness */
-        @media (max-width: 768px) {
-          .desktop-menu {
-            display: none !important;
-          }
+                /* --- Navbar Styling --- */
+                .refined-navbar.scrolled, .modern-navbar.scrolled {
+                    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                    background: rgba(255, 255, 255, 0.95) !important;
+                    backdrop-filter: blur(10px);
+                }
 
-          .mobile-menu-toggle {
-            display: block !important;
-          }
 
-          .mobile-menu {
-            display: flex !important;
-          }
+                /* --- Ant Menu Styling --- */
+                .ant-menu-horizontal {
+                    border: none;
+                }
+                .ant-menu-item, .ant-menu-submenu-title {
+                    font-weight: 500 !important;
+                    border-radius: 6px;
+                    margin: 0 8px;  /* Menambah jarak sedikit */
+                    font-size: 15px; /* Memperbesar font sedikit */
+                    transition: all 0.3s ease !important;
+                }
+                
+                /* SIMPLE HOVER EFFECT HIJAU PASTEL */
+                .ant-menu-item:hover, .ant-menu-submenu-title:hover {
+                    background: rgba(168, 213, 186, 0.2) !important;
+                    color: #2d5036 !important; /* Membuat text sedikit lebih gelap & tegas saat hover */
+                    transition: all 0.3s ease !important;
+                }
+                
+                .ant-menu-item-selected {
+                    font-weight: 700 !important;
+                    background: transparent !important;
+                }
 
-          .site-layout-content {
-            padding: 70px 16px 16px;
-            margin-top: 64px;
-          }
+                /* Dropdown styling */
+                .ant-menu-sub {
+                    border-radius: 8px !important;
+                    padding: 8px !important;
+                }
 
-          /* Mobile layout adjustments */
-          .ant-layout-header {
-            padding: 0 16px !important;
-          }
+                /* Dropdown item hover */
+                .ant-menu-sub .ant-menu-item:hover {
+                     background: rgba(168, 213, 186, 0.2) !important;
+                }
 
-          .refined-navbar {
-            padding: 12px 16px !important;
-          }
+                /* --- MEDIA QUERIES --- */
+                
+                /* Desktop Only (Hide Mobile Elements) */
+                @media (min-width: 769px) {
+                    .mobile-menu-toggle { display: none !important; }
+                    .mobile-menu { display: none !important; }
+                    .desktop-menu { display: flex !important; }
+                }
 
-          /* Mobile logo adjustments */
-          .modern-navbar img[alt="Logo Satudata Pertanian"] {
-            height: 40px !important;
-            max-height: 40px !important;
-          }
+                /* Mobile Only (Hide Desktop Elements & Adjust Layout) */
+                @media (max-width: 768px) {
+                    .desktop-menu { display: none !important; }
+                    .mobile-menu-toggle { display: block !important; }
+                    /* Force display flex on mobile so animations work */
+                    .mobile-menu { display: flex !important; }
+                    
+                    /* Adjust Layout Content Padding */
+                    .site-layout-content {
+                        padding: 70px 16px 16px !important;
+                        margin-top: 64px;
+                    }
 
-          /* Mobile menu styling */
-          .ant-menu.ant-menu-root.ant-menu-inline {
-            background: transparent;
-          }
+                    /* Adjust Navbar Padding */
+                    .modern-navbar { padding: 10px 16px !important; }
+                    
+                    /* Adjust Logo Size */
+                    .modern-navbar img[alt="Logo Satu Data Pertanian"] {
+                        height: 40px !important;
+                        max-height: 40px !important;
+                    }
 
-          .mobile-nav-menu .ant-menu-item,
-          .mobile-nav-menu .ant-menu-submenu-title {
-            border-radius: 8px;
-            margin: 4px 0;
-            padding: 10px 16px !important;
-            font-size: 16px;
-          }
-        }
+                    /* Mobile Menu Items Styling */
+                    .mobile-nav-menu .ant-menu-item,
+                    .mobile-nav-menu .ant-menu-submenu-title {
+                        padding: 10px 16px !important;
+                        height: auto !important;
+                        line-height: 1.5 !important;
+                    }
+                }
 
-        /* iPhone SE and smallest mobile devices */
-        @media (max-width: 320px) {
-          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
-            height: 28px !important;
-            max-height: 28px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Small mobile devices */
-        @media (min-width: 321px) and (max-width: 375px) {
-          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
-            height: 30px !important;
-            max-height: 30px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Medium mobile devices */
-        @media (min-width: 376px) and (max-width: 480px) {
-          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
-            height: 32px !important;
-            max-height: 32px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Large mobile devices */
-        @media (min-width: 481px) and (max-width: 575px) {
-          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
-            height: 35px !important;
-            max-height: 35px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Extra small tablets */
-        @media (min-width: 576px) and (max-width: 768px) {
-          .ant-layout-header img[alt="Logo Satudata Pertanian"] {
-            height: 40px !important;
-            max-height: 40px !important;
-            width: auto !important;
-          }
-        }
-        
-        @media (min-width: 769px) {
-          .mobile-menu-toggle {
-            display: block !important;
-          }
-
-          .desktop-menu {
-            display: none !important;
-          }
-
-          /* Desktop logo styling */
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 50px !important;
-            max-height: 50px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Small tablets */
-        @media (min-width: 769px) and (max-width: 850px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 42px !important;
-            max-height: 42px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Medium tablets */
-        @media (min-width: 851px) and (max-width: 991px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 45px !important;
-            max-height: 45px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Large tablets (iPad Pro, etc.) */
-        @media (min-width: 992px) and (max-width: 1024px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 47px !important;
-            max-height: 47px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Small laptops */
-        @media (min-width: 1025px) and (max-width: 1199px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 48px !important;
-            max-height: 48px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Medium laptops */
-        @media (min-width: 1200px) and (max-width: 1365px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 50px !important;
-            max-height: 50px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Large laptops and small desktops */
-        @media (min-width: 1366px) and (max-width: 1440px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 52px !important;
-            max-height: 52px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Desktop monitors */
-        @media (min-width: 1441px) and (max-width: 1920px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 54px !important;
-            max-height: 54px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Large desktop monitors (Nest Hub Max equivalent and larger) */
-        @media (min-width: 1921px) {
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 56px !important;
-            max-height: 56px !important;
-            width: auto !important;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .site-layout-content {
-            padding: 70px 16px 16px;
-            margin-top: 64px;
-          }
-
-          .modern-navbar {
-            padding: 10px 16px !important;
-          }
-
-          .modern-navbar > div {
-            flex: unset !important;
-          }
-
-          .modern-navbar > div:first-child {
-            flex: 0 0 auto !important;
-          }
-
-          .modern-navbar > div:nth-child(2) {
-            flex: 1 1 auto !important;
-            padding-left: 10px !important;
-          }
-
-          .modern-navbar > div:last-child {
-            flex: 0 0 auto !important;
-          }
-
-          .navbar {
-            padding: 0 16px !important;
-          }
-
-          /* Mobile logo adjustments */
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 40px !important;
-            max-height: 40px !important;
-            width: auto !important;
-          }
-
-          /* Mobile menu styling - keep desktop menu visible */
-          .ant-menu.ant-menu-root.ant-menu-inline {
-            background: transparent;
-          }
-
-          .ant-menu-item,
-          .ant-menu-submenu-title {
-            border-radius: 8px;
-            margin: 4px 0;
-            padding: 8px 12px !important;
-            font-size: 14px !important;
-          }
-
-          /* Fade in and scale animation for agricultural text */
-          @keyframes fadeInScale {
-            0% {
-              opacity: 0;
-              transform: scale(0.8);
-            }
-            100% {
-              opacity: 1;
-              transform: scale(1);
-            }
-          }
-        }
-
-        /* Additional specific styling for very small devices like iPhone SE */
-        @media (max-width: 375px) {
-          .modern-navbar {
-            padding: 8px 12px !important;
-          }
-        }
-
-        /* Small tablet adjustments */
-        @media (min-width: 769px) and (max-width: 991px) {
-          .modern-navbar > div:nth-child(2) {
-            padding-left: 20px !important;
-          }
-
-          .modern-navbar > div:last-child {
-            flex: 0 0 auto !important;
-          }
-
-          .navbar {
-            padding: 0 16px !important;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .desktop-menu {
-            display: none !important;
-          }
-
-          .mobile-menu-toggle {
-            display: block !important;
-          }
-
-          .mobile-menu {
-            display: flex !important;
-          }
-
-          .site-layout-content {
-            padding: 70px 16px 16px;
-            margin-top: 64px;
-          }
-
-          /* Mobile layout adjustments */
-          .ant-layout-header {
-            padding: 0 16px !important;
-          }
-
-          .modern-navbar > div {
-            flex: unset !important;
-          }
-
-          .modern-navbar > div:first-child {
-            flex: 0 0 auto !important;
-          }
-
-          .modern-navbar > div:nth-child(2) {
-            display: none !important;
-          }
-
-          .modern-navbar > div:last-child {
-            flex: 0 0 auto !important;
-          }
-
-          .navbar {
-            padding: 0 16px !important;
-          }
-
-          /* Mobile logo adjustments */
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 40px !important;
-            max-height: 40px !important;
-            width: auto !important;
-          }
-
-          /* Mobile menu styling */
-          .ant-menu.ant-menu-root.ant-menu-inline {
-            background: transparent;
-          }
-
-          .ant-menu-item,
-          .ant-menu-submenu-title {
-            border-radius: 8px;
-            margin: 4px 0;
-            padding: 12px 16px !important;
-          }
-
-          /* Ensure mobile menu items are properly styled */
-          .mobile-nav-menu .ant-menu-item {
-            font-size: 16px;
-            line-height: 1.5;
-          }
-
-          .mobile-nav-menu .ant-menu-submenu-title {
-            font-size: 16px;
-            line-height: 1.5;
-            padding: 12px 16px !important;
-          }
-
-          /* Fade in and scale animation for agricultural text */
-          @keyframes fadeInScale {
-            0% {
-              opacity: 0;
-              transform: scale(0.8);
-            }
-            100% {
-              opacity: 1;
-              transform: scale(1);
-            }
-          }
-        }
-
-        @media (min-width: 769px) {
-          .mobile-menu-toggle {
-            display: none !important;
-          }
-
-          .desktop-menu {
-            display: flex !important;
-          }
-
-          .modern-navbar > div:nth-child(2) {
-            display: flex !important;
-            padding-left: 40px !important;
-          }
-
-          /* Desktop logo styling */
-          .modern-navbar .ant-layout-header a[style*="flex"] img {
-            height: 50px !important;
-            max-height: 50px !important;
-            width: auto !important;
-          }
-        }
-
-        /* Tablet responsive adjustments */
-        @media (min-width: 769px) and (max-width: 991px) {
-          .modern-navbar > div:nth-child(2) {
-            display: none !important;
-          }
-        }
-      `}</style>
+                /* Small Mobile Devices */
+                @media (max-width: 480px) {
+                    .modern-navbar img[alt="Logo Satu Data Pertanian"] {
+                        height: 32px !important;
+                        max-height: 32px !important;
+                    }
+                }
+            `}</style>
         </Layout>
     );
 };

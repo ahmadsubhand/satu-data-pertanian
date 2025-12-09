@@ -19,8 +19,8 @@ export default function IndicatorsPage({}: PageProps) {
     };
 
     return (
-        <PublicLayout title="Indikator - Satudata Pertanian">
-            <Head title="Indikator - Satudata Pertanian" />
+        <PublicLayout title="Indikator - Satu Data Pertanian">
+            <Head title="Indikator - Satu Data Pertanian" />
             <div style={{ padding: '20px', textAlign: 'center', minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <div>
                     <h1 style={{ color: '#2d5036' }}>Halaman Indikator</h1>

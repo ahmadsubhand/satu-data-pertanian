@@ -139,8 +139,8 @@ const SatudataIndexPage: React.FC<SatudataIndexPageProps> = ({ dataCatalogs, fil
   );
 
   return (
-    <PublicLayout title="Katalog Data - Satudata Pertanian">
-      <Head title="Katalog Data - Satudata Pertanian" />
+    <PublicLayout title="Katalog Data - Satu Data Pertanian">
+      <Head title="Katalog Data - Satu Data Pertanian" />
       
       <div>
         {/* Hero Section */}
@@ -159,7 +159,7 @@ const SatudataIndexPage: React.FC<SatudataIndexPageProps> = ({ dataCatalogs, fil
               fontSize: '28px'
             }}
           >
-            Katalog Data Satudata Pertanian
+            Katalog Data Satu Data Pertanian
           </Title>
           <Paragraph 
             style={{ 

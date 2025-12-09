@@ -153,8 +153,8 @@ const GeospatialPage: React.FC<GeospatialPageProps> = () => {
   );
 
   return (
-    <PublicLayout title="Data Geospasial - Satudata Pertanian">
-      <Head title="Data Geospasial - Satudata Pertanian" />
+    <PublicLayout title="Data Geospasial - Satu Data Pertanian">
+      <Head title="Data Geospasial - Satu Data Pertanian" />
       
       <div>
         {/* Hero Section */}
@@ -173,7 +173,7 @@ const GeospatialPage: React.FC<GeospatialPageProps> = () => {
               fontSize: '28px'
             }}
           >
-            Data Geospasial Satudata Pertanian
+            Data Geospasial Satu Data Pertanian
           </Title>
           <Paragraph 
             style={{ 

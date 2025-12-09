@@ -135,7 +135,7 @@ export default function AuthSplitLayout({
                     </div>
 
                     <div className="animate-slide-in-left animation-delay-2000 relative z-20 text-sm text-green-200/80">
-                        &copy; {new Date().getFullYear()} Satudata Pertanian.
+                        &copy; {new Date().getFullYear()} Satu Data Pertanian.
                         Semua hak dilindungi.
                     </div>
                 </div>

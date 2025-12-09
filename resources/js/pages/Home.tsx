@@ -123,8 +123,8 @@ const HomePage: React.FC<HomePageProps> = ({
         }
     }, [datasetsCount]);
     return (
-        <PublicLayout title="Beranda - Satudata Pertanian">
-            <Head title="Beranda - Satudata Pertanian" />
+        <PublicLayout title="Beranda - Satu Data Pertanian">
+            <Head title="Beranda - Satu Data Pertanian" />
 
             {/* Hero Section */}
             <AnimatedSection delay={0.1}>
@@ -147,7 +147,7 @@ const HomePage: React.FC<HomePageProps> = ({
                     >
                         <img
                             src="/images/logos/logo-satudata.png"
-                            alt="Logo Satudata Pertanian"
+                            alt="Logo Satu Data Pertanian"
                             style={{
                                 height: '80px',
                                 marginBottom: '12px',
@@ -245,7 +245,7 @@ const HomePage: React.FC<HomePageProps> = ({
 
 
 
-            {/* Dataset and Publications Section from Satudata */}
+            {/* Dataset and Publications Section from Satu Data */}
             <AnimatedSection delay={0.5}>
                 <div style={{ marginBottom: '30px' }}>
                     <Title

@@ -106,7 +106,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
   };
 
   return (
-    <PublicLayout title="Dataset - Satudata Pertanian">
+    <PublicLayout title="Dataset - Satu Data Pertanian">
       <div className="dataset-container" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Hero Section */}
         <div
@@ -137,7 +137,7 @@ const DatasetPage: React.FC<DatasetPageProps> = ({ datasets = [], paginator, fil
               fontSize: '32px',
               textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
             }}>
-              📊 Dataset Satudata Pertanian
+              📊 Dataset Satu Data Pertanian
             </h1>
             <p style={{
               fontSize: '18px',

@@ -155,8 +155,8 @@ const StatisticalPage: React.FC<StatisticalPageProps> = () => {
   );
 
   return (
-    <PublicLayout title="Data Statistik - Satudata Pertanian">
-      <Head title="Data Statistik - Satudata Pertanian" />
+    <PublicLayout title="Data Statistik - Satu Data Pertanian">
+      <Head title="Data Statistik - Satu Data Pertanian" />
       
       <div>
         {/* Hero Section */}
@@ -175,7 +175,7 @@ const StatisticalPage: React.FC<StatisticalPageProps> = () => {
               fontSize: '28px'
             }}
           >
-            Data Statistik Satudata Pertanian
+            Data Statistik Satu Data Pertanian
           </Title>
           <Paragraph 
             style={{ 

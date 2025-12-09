@@ -47,37 +47,84 @@ interface PublikasiPageProps extends PageProps {
     publikasi: Publication[];
 }
 
+// Define filter interface
+interface PublicationFilters {
+    searchText: string;
+    category: string; // 'all', 'analisis', 'buletin', 'kajian', 'newsletter', 'outlook', 'statistik'
+}
+
 const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
-    const [searchText, setSearchText] = useState('');
+    const [filters, setFilters] = useState<PublicationFilters>({
+        searchText: '',
+        category: 'all'
+    });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8; // Increased to show more items per page
 
-    // Filter data based on search
-    const allFilteredData = publikasi.filter(
-        (pub) =>
-            pub.judul.toLowerCase().includes(searchText.toLowerCase()) ||
-            (pub.keterangan &&
-                pub.keterangan
-                    .toLowerCase()
-                    .includes(searchText.toLowerCase())) ||
-            (pub.nomor_publikasi &&
-                pub.nomor_publikasi
-                    .toLowerCase()
-                    .includes(searchText.toLowerCase())),
-    );
+    // Filter and sort data based on filters
+    const allFilteredData = publikasi
+        .filter((pub) => {
+            // Apply search filter
+            const matchesSearch =
+                pub.judul.toLowerCase().includes(filters.searchText.toLowerCase()) ||
+                (pub.keterangan &&
+                    pub.keterangan
+                        .toLowerCase()
+                        .includes(filters.searchText.toLowerCase())) ||
+                (pub.nomor_publikasi &&
+                    pub.nomor_publikasi
+                        .toLowerCase()
+                        .includes(filters.searchText.toLowerCase()));
 
-    // Hitung total halaman berdasarkan data yang difilter
+            // Apply category filter
+            let matchesCategory = true;
+            if (filters.category !== 'all') {
+                const titleLower = pub.judul.toLowerCase();
+                switch(filters.category) {
+                    case 'analisis':
+                        matchesCategory = titleLower.includes('analisis') || titleLower.includes('kinerja');
+                        break;
+                    case 'buletin':
+                        matchesCategory = titleLower.includes('buletin');
+                        break;
+                    case 'kajian':
+                        matchesCategory = titleLower.includes('kajian');
+                        break;
+                    case 'newsletter':
+                        matchesCategory = titleLower.includes('newsletter');
+                        break;
+                    case 'outlook':
+                        matchesCategory = titleLower.includes('outlook');
+                        break;
+                    case 'statistik':
+                        matchesCategory = titleLower.includes('statistik') || titleLower.includes('data');
+                        break;
+                    default:
+                        matchesCategory = true;
+                }
+            }
+
+            return matchesSearch && matchesCategory;
+        })
+        .sort((a, b) => {
+            // Sort by release date in descending order (newest first) by default
+            const dateA = new Date(a.tanggal_rilis).getTime();
+            const dateB = new Date(b.tanggal_rilis).getTime();
+            return dateB - dateA; // Newest first
+        });
+
+    // Calculate total pages based on filtered data
     const totalPages = Math.ceil(allFilteredData.length / itemsPerPage);
 
-    // Ambil data untuk halaman saat ini
+    // Get data for current page
     const filteredData = allFilteredData.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage,
     );
 
     return (
-        <PublicLayout title="Publikasi - Satudata Pertanian">
-            <Head title="Publikasi - Satudata Pertanian" />
+        <PublicLayout title="Publikasi - Satu Data Pertanian">
+            <Head title="Publikasi - Satu Data Pertanian" />
 
             <div
                 style={{
@@ -118,7 +165,7 @@ const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
                                 textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
                             }}
                         >
-                            📘 Publikasi Satudata Pertanian
+                            📘 Publikasi Satu Data Pertanian
                         </Title>
                         <Paragraph
                             style={{
@@ -158,12 +205,43 @@ const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
                         <Col xs={24} md={18}>
                             <Search
                                 placeholder="🔍 Cari publikasi (judul, deskripsi, nomor publikasi)..."
-                                onSearch={(value) => setSearchText(value)}
+                                onSearch={(value) => setFilters({...filters, searchText: value})}
+                                value={filters.searchText}
+                                onChange={(e) => setFilters({...filters, searchText: e.target.value})}
                                 enterButton="Cari"
                                 size="large"
-                                style={{ width: '100%' }}
+                                style={{ width: '100%', marginBottom: '16px' }}
                                 allowClear
                             />
+
+                            {/* Category Filter */}
+                            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                                <div style={{ flex: 1, minWidth: '150px' }}>
+                                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', color: '#2d5036', marginBottom: '6px' }}>
+                                        Kategori:
+                                    </label>
+                                    <select
+                                        value={filters.category}
+                                        onChange={(e) => setFilters({...filters, category: e.target.value})}
+                                        style={{
+                                            width: '100%',
+                                            padding: '8px 12px',
+                                            border: '1px solid #d9d9d9',
+                                            borderRadius: '6px',
+                                            fontSize: '14px',
+                                        }}
+                                    >
+                                        <option value="all">Semua Kategori</option>
+                                        <option value="analisis">Analisis</option>
+                                        <option value="buletin">Buletin</option>
+                                        <option value="kajian">Kajian</option>
+                                        <option value="newsletter">Newsletter</option>
+                                        <option value="outlook">Outlook</option>
+                                        <option value="statistik">Statistik</option>
+                                    </select>
+                                </div>
+
+                            </div>
                         </Col>
                         <Col xs={24} md={6}>
                             <div
@@ -368,6 +446,7 @@ const PublikasiPage: React.FC<PublikasiPageProps> = ({ publikasi = [] }) => {
                             gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                             gap: '25px',
                         }}
+                        className="publikasi-grid"
                     >
                         {filteredData.map((pub, index) => (
                             <div

@@ -65,8 +65,8 @@ const ExportImportPage: React.FC<ExportImportPageProps> = () => {
   ];
 
   return (
-    <PublicLayout title="Data Ekspor-Impor Pertanian - Satudata Pertanian">
-      <Head title="Data Ekspor-Impor Pertanian - Satudata Pertanian" />
+    <PublicLayout title="Data Ekspor-Impor Pertanian - Satu Data Pertanian">
+      <Head title="Data Ekspor-Impor Pertanian - Satu Data Pertanian" />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ 
@@ -201,7 +201,7 @@ const ExportImportPage: React.FC<ExportImportPageProps> = () => {
         }}>
           <Title level={3} style={{ color: '#2d5036', marginBottom: '16px' }}>Butuh Data Lainnya?</Title>
           <Paragraph style={{ color: '#495057', marginBottom: '24px', maxWidth: '600px', margin: '0 auto 24px' }}>
-            Jelajahi lebih banyak dataset ekspor-impor pertanian yang tersedia di portal Satudata Pertanian untuk mendukung analisis perdagangan Anda.
+            Jelajahi lebih banyak dataset ekspor-impor pertanian yang tersedia di portal Satu Data Pertanian untuk mendukung analisis perdagangan Anda.
           </Paragraph>
           <Button 
             type="primary" 

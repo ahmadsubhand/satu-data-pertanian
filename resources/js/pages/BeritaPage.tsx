@@ -70,8 +70,8 @@ const BeritaPage: React.FC<BeritaPageProps> = ({ berita = [] }) => {
     );
 
     return (
-        <PublicLayout title="Berita - Satudata Pertanian">
-            <Head title="Berita - Satudata Pertanian" />
+        <PublicLayout title="Berita - Satu Data Pertanian">
+            <Head title="Berita - Satu Data Pertanian" />
 
             <div
                 style={{
@@ -112,7 +112,7 @@ const BeritaPage: React.FC<BeritaPageProps> = ({ berita = [] }) => {
                                 textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
                             }}
                         >
-                            📰 Berita Satudata Pertanian
+                            📰 Berita Satu Data Pertanian
                         </Title>
                         <Paragraph
                             style={{
