@@ -380,9 +380,9 @@ const InfografisPage: React.FC<InfografisPageProps> = ({ infografis = [] }) => {
                                             >
                                                 {infografisItem.file ? (
                                                     <img
-                                                        src={`/storage/${infografisItem.file}`}
+                                                        src={`/storage/infografis/${infografisItem.file}`}
                                                         alt={infografisItem.judul}
-                                                        style={{
+                                                        style={{    
                                                             position: 'absolute',
                                                             top: 0,
                                                             left: 0,
