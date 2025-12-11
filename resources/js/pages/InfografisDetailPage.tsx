@@ -166,7 +166,7 @@ const InfografisDetailPage: React.FC<InfografisDetailPageProps> = ({
                                 {/* Infografis preview */}
                                 {infografis.file ? (
                                     <img
-                                        src={`/storage/${infografis.file}`}
+                                        src={`/storage/infografis/${infografis.file}`}
                                         alt={infografis.judul}
                                         style={{
                                             position: 'absolute',
@@ -352,7 +352,7 @@ const InfografisDetailPage: React.FC<InfografisDetailPageProps> = ({
                                     }}
                                 >
                                     <a
-                                        href={infografis.file}
+                                        href={`/storage/infografis/${infografis.file}`}
                                         download
                                         style={{
                                             display: 'inline-flex',
@@ -524,7 +524,7 @@ const InfografisDetailPage: React.FC<InfografisDetailPageProps> = ({
 
                 <div style={{ textAlign: 'center' }}>
                     <a
-                        href={infografis.file}
+                        href={`/storage/infografis/${infografis.file}`}
                         download
                         style={{
                             display: 'inline-flex',
